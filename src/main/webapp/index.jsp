@@ -7,10 +7,12 @@
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
-<head>
-    <title>Title</title>
-</head>
-<body>
-hola caracola
-</body>
+    <head>
+        <title>Proyecto PDF Viewer</title>
+    </head>
+    <body>
+        <p><a href="htmlforms/CargarCarpeta.html">Cargar una nueva carpeta en la BD</a>
+        <p><a href="htmlforms/CargarFichero.html">Cargar un nuevo fichero en la BD</a>
+
+    </body>
 </html>
