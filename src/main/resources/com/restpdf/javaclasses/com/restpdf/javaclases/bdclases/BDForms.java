@@ -13,7 +13,7 @@ public class BDForms {
     public void setC(Connection c) {        this.c = c;    }
 
     public BDForms() throws SQLException, ClassNotFoundException {
-        Class.forName("com.mysql.cj.jdbc.Driver");
+        //Class.forName("com.mysql.cj.jdbc.Driver");
         c = DriverManager.getConnection(url, user, pwd);
     }
 
