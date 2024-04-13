@@ -1,4 +1,4 @@
-package com.restpdf.javaclases.mainclases;
+package com.restpdf.javaclases.old;
 
 import jakarta.ws.rs.*;
 

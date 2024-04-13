@@ -7,13 +7,13 @@ public class BDForms {
     Connection c;
     PreparedStatement ps;
     String sql;
-    private final static String url="jdbc:mysql://sql11.freemysqlhosting.net/sql11652348",  user="sql11652348", pwd="rtJrPKLmpc";
+    private final static String url="jdbc:mysql://sql11.freemysqlhosting.net/sql11652348",  user="id22000619_sql11652348", pwd="rtJrPKLmpc_1";
+
 
     public Connection getC() {        return c;    }
     public void setC(Connection c) {        this.c = c;    }
 
     public BDForms() throws SQLException, ClassNotFoundException {
-        //Class.forName("com.mysql.cj.jdbc.Driver");
         c = DriverManager.getConnection(url, user, pwd);
     }
 
@@ -30,7 +30,7 @@ public class BDForms {
 
     public void setNuevoPDF (FormularioPDF NewPDF) throws SQLException {
 
-        sql = "INSERT INTO CamposFormularios (NombreCampo, NombreFormulario, Pagina, Posicion, PosicionY, Largo, Ancho) " +
+        sql = "INSERT INTO CamposFormularios (NombreCampo, NombreFormulario, Pagina, PosicionX, PosicionY, Largo, Ancho) " +
                 "VALUES (?, ?, ?, ?, ?, ?, ?);";
         try {
             ps = c.prepareStatement(sql);

@@ -1,4 +1,4 @@
-package com.restpdf.javaclases.mainclases;
+package com.restpdf.javaclases.old;
 
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
@@ -16,7 +16,7 @@ public class LocalhostServer {
         HttpServer server = HttpServer.create(new InetSocketAddress("localhost", 8080), 0);
         ThreadPoolExecutor threadPoolExecutor = (ThreadPoolExecutor) Executors.newFixedThreadPool(10);
 
-        server.createContext("/test", new  MyHandler());
+        server.createContext("/test", new MyHandler());
         server.setExecutor(threadPoolExecutor);
         server.start();
         System.out.println("Server started on port 8001");
@@ -28,9 +28,9 @@ public class LocalhostServer {
 //        SwingUtilities.invokeLater(new Runnable() {
 //            @Override
 //            public void run() {
-//                ApplicationFrame mainFrame = null;
+//                BDFrame mainFrame = null;
 //                try {
-//                    mainFrame = new ApplicationFrame();
+//                    mainFrame = new BDFrame();
 //                } catch (SQLException | ClassNotFoundException e) {
 //                    throw new RuntimeException(e);
 //                }
