@@ -1,6 +1,6 @@
 package com.restpdf.javaclases.mainclases;
 
-import com.restpdf.javaclases.PDFmanager.EditarPDFFrame;
+import com.restpdf.javaclases.PDFEditor.Frames.EditarPDFFrame;
 import com.restpdf.javaclases.bdclases.BDFrame;
 
 import javax.swing.*;
@@ -49,8 +49,7 @@ public class MainFrame extends JFrame {
 
         jb = new JButton("Selecciona");
         jb.setBounds(125, 90, 80, 30);
-        jb.addActionListener(new ActionListener() {
-            // Anonymous class.
+        jb.addActionListener(new ActionListener() {            // Anonymous class.
 
             public void actionPerformed(ActionEvent e)
             {
@@ -66,10 +65,9 @@ public class MainFrame extends JFrame {
                     mainFrame.setVisible(true);
                 }
                 else if (RBModificaBD.isSelected()) {
-                    //BDFrame mainFrame = null;
-                    EditarPDFFrame mainFrame = null;
+                    BDFrame mainFrame = null;
                     try {
-                        mainFrame = new EditarPDFFrame();
+                        mainFrame = new BDFrame();
                     } catch (SQLException | ClassNotFoundException ex) {
                         throw new RuntimeException(ex);
                     }
@@ -80,6 +78,7 @@ public class MainFrame extends JFrame {
         });
         ButtonPanel.add(jb);
         mainPanel.add(ButtonPanel, BorderLayout.SOUTH);
+
     //-------------------------------------------------------------------------------------------
         this.add(mainPanel);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

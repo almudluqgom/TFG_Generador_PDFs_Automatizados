@@ -51,7 +51,7 @@ public class SubirCarpeta  extends HttpServlet {
         BDForms bd = new BDForms();
         bd.setCarpeta(Carpeta);
         String carpeta = bd.getCarpeta();
-        bd.cerrar();
+        bd.close();
 
         if(carpeta != null) {
             HttpSession httpSession = request.getSession();

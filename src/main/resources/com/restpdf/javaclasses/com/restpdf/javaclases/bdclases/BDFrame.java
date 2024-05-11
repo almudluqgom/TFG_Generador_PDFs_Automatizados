@@ -18,6 +18,7 @@ public class BDFrame extends JFrame {
     JFileChooser chooser;
     JLabel textfolder;
     static String choosertitle = "Selecciona la carpeta: ";
+
     public BDFrame() throws SQLException, ClassNotFoundException {
         bd = new BDForms();
 
@@ -66,12 +67,8 @@ public class BDFrame extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 String f = textfolder.getText();
 
-                try {
-                    bd.setCarpeta(f);
-                    System.out.println("Exito actualizando la base de datos");
-                } catch (SQLException ex) {
-                    throw new RuntimeException(ex);
-                }
+                bd.setCarpeta(f);
+                System.out.println("Exito actualizando la base de datos");
                 JOptionPane.showMessageDialog(null, "Exito actualizando la base de datos",
                         "InfoBox: Carpeta de trabajo actualizada", JOptionPane.INFORMATION_MESSAGE);
 
