@@ -26,10 +26,11 @@ public class PDFInternalFrame extends JInternalFrame { //VentanaInternaSM || Ven
         bd = new JScrollPane();
         pdf = new ViewPDFPanel();
 
-        this.setClosable(true);
-        this.setIconifiable(true);
-        this.setMaximizable(true);
-        this.setResizable(true);
+        this.setClosable(false);
+        this.setIconifiable(false);
+        this.setMaximizable(false);
+        this.setResizable(false);
+        this.setForeground(Color.WHITE);
 
         bd.add(pdf);
         this.getContentPane().add(bd, BorderLayout.CENTER);

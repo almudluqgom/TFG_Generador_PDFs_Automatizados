@@ -4,9 +4,7 @@ package com.restpdf.javaclases.PDFEditor.Frames;
 import com.restpdf.javaclases.PDFEditor.Handlers.PDFWindowHandler;
 import com.restpdf.javaclases.PDFEditor.Listeners.PDFEvent;
 import com.restpdf.javaclases.PDFEditor.Listeners.ViewPDFListeners;
-import com.restpdf.javaclases.PDFEditor.Panels.PDFDisplayPanel;
 import com.restpdf.javaclases.PDFEditor.Panels.ViewPDFPanel;
-import com.restpdf.javaclases.mainclases.MainFrame;
 
 import javax.swing.*;
 import java.awt.*;
@@ -22,8 +20,6 @@ public class VentanaEditorFrame extends JFrame {    //ventanaPrincipal
     PDFViewHandler PDFVHandler;
     JDesktopPane zonaEscritorio;
     private String nombrepdf;
-
-    PDFDisplayPanel pdf;
 
     public VentanaEditorFrame(){
         nombrepdf = null;
@@ -41,11 +37,9 @@ public class VentanaEditorFrame extends JFrame {    //ventanaPrincipal
         PDFInternalFrame vi = new PDFInternalFrame(nombrepdf);
         vi.addInternalFrameListener(PDFWHandler);
         vi.getPdf().addEventListener(PDFVHandler);
-        //pdf.add(vi);
+
         PanelPDF.add(vi);
         vi.setSize(800, 1000);
-
-        //sacar framepdf - vi.getLienzo.setImage
         vi.setVisible(true);
     }
     private void initSwingComponents() {
@@ -71,15 +65,13 @@ public class VentanaEditorFrame extends JFrame {    //ventanaPrincipal
         PanelPDF.setLayout(new BorderLayout());
         PanelPDF.setSize(600,1000);
 
-        zonaEscritorio = new JDesktopPane();
+        zonaEscritorio = new JDesktopPane(); //aqui es donde añadimos los internalframes
+        zonaEscritorio.setBackground(Color.BLACK);
         zonaEscritorio.setPreferredSize(new Dimension(600, 1000));
-
         PanelPDF.add(zonaEscritorio);
-        //pdf = new PDFDisplayPanel(nombrepdf);
 //--------------------------------------------------------------------------
         MainInternalFrame.add(PanelOpciones, BorderLayout.WEST);
         MainInternalFrame.add(PanelPDF);
-        //MainInternalFrame.add(pdf.getF().getContentPane());
 
         this.add(MainInternalFrame);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

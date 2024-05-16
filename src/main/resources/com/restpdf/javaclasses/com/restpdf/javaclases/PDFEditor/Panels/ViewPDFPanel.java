@@ -31,7 +31,7 @@ public class ViewPDFPanel extends JPanel {   //Lienzo2D
     }
     @SuppressWarnings("unchecked")
     private void initComponentes(){
-        this.setBackground(Color.lightGray);
+        this.setForeground(Color.WHITE);
 
         addMouseMotionListener(new MouseMotionAdapter(){
             public void mouseDragged(MouseEvent evt) {
