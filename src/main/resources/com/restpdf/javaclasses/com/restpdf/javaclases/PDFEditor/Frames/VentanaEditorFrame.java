@@ -41,8 +41,8 @@ public class VentanaEditorFrame extends JFrame {    //ventanaPrincipal
         PDFInternalFrame vi = new PDFInternalFrame(nombrepdf);
         vi.addInternalFrameListener(PDFWHandler);
         vi.getPdf().addEventListener(PDFVHandler);
-        pdf.add(vi);
-        //zonaEscritorio.add(vi);
+        //pdf.add(vi);
+        PanelPDF.add(vi);
         vi.setSize(800, 1000);
 
         //sacar framepdf - vi.getLienzo.setImage
@@ -65,23 +65,24 @@ public class VentanaEditorFrame extends JFrame {    //ventanaPrincipal
         PanelOpciones.add(BotonGuardarCampos,BorderLayout.SOUTH);
         PanelOpciones.setSize(50,50);
 //--------------------------------------------------------------------------
-//        PanelPDF = new JPanel();
-//        PanelPDF.setBorder(BorderFactory.createLineBorder(Color.gray));
-//        PanelPDF.setForeground(Color.lightGray);
-//        PanelPDF.setLayout(new BorderLayout());
-//        PanelPDF.setSize(600,1000);
+        PanelPDF = new JPanel();
+        PanelPDF.setBorder(BorderFactory.createLineBorder(Color.gray));
+        PanelPDF.setForeground(Color.lightGray);
+        PanelPDF.setLayout(new BorderLayout());
+        PanelPDF.setSize(600,1000);
 
-//        zonaEscritorio = new JDesktopPane();
-//        zonaEscritorio.setPreferredSize(new Dimension(600, 1000));
+        zonaEscritorio = new JDesktopPane();
+        zonaEscritorio.setPreferredSize(new Dimension(600, 1000));
 
-        //PanelPDF.add(zonaEscritorio);
-        pdf = new PDFDisplayPanel(nombrepdf);
+        PanelPDF.add(zonaEscritorio);
+        //pdf = new PDFDisplayPanel(nombrepdf);
 //--------------------------------------------------------------------------
         MainInternalFrame.add(PanelOpciones, BorderLayout.WEST);
-        MainInternalFrame.add(pdf.getF().getContentPane());
+        MainInternalFrame.add(PanelPDF);
+        //MainInternalFrame.add(pdf.getF().getContentPane());
 
         this.add(MainInternalFrame);
-        //this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setSize(1000,1000);
     }
 
