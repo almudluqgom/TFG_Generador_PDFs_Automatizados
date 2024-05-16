@@ -20,11 +20,13 @@ public class EditarPDFFrame extends JFrame {
     private JPanel mainPanel;
     JLabel nombrep;
     String selectedpdf;
-    private static final String website ="https://tfgbd.000webhostapp.com/SelectPDF.php";
+    private static final String website = "https://tfgbd.000webhostapp.com/SelectPDF.php";
+
     public EditarPDFFrame() throws SQLException, ClassNotFoundException {
 
         initSwingComponents();
     }
+
     private void initSwingComponents() {
         mainPanel = new JPanel();
 
@@ -32,13 +34,13 @@ public class EditarPDFFrame extends JFrame {
         mainPanel.setBorder(BorderFactory.createLineBorder(Color.lightGray));
 
 
-        JPanel butP = new JPanel(new GridLayout(2,0));
+        JPanel butP = new JPanel(new GridLayout(2, 0));
         nombrep = new JLabel("...");
 
         JPanel optionsP = new JPanel();
         optionsP.setLayout(new GridLayout());
         ButtonGroup buttonGroup1 = new ButtonGroup();
-        inicializarListaPDFsDisponibles(optionsP,buttonGroup1, nombrep);
+        inicializarListaPDFsDisponibles(optionsP, buttonGroup1, nombrep);
 
         mainPanel.add(optionsP, BorderLayout.NORTH);
 
@@ -48,19 +50,15 @@ public class EditarPDFFrame extends JFrame {
         b.addActionListener(new ActionListener() { //confirmación de directorio como almacen. pdf
             @Override
             public void actionPerformed(ActionEvent e) {
-               VentanaEditorFrame mainFrame = null;
-//                try {
-                    mainFrame = new VentanaEditorFrame(selectedpdf);
-//                } catch (SQLException | ClassNotFoundException ex) {
-//                    throw new RuntimeException(ex);
-//                }
+                VentanaEditorFrame mainFrame = null;
+                mainFrame = new VentanaEditorFrame(selectedpdf);
                 mainFrame.setVisible(true);
                 dispose();
             }
         });
 
         butP.add(nombrep);
-        butP.setSize(300,100);
+        butP.setSize(300, 100);
 
         JButton back = new JButton("Atrás");
         butP.add(back);
@@ -86,7 +84,7 @@ public class EditarPDFFrame extends JFrame {
         this.add(mainPanel);
 
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.setSize(300,300);
+        this.setSize(300, 300);
     }
 
     private void inicializarListaPDFsDisponibles(JPanel panelOp, ButtonGroup buttonGroup1, JLabel nombrep) {
@@ -99,10 +97,10 @@ public class EditarPDFFrame extends JFrame {
             String str = br.readLine();
             System.out.println(str);
 
-           ArrayList<String> listaPDFsDisp = new ArrayList<>( Arrays.asList(str.split("<br>")));
-           panelOp.setLayout(new GridLayout(listaPDFsDisp.size(),0));
+            ArrayList<String> listaPDFsDisp = new ArrayList<>(Arrays.asList(str.split("<br>")));
+            panelOp.setLayout(new GridLayout(listaPDFsDisp.size(), 0));
 
-           for(String pdf : listaPDFsDisp){
+            for (String pdf : listaPDFsDisp) {
                 final JRadioButton button1 = new JRadioButton(pdf);
                 panelOp.add(button1);
                 buttonGroup1.add(button1);

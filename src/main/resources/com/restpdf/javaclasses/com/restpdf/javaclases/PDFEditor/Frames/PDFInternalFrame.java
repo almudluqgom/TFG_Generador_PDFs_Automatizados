@@ -8,9 +8,17 @@ import java.awt.*;
 public class PDFInternalFrame extends JInternalFrame { //VentanaInternaSM || VentanaInternaImagen
     JScrollPane bd;
     ViewPDFPanel pdf;    //Lienzo2D
-    public PDFInternalFrame(){}
-    public PDFInternalFrame(String npdf){
-        super(npdf,true,true,true,true);
+    String namepdf;
+
+    public PDFInternalFrame(String npdf) {
+        super(npdf, true, false, false, false);
+        namepdf = npdf;
+        initComponentes();
+    }
+
+    public PDFInternalFrame() {
+        super("Nuevo PDF", true, false, false, false);
+        namepdf = "";
         initComponentes();
     }
 
@@ -23,7 +31,9 @@ public class PDFInternalFrame extends JInternalFrame { //VentanaInternaSM || Ven
         this.setMaximizable(true);
         this.setResizable(true);
 
+        bd.add(pdf);
         this.getContentPane().add(bd, BorderLayout.CENTER);
+
     }
 
     public JScrollPane getBd() {
@@ -41,4 +51,5 @@ public class PDFInternalFrame extends JInternalFrame { //VentanaInternaSM || Ven
     public void setPdf(ViewPDFPanel pdf) {
         this.pdf = pdf;
     }
+
 }

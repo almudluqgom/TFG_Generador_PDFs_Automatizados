@@ -2,10 +2,6 @@ package com.restpdf.javaclases.PDFEditor.Panels;
 
 import com.restpdf.javaclases.PDFEditor.Listeners.*;
 import com.restpdf.javaclases.PDFEditor.Tools.FieldRectangle;
-import javafx.scene.web.WebEngine;
-import javafx.scene.web.WebView;
-
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -24,7 +20,6 @@ public class ViewPDFPanel extends JPanel {   //Lienzo2D
     List<FieldRectangle> vRect = new ArrayList<>();
     boolean isdeletemodeactive;
 
-
     public ViewPDFPanel(){
         initComponentes();
         iswindowmode = false;
@@ -33,11 +28,11 @@ public class ViewPDFPanel extends JPanel {   //Lienzo2D
         isdeletemodeactive = false;
         ClipWindow = new Ellipse2D.Double(0, 0, 100, 100);
 
-
     }
     @SuppressWarnings("unchecked")
     private void initComponentes(){
         this.setBackground(Color.lightGray);
+
         addMouseMotionListener(new MouseMotionAdapter(){
             public void mouseDragged(MouseEvent evt) {
                 Point2D punto = new Point2D.Double(evt.getPoint().getX() + pAux.getX(), evt.getPoint().getY() + pAux.getY());
