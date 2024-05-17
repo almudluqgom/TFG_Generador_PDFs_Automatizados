@@ -34,12 +34,6 @@
     </dependency>
     <dependency>
       <groupId>com.itextpdf</groupId>
-      <artifactId>kernel</artifactId>
-      <version>7.0.2</version>
-    </dependency>
-
-    <dependency>
-      <groupId>com.itextpdf</groupId>
       <artifactId>io</artifactId>
       <version>7.0.2</version>
     </dependency>
@@ -112,11 +106,6 @@
           <artifactId>txw2</artifactId>
           <version>4.0.1</version>
       </dependency>
-      <dependency>
-          <groupId>org.openjfx</groupId>
-          <artifactId>javafx-graphics</artifactId>
-          <version>21.0.2</version>
-      </dependency>
     <dependency>
       <groupId>org.openjfx</groupId>
       <artifactId>javafx-web</artifactId>
@@ -137,6 +126,11 @@
           <artifactId>javafx-graphics</artifactId>
           <version>17</version>
       </dependency>
+    <dependency>
+      <groupId>com.itextpdf</groupId>
+      <artifactId>itextpdf</artifactId>
+      <version>5.4.0</version>
+    </dependency>
 
   </dependencies>
 

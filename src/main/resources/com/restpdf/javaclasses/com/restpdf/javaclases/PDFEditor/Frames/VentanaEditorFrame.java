@@ -4,6 +4,7 @@ package com.restpdf.javaclases.PDFEditor.Frames;
 import com.restpdf.javaclases.PDFEditor.Handlers.PDFWindowHandler;
 import com.restpdf.javaclases.PDFEditor.Listeners.PDFEvent;
 import com.restpdf.javaclases.PDFEditor.Listeners.ViewPDFListeners;
+import com.restpdf.javaclases.PDFEditor.Panels.BackgroundPDFPanel;
 import com.restpdf.javaclases.PDFEditor.Panels.ViewPDFPanel;
 
 import javax.swing.*;
@@ -20,6 +21,7 @@ public class VentanaEditorFrame extends JFrame {    //ventanaPrincipal
     PDFViewHandler PDFVHandler;
     JDesktopPane zonaEscritorio;
     private String nombrepdf;
+    BackgroundPDFPanel bg;
 
     public VentanaEditorFrame(){
         nombrepdf = null;
@@ -34,13 +36,14 @@ public class VentanaEditorFrame extends JFrame {    //ventanaPrincipal
         PDFWHandler = new PDFWindowHandler();   //mVentanaInterna = new ManejadorVentanaInterna();
         PDFVHandler = new PDFViewHandler();
 
-        PDFInternalFrame vi = new PDFInternalFrame(nombrepdf);
-        vi.addInternalFrameListener(PDFWHandler);
-        vi.getPdf().addEventListener(PDFVHandler);
+        PDFInternalFrame pdf_if = new PDFInternalFrame(nombrepdf);
+        //aqui el background, separa las 2 cosas
+        pdf_if.addInternalFrameListener(PDFWHandler);
+        pdf_if.getPdf().addEventListener(PDFVHandler);
 
-        PanelPDF.add(vi);
-        vi.setSize(800, 1000);
-        vi.setVisible(true);
+        PanelPDF.add(pdf_if);
+        pdf_if.setSize(800, 1000);
+        pdf_if.setVisible(true);
     }
     private void initSwingComponents() {
         MainInternalFrame = new JPanel();

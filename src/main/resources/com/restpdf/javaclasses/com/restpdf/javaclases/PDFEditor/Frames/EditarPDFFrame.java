@@ -95,7 +95,7 @@ public class EditarPDFFrame extends JFrame {
             urlc.connect();
             BufferedReader br = new BufferedReader(new InputStreamReader(urlc.getInputStream()));
             String str = br.readLine();
-            System.out.println(str);
+            //System.out.println(str);
 
             ArrayList<String> listaPDFsDisp = new ArrayList<>(Arrays.asList(str.split("<br>")));
             panelOp.setLayout(new GridLayout(listaPDFsDisp.size(), 0));
