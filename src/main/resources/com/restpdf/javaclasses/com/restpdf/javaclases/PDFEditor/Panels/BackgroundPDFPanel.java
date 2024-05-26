@@ -2,7 +2,6 @@ package com.restpdf.javaclases.PDFEditor.Panels;
 
 import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.parser.PdfTextExtractor;
-import com.itextpdf.text.pdf.parser.*;
 
 import javax.swing.*;
 import javax.swing.text.BadLocationException;
@@ -32,7 +31,7 @@ public class BackgroundPDFPanel extends JTextPane {
 
         for (int i = 1; i <= pages; i++) {
             textopdf.append(PdfTextExtractor.getTextFromPage(reader, i));
-            System.out.println(textopdf.toString());
+
         }
 
         StyledDocument doc = this.getStyledDocument();

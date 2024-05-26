@@ -29,6 +29,7 @@ public class PDFInternalFrame extends JInternalFrame { //VentanaInternaSM || Ven
     private void initComponentes() {
         bd = new JScrollPane();
         pdf = new ViewPDFPanel();
+
         try {
             bg = new BackgroundPDFPanel(namepdf);
         } catch (IOException e) {
@@ -41,8 +42,6 @@ public class PDFInternalFrame extends JInternalFrame { //VentanaInternaSM || Ven
         this.setResizable(false);
         this.setForeground(Color.WHITE);
 
-//        bd.add(pdf);
-//        this.getContentPane().add(bd, BorderLayout.CENTER);
         bd.add(bg);
         this.getContentPane().add(bg, BorderLayout.CENTER);
 

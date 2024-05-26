@@ -1,5 +1,6 @@
 package com.restpdf.javaclases.PDFEditor.Frames;
 
+import com.restpdf.javaclases.PDFEditor.Tools.StringEncoder;
 import com.restpdf.javaclases.mainclases.MainFrame;
 
 import javax.swing.*;
@@ -99,8 +100,10 @@ public class EditarPDFFrame extends JFrame {
 
             ArrayList<String> listaPDFsDisp = new ArrayList<>(Arrays.asList(str.split("<br>")));
             panelOp.setLayout(new GridLayout(listaPDFsDisp.size(), 0));
+            StringEncoder e = new StringEncoder();
 
             for (String pdf : listaPDFsDisp) {
+                pdf = e.desencripta(pdf);
                 final JRadioButton button1 = new JRadioButton(pdf);
                 panelOp.add(button1);
                 buttonGroup1.add(button1);
