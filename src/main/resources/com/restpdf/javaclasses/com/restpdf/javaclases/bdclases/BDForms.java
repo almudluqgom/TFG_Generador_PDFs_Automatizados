@@ -25,18 +25,6 @@ public class BDForms {
         br.close();
     }
 
-    public void setCarpeta(String Carpeta) {
-        URL url = null;
-        try {
-            url = new URL("https://tfgbd.000webhostapp.com/uploadNewFolder.php?valor=" + Carpeta);
-            urlc = url.openConnection();
-            urlc.connect();
-
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
     public void setNuevoPDF(FormularioPDF NewPDF) {
 
         ArrayList<CampoF> fields = NewPDF.getFormfields();
@@ -64,8 +52,12 @@ public class BDForms {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+        String o = String.valueOf(output);
+        o = o.replace(" ", "");
+        o = o.replace("[", "");
+        o = o.replace("]", "");
 
-        return String.valueOf(output);
+        return o;
     }
 
     public void setNuevoCampoPDF(String Campof, String NPDF, int p, int posx, int posy, int l, int a) throws SQLException {
@@ -78,7 +70,7 @@ public class BDForms {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        ;
+
     }
 
     public String sendNewFile(String f) {
@@ -89,6 +81,30 @@ public class BDForms {
             f= e.encripta(f);
 
             String u = "https://tfgbd.000webhostapp.com/uploadNewPDF.php?valor=" + f;
+
+            url = new URL(u);
+            urlc = url.openConnection();
+            urlc.connect();
+
+            br = new BufferedReader(new InputStreamReader(((HttpURLConnection) (new URL(u)).openConnection()).getInputStream(), Charset.forName("UTF-8")));
+            String str = br.readLine();
+            System.out.println(str);
+            result = str;
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return result;
+    }
+
+    public String setCarpeta(String Carpeta) {
+        URL url = null;
+        String result = null;
+        try {
+            StringEncoder e = new StringEncoder();
+            Carpeta= e.encripta(Carpeta);
+
+            String u = "https://tfgbd.000webhostapp.com/uploadNewFolder.php?valor=" + Carpeta;
 
             url = new URL(u);
             urlc = url.openConnection();

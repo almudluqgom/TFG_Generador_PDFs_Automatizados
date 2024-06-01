@@ -93,10 +93,10 @@ public class EditarPDFFrame extends JFrame {
         try {
             URL url = new URL("https://tfgbd.000webhostapp.com/selectPDF.php");
             URLConnection urlc = url.openConnection();
+
             urlc.connect();
             BufferedReader br = new BufferedReader(new InputStreamReader(urlc.getInputStream()));
             String str = br.readLine();
-            //System.out.println(str);
 
             ArrayList<String> listaPDFsDisp = new ArrayList<>(Arrays.asList(str.split("<br>")));
             panelOp.setLayout(new GridLayout(listaPDFsDisp.size(), 0));
@@ -107,6 +107,7 @@ public class EditarPDFFrame extends JFrame {
                 final JRadioButton button1 = new JRadioButton(pdf);
                 panelOp.add(button1);
                 buttonGroup1.add(button1);
+
                 button1.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
@@ -114,12 +115,11 @@ public class EditarPDFFrame extends JFrame {
                         nombrep.setText("PDF seleccionado: " + button1.getText());
                     }
                 });
-
             }
+
             br.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+
+        } catch (Exception e) {     e.printStackTrace();        }
     }
 
 }

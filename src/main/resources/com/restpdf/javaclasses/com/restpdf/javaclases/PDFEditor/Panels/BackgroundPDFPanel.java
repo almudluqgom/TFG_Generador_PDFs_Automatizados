@@ -11,6 +11,7 @@ import javax.swing.text.StyledDocument;
 import java.awt.*;
 import java.io.IOException;
 
+
 public class BackgroundPDFPanel extends JTextPane {
 
     String npdf;
@@ -23,27 +24,29 @@ public class BackgroundPDFPanel extends JTextPane {
 
     public BackgroundPDFPanel(String s) throws IOException {
 
-        npdf = s;
-        reader = new PdfReader(s);
+//        npdf = s;
+//        reader = new PdfReader(s);
+//
+//        int pages = reader.getNumberOfPages();
+//        textopdf = new StringBuilder();
+//
+//        for (int i = 1; i <= pages; i++) {
+//            textopdf.append(PdfTextExtractor.getTextFromPage(reader, i));
+//        }
+//
+//        StyledDocument doc = this.getStyledDocument();
+//
+//        Style style = this.addStyle("Color Style", null);
+//        StyleConstants.setForeground(style, Color.BLACK);
+//        try {
+//            doc.insertString(doc.getLength(), textopdf.toString(), style);
+//        } catch (BadLocationException e) {
+//            e.printStackTrace();
+//        }
 
-        int pages = reader.getNumberOfPages();
-        textopdf = new StringBuilder();
-
-        for (int i = 1; i <= pages; i++) {
-            textopdf.append(PdfTextExtractor.getTextFromPage(reader, i));
-
-        }
-
-        StyledDocument doc = this.getStyledDocument();
-
-        Style style = this.addStyle("Color Style", null);
-        StyleConstants.setForeground(style, Color.BLACK);
-        try {
-            doc.insertString(doc.getLength(), textopdf.toString(), style);
-        } catch (BadLocationException e) {
-            e.printStackTrace();
-        }
         this.setEditable(false);
+
+
     }
 
     public String getNpdf() {

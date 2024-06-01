@@ -1,15 +1,17 @@
 package com.restpdf.javaclases.PDFEditor.Frames;
 
 
+import com.restpdf.javaclases.PDFBuilder.*;
 import com.restpdf.javaclases.PDFEditor.Handlers.PDFWindowHandler;
 import com.restpdf.javaclases.PDFEditor.Listeners.PDFEvent;
 import com.restpdf.javaclases.PDFEditor.Listeners.ViewPDFListeners;
-import com.restpdf.javaclases.PDFEditor.Panels.BackgroundPDFPanel;
 import com.restpdf.javaclases.PDFEditor.Panels.ViewPDFPanel;
 
 import javax.swing.*;
 import java.awt.*;
-import java.io.IOException;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.PrintWriter;
 
 public class VentanaEditorFrame extends JFrame {    //ventanaPrincipal
     JPanel PanelNuevosCampos;
@@ -21,25 +23,17 @@ public class VentanaEditorFrame extends JFrame {    //ventanaPrincipal
     PDFViewHandler PDFVHandler;
     JDesktopPane zonaEscritorio;
     private String nombrepdf;
-    BackgroundPDFPanel bg;
 
-    public VentanaEditorFrame(){
-        nombrepdf = null;
-        initSwingComponents();
-        PDFWHandler = new PDFWindowHandler();   //mVentanaInterna = new ManejadorVentanaInterna();
-        PDFVHandler = new PDFViewHandler();
-    }
-    public VentanaEditorFrame(String pdfname){
+        public VentanaEditorFrame(String pdfname){
         nombrepdf = pdfname;
-
         initSwingComponents();
         PDFWHandler = new PDFWindowHandler();   //mVentanaInterna = new ManejadorVentanaInterna();
         PDFVHandler = new PDFViewHandler();
 
         PDFInternalFrame pdf_if = new PDFInternalFrame(nombrepdf);
-        //aqui el background, separa las 2 cosas
+
         pdf_if.addInternalFrameListener(PDFWHandler);
-        pdf_if.getPdf().addEventListener(PDFVHandler);
+        pdf_if.getPanelpdf().addEventListener(PDFVHandler);
 
         PanelPDF.add(pdf_if);
         pdf_if.setSize(800, 1000);
@@ -58,7 +52,30 @@ public class VentanaEditorFrame extends JFrame {    //ventanaPrincipal
         BotonGuardarCampos = new JButton();
         BotonGuardarCampos.setText("Guardar");
         BotonGuardarCampos.setSize(50,50);
-        //pòner función de guardar
+        BotonGuardarCampos.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                PrintWriter pout = new PrintWriter(System.out);
+//                if (argv.length == 0) {
+//                    pout = new PrintWriter(System.out);
+//                } else {
+//                    if (new File(argv[0]).exists()) {
+//                        throw new IOException(
+//                                "Output file " + argv[0] + " already exists");
+//                    }
+//                    pout = new PrintWriter(new FileWriter(argv[0]));
+//                }
+                PDF p = new PDF(pout);
+//                Page p1 = new Page(p);
+//                p1.add(new MoveTo(p, 100, 600));
+//                p1.add(new Text(p, "Hello world, live on the web."));
+//                p1.add(new Text(p, "Hello world, line 2 on the web."));
+//                p.add(p1);
+//                p.setAuthor("Ian F. Darwin");
+                p.writePDF();
+            }
+        });
+
+
         PanelOpciones.add(BotonGuardarCampos,BorderLayout.SOUTH);
         PanelOpciones.setSize(50,50);
 //--------------------------------------------------------------------------
@@ -66,7 +83,7 @@ public class VentanaEditorFrame extends JFrame {    //ventanaPrincipal
         PanelPDF.setBorder(BorderFactory.createLineBorder(Color.gray));
         PanelPDF.setForeground(Color.lightGray);
         PanelPDF.setLayout(new BorderLayout());
-        PanelPDF.setSize(600,1000);
+        PanelPDF.setSize(1000,1000);
 
         zonaEscritorio = new JDesktopPane(); //aqui es donde añadimos los internalframes
         zonaEscritorio.setBackground(Color.BLACK);
@@ -85,7 +102,7 @@ public class VentanaEditorFrame extends JFrame {    //ventanaPrincipal
 
         @Override
         public void NewFieldCreated(PDFEvent evt) {
-            ViewPDFPanel view = ((PDFInternalFrame) zonaEscritorio.getSelectedFrame()).getPdf();
+            ViewPDFPanel view = ((PDFInternalFrame) zonaEscritorio.getSelectedFrame()).getPanelpdf();
             view.EnableDeleteListener();
         }
     }

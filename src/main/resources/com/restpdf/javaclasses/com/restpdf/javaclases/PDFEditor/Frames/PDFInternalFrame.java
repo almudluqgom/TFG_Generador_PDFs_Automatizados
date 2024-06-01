@@ -1,34 +1,43 @@
 package com.restpdf.javaclases.PDFEditor.Frames;
 
+import com.itextpdf.kernel.pdf.*;
+import com.itextpdf.kernel.geom.*;
+import com.itextpdf.kernel.pdf.canvas.*;
+import com.itextpdf.kernel.pdf.xobject.*;
+import com.itextpdf.layout.element.Image;
+
 import com.restpdf.javaclases.PDFEditor.Panels.BackgroundPDFPanel;
 import com.restpdf.javaclases.PDFEditor.Panels.ViewPDFPanel;
-import javafx.scene.layout.Background;
+import com.restpdf.javaclases.PDFEditor.Tools.StringEncoder;
+import com.restpdf.javaclases.bdclases.BDForms;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+
 
 public class PDFInternalFrame extends JInternalFrame { //VentanaInternaSM || VentanaInternaImagen
     JScrollPane bd;
-    ViewPDFPanel pdf;    //Lienzo2D
-    String namepdf;
+    ViewPDFPanel Panelpdf;    //Lienzo2D
+    String namepdf, namenewpdf;
     BackgroundPDFPanel bg;
+
 
     public PDFInternalFrame(String npdf) {
         super(npdf, true, false, false, false);
         namepdf = npdf;
+        namenewpdf =  npdf.replace(".pdf", "_new.pdf");
+
         initComponentes();
     }
-
-    public PDFInternalFrame() {
-        super("Nuevo PDF", true, false, false, false);
-        namepdf = "";
-        initComponentes();
-    }
-
     private void initComponentes() {
+
         bd = new JScrollPane();
-        pdf = new ViewPDFPanel();
+        Panelpdf = new ViewPDFPanel();
 
         try {
             bg = new BackgroundPDFPanel(namepdf);
@@ -36,14 +45,14 @@ public class PDFInternalFrame extends JInternalFrame { //VentanaInternaSM || Ven
             throw new RuntimeException(e);
         }
 
-        this.setClosable(false);
-        this.setIconifiable(false);
-        this.setMaximizable(false);
-        this.setResizable(false);
-        this.setForeground(Color.WHITE);
+        java.awt.Rectangle crop = new java.awt.Rectangle(0, 0, 21, 29);
+        bd.setBounds(crop);
+        add(bd);
 
-        bd.add(bg);
-        this.getContentPane().add(bg, BorderLayout.CENTER);
+        this.setClosable(false);
+        this.setResizable(false);
+
+        this.setForeground(Color.WHITE);
 
     }
 
@@ -55,13 +64,12 @@ public class PDFInternalFrame extends JInternalFrame { //VentanaInternaSM || Ven
         this.bd = bd;
     }
 
-    public ViewPDFPanel getPdf() {
-        return pdf;
+    public ViewPDFPanel getPanelpdf() {
+        return Panelpdf;
     }
 
-    public void setPdf(ViewPDFPanel pdf) {
-        this.pdf = pdf;
+    public void setPanelpdf(ViewPDFPanel panelpdf) {
+        this.Panelpdf = panelpdf;
     }
-
 
 }
