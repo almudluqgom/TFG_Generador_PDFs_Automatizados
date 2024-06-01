@@ -4,8 +4,6 @@ import com.itextpdf.kernel.pdf.*;
 
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.layout.element.Image;
-import com.itextpdf.text.Chunk;
-import com.restpdf.javaclases.PDFBuilder.Page;
 import com.restpdf.javaclases.PDFEditor.Panels.BackgroundPDFPanel;
 import com.restpdf.javaclases.PDFEditor.Panels.ViewPDFPanel;
 import com.restpdf.javaclases.PDFEditor.Tools.PageComponent;
@@ -14,8 +12,7 @@ import com.restpdf.javaclases.bdclases.BDForms;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.io.FileNotFoundException;
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -44,38 +41,48 @@ public class PDFInternalFrame extends JInternalFrame { //VentanaInternaSM || Ven
         pages= new ArrayList<>();
 
         initComponentes();
+
+        //never forget close the docs
         origPdf.close();
         if (pdf.getNumberOfPages() != 0)
             pdf.close();
         else{
             //pdf.open();
-            pdf.addNewPage(); // << this will do the trick.
+            pdf.addNewPage(); // << avoids empty doc
             pdf.close();
         }
+        delete();
+
     }
     private void initComponentes() {
-
-        java.awt.Rectangle crop = new java.awt.Rectangle(0, 0, 21, 29);
 
         bd = new JScrollPane();
         Panelpdf = new ViewPDFPanel();
 
-        try {
-            bg = new BackgroundPDFPanel(namepdf);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
-        PdfPage firstp = obtainFirstPage();
-
-        //test display 1st page
-        PageComponent page = new PageComponent("C:\\\\Users\\\\Almuchuela\\\\Downloads\\\\pagina4.jpeg",firstp);
-        bd.add(page);
+//        try {
+//            bg = new BackgroundPDFPanel(namepdf);
+//            bd.add(bg);
+//        } catch (IOException e) {
+//            throw new RuntimeException(e);
+//        }
 
         //initalization
         createPages();
+        PdfPage firstp = obtainFirstPage();
 
-        bd.setBounds(crop);
+        //test display 1st page
+        //PageComponent page = new PageComponent("C:\\\\Users\\\\Almuchuela\\\\Downloads\\\\pagina4.jpeg",firstp);
+        PageComponent page = auxp;
+        JPanel panel = new JPanel();
+
+        panel.setBackground(Color.GRAY);
+        panel.setPreferredSize(new Dimension(page.getW(), page.getH()));
+
+        JLabel picLabel = new JLabel(new ImageIcon(page.getBi()));
+        panel.add(picLabel);
+        //bd.add(page);
+        bd = new JScrollPane(panel);
+
         add(bd);
 
         this.setClosable(false);
@@ -89,9 +96,12 @@ public class PDFInternalFrame extends JInternalFrame { //VentanaInternaSM || Ven
         try {
             origPdf = new PdfDocument(new PdfReader(namepdf));
             origPage = origPdf.getPage(1);
+
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+
+        auxp = pages.get(0);
         return origPage;
     }
 
@@ -142,6 +152,13 @@ public class PDFInternalFrame extends JInternalFrame { //VentanaInternaSM || Ven
             throw new RuntimeException(e);
         }
     }
-
+    public void delete(){
+        File myObj = new File(namenewpdf);
+        if (myObj.delete()) {
+            System.out.println("Deleted the file: " + myObj.getName());
+        } else {
+            System.out.println("Failed to delete the file.");
+        }
+    }
 
 }

@@ -24,7 +24,7 @@ public class BackgroundPDFPanel extends JTextPane {
 
     public BackgroundPDFPanel(String s) throws IOException {
 
-//        npdf = s;
+            npdf = s;
 //        reader = new PdfReader(s);
 //
 //        int pages = reader.getNumberOfPages();
