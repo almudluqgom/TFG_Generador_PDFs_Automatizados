@@ -1,14 +1,8 @@
 package com.restpdf.javaclases.PDFEditor.Panels;
 
-import com.itextpdf.text.pdf.PdfReader;
-import com.itextpdf.text.pdf.parser.PdfTextExtractor;
+import com.itextpdf.kernel.pdf.PdfReader;
 
 import javax.swing.*;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.Style;
-import javax.swing.text.StyleConstants;
-import javax.swing.text.StyledDocument;
-import java.awt.*;
 import java.io.IOException;
 
 

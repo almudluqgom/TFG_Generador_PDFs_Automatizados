@@ -13,11 +13,13 @@ import java.io.IOException;
 public class PageComponent extends Component {
     private BufferedImage bi, biFiltered;
     int w, h;
-    PdfPage currentinfop;
+    String nombrep;
 
-    public PageComponent(String page, PdfPage p){
+    public PageComponent(String page){
         try {
             bi = ImageIO.read(new File(page));
+            System.out.println("tipo del constructor 1:" + bi.getType());
+
             w = bi.getWidth(null);
             h = bi.getHeight(null);
 
@@ -32,12 +34,12 @@ public class PageComponent extends Component {
             System.out.println("Image could not be read");
             System.exit(1);
         }
-        currentinfop = p;
     }
 
-    public PageComponent(BufferedImage buf, PdfPage p){
+    public PageComponent(BufferedImage buf){
 
             bi = buf;
+            System.out.println("tipo del constructor 2:" + bi.getType());
             w = bi.getWidth(null);
             h = bi.getHeight(null);
 
@@ -48,18 +50,18 @@ public class PageComponent extends Component {
                 big.drawImage(bi, 0, 0, null);
                 biFiltered = bi = bi2;
             }
-        currentinfop = p;
     }
-    public PageComponent(Image page, PdfPage p){
+    public PageComponent(Image page, String path){
         w =  Math.round(page.getImageWidth());
         h =  Math.round(page.getImageHeight());
 
         bi = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
+        System.out.println("tipo del constructor 3:" + bi.getType());
         Graphics big = bi.getGraphics();
         big.drawImage(bi, 0, 0, null);
         biFiltered = bi;
 
-        currentinfop = p;
+        nombrep = path;
     }
 
     public void SaveImage(String n){
@@ -67,11 +69,12 @@ public class PageComponent extends Component {
         JFileChooser chooser = new JFileChooser();
         chooser.setSelectedFile(saveFile);
         try {
-        ImageIO.write(biFiltered, "jpeg", saveFile);
+        ImageIO.write(biFiltered, "jpg", saveFile);
         } catch (IOException ex) {
             System.out.println("Cuidao, no se creó el archivo");
         }
     }
+
 
     public BufferedImage getBi() {
         return bi;
@@ -103,5 +106,13 @@ public class PageComponent extends Component {
 
     public void setH(int h) {
         this.h = h;
+    }
+
+    public String getNombrep() {
+        return nombrep;
+    }
+
+    public void setNombrep(String nombrep) {
+        this.nombrep = nombrep;
     }
 }

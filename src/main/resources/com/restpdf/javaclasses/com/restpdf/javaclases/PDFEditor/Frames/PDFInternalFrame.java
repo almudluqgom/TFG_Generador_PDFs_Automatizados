@@ -4,16 +4,22 @@ import com.itextpdf.kernel.pdf.*;
 
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.layout.element.Image;
-import com.restpdf.javaclases.PDFEditor.Panels.BackgroundPDFPanel;
-import com.restpdf.javaclases.PDFEditor.Panels.ViewPDFPanel;
-import com.restpdf.javaclases.PDFEditor.Tools.PageComponent;
-import com.restpdf.javaclases.PDFEditor.Tools.StringEncoder;
+
+import com.spire.pdf.PdfDocument;
+import com.spire.pdf.graphics.PdfImageType;
+
+
+import com.restpdf.javaclases.PDFEditor.Panels.*;
+import com.restpdf.javaclases.PDFEditor.Tools.*;
 import com.restpdf.javaclases.bdclases.BDForms;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 
 
@@ -21,9 +27,6 @@ public class PDFInternalFrame extends JInternalFrame { //VentanaInternaSM || Ven
     JScrollPane bd;
     ViewPDFPanel Panelpdf;    //Lienzo2D
     String namepdf, namenewpdf;
-    BackgroundPDFPanel bg;
-    PageComponent auxp;
-    PdfDocument pdf, origPdf;
     ArrayList<PageComponent> pages;
 
     public PDFInternalFrame(String npdf) {
@@ -31,27 +34,10 @@ public class PDFInternalFrame extends JInternalFrame { //VentanaInternaSM || Ven
         namepdf = npdf;
         namenewpdf =  npdf.replace(".pdf", "_new.pdf");
 
-        try {
-            origPdf = new PdfDocument(new PdfReader(namepdf));
-            pdf = new PdfDocument(new PdfWriter(namenewpdf));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
 
         pages= new ArrayList<>();
-
         initComponentes();
-
-        //never forget close the docs
-        origPdf.close();
-        if (pdf.getNumberOfPages() != 0)
-            pdf.close();
-        else{
-            //pdf.open();
-            pdf.addNewPage(); // << avoids empty doc
-            pdf.close();
-        }
-        delete();
+        delete(namenewpdf);
 
     }
     private void initComponentes() {
@@ -59,6 +45,8 @@ public class PDFInternalFrame extends JInternalFrame { //VentanaInternaSM || Ven
         bd = new JScrollPane();
         Panelpdf = new ViewPDFPanel();
 
+        //initalization
+        createPages();
 //        try {
 //            bg = new BackgroundPDFPanel(namepdf);
 //            bd.add(bg);
@@ -66,19 +54,18 @@ public class PDFInternalFrame extends JInternalFrame { //VentanaInternaSM || Ven
 //            throw new RuntimeException(e);
 //        }
 
-        //initalization
-        createPages();
-        PdfPage firstp = obtainFirstPage();
+        PageComponent page = pages.get(0);;
 
-        //test display 1st page
-        //PageComponent page = new PageComponent("C:\\\\Users\\\\Almuchuela\\\\Downloads\\\\pagina4.jpeg",firstp);
-        PageComponent page = auxp;
+        //test display one page
+        //PageComponent page = new PageComponent("C:\\\\Users\\\\Almuchuela\\\\Downloads\\\\pagina4.jpeg");
+
         JPanel panel = new JPanel();
 
         panel.setBackground(Color.GRAY);
         panel.setPreferredSize(new Dimension(page.getW(), page.getH()));
 
         JLabel picLabel = new JLabel(new ImageIcon(page.getBi()));
+
         panel.add(picLabel);
         //bd.add(page);
         bd = new JScrollPane(panel);
@@ -91,18 +78,9 @@ public class PDFInternalFrame extends JInternalFrame { //VentanaInternaSM || Ven
         this.setForeground(Color.WHITE);
     }
 
-    private PdfPage obtainFirstPage() {
-        PdfPage origPage = null;
-        try {
-            origPdf = new PdfDocument(new PdfReader(namepdf));
-            origPage = origPdf.getPage(1);
-
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
-        auxp = pages.get(0);
-        return origPage;
+    private PageComponent obtainFirstPage() {
+        PageComponent first = pages.get(0);
+        return first;
     }
 
     public JScrollPane getBd() {
@@ -121,39 +99,38 @@ public class PDFInternalFrame extends JInternalFrame { //VentanaInternaSM || Ven
         this.Panelpdf = panelpdf;
     }
 
-    public void createPages(){
-
-        PdfFormXObject pageCopy;
-        PdfPage currentp;
-        Image img;
-        String newpath;
+    public void createPages() {
 
         BDForms based = new BDForms();
         StringEncoder se = new StringEncoder();
-
         String absp = based.getCarpeta();
         absp = se.decodeFolder(absp);
 
-        try {
-            for(int i=1;i<=origPdf.getNumberOfPages();i++){
+        PdfDocument pdf = new PdfDocument();
+        String imgpath;
+        pdf.loadFromFile(namepdf);
+        for (int i = 0; i < pdf.getPages().getCount(); i++) {
 
-                newpath = absp + "\\newFile" + i + ".jpeg";
-                currentp = origPdf.getPage(i);
-                pageCopy = currentp.copyAsFormXObject(pdf);
+            BufferedImage image = pdf.saveAsImage(i, PdfImageType.Bitmap,500,500);    //Convert all pages to images and set the image Dpi
 
-                if (pageCopy != null) {
-                    img = new Image(pageCopy);
-                    auxp = new PageComponent(img, currentp);
-                    pages.add(auxp);
-                    auxp.SaveImage(newpath);
-                }
+            imgpath = absp + "\\Page" + i + ".png";
+
+            File file = new File(imgpath);
+            try {
+                ImageIO.write(image, "PNG", file);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
             }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+            PageComponent p = new PageComponent(imgpath);
+            pages.add(p);
+
         }
+        pdf.close();
+
+
     }
-    public void delete(){
-        File myObj = new File(namenewpdf);
+    public void delete(String n){
+        File myObj = new File(n);
         if (myObj.delete()) {
             System.out.println("Deleted the file: " + myObj.getName());
         } else {
