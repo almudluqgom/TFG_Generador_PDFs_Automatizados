@@ -113,6 +113,7 @@ public class PDFInternalFrame extends JInternalFrame { //VentanaInternaSM || Ven
 
             BufferedImage image = pdf.saveAsImage(i, PdfImageType.Bitmap,500,500);    //Convert all pages to images and set the image Dpi
 
+
             imgpath = absp + "\\Page" + i + ".png";
 
             File file = new File(imgpath);
