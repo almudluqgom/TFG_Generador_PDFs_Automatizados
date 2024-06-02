@@ -8,6 +8,10 @@ public class FieldRectangle {
     private Rectangle rectangulo;
     private Point2D pAux; //Punto auxiliar para mantener la coordenada de la esquina superior izquierda
 
+    public FieldRectangle() {
+        this.rectangulo = new Rectangle();
+        pAux=null;
+    }
     public FieldRectangle(Point2D p) {
         this.rectangulo = new Rectangle((Point) p);
         pAux = p;

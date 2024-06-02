@@ -21,12 +21,14 @@ public class ViewPDFPanel extends JPanel {   //Lienzo2D
     boolean isdeletemodeactive;
 
     public ViewPDFPanel(){
-        initComponentes();
+
         iswindowmode = false;
         pAux = null;
         vRect = new ArrayList<>();
         isdeletemodeactive = false;
         ClipWindow = new Ellipse2D.Double(0, 0, 100, 100);
+
+        initComponentes();
 
     }
     @SuppressWarnings("unchecked")
@@ -37,6 +39,8 @@ public class ViewPDFPanel extends JPanel {   //Lienzo2D
         addMouseMotionListener(new MouseMotionAdapter(){
             public void mouseDragged(MouseEvent evt) {
                 Point2D punto = new Point2D.Double(evt.getPoint().getX() + pAux.getX(), evt.getPoint().getY() + pAux.getY());
+                System.out.println( "MouseDrag en: " + punto.getX() + punto.getY());
+
                 RectAux.setLocation(punto);
                 updateWindowMode(evt);
                 repaint();
@@ -48,12 +52,15 @@ public class ViewPDFPanel extends JPanel {   //Lienzo2D
         });
         addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent evt) {
-
                 pAux = evt.getPoint();
+                //System.out.println( "Clicaste en " + pAux.getX() +"-" + pAux.getY());
             }
+
             public void mousePressed(MouseEvent evt) {
                 pAux = evt.getPoint();
+                System.out.println( "MousePressed en: " + pAux.getX() + pAux.getY());
                 RectAux = getSelectedField(evt.getPoint());
+
                 if(RectAux != null) {
                     pAux = new Point2D.Double(RectAux.getLocation().getX() - evt.getPoint().getX(),
                             RectAux.getLocation().getY() - evt.getPoint().getY());
@@ -61,9 +68,12 @@ public class ViewPDFPanel extends JPanel {   //Lienzo2D
                     PDFEvent pdfe = new PDFEvent(this);
                     pdfe.setXpoint(pAux); //punto de Inicio del recuadro
                     notifyNewField(pdfe);
+                }else{
+                    createRect(evt);
                 }
             }
             public void mouseReleased(MouseEvent evt) {
+                //System.out.println("soltaste wey");
                 Point2D punto = new Point2D.Double(evt.getPoint().getX() + pAux.getX(), evt.getPoint().getY() + pAux.getY());
                 RectAux.setLocation(punto);
                 updateWindowMode(evt);
@@ -76,6 +86,7 @@ public class ViewPDFPanel extends JPanel {   //Lienzo2D
             public void keyPressed(KeyEvent e) {
                 int key = e.getKeyCode();
                 if(key == KeyEvent.VK_DELETE && isdeletemodeactive){
+                    System.out.println("pulsaste delete maja");
                     if(RectAux != null && vRect.contains(RectAux)) {
                         vRect.remove(RectAux);
                         RectAux = null;
@@ -87,8 +98,6 @@ public class ViewPDFPanel extends JPanel {   //Lienzo2D
             public void keyReleased(KeyEvent e) {   }
         });
     }
-
-
     public void notifyNewField(PDFEvent e){
         if(!PDFEventListeners.isEmpty()) {
             for(ViewPDFListeners listener : PDFEventListeners)
@@ -116,6 +125,11 @@ public class ViewPDFPanel extends JPanel {   //Lienzo2D
 
     public void EnableDeleteListener() {
         isdeletemodeactive=true;
+    }
+
+    private void createRect(MouseEvent evt){
+        RectAux = new FieldRectangle(evt.getPoint());
+        vRect.add(RectAux);
     }
      @Override
     public void paint(Graphics g){
