@@ -6,6 +6,7 @@ import com.restpdf.javaclases.PDFEditor.Handlers.PDFWindowHandler;
 import com.restpdf.javaclases.PDFEditor.Listeners.PDFEvent;
 import com.restpdf.javaclases.PDFEditor.Listeners.ViewPDFListeners;
 import com.restpdf.javaclases.PDFEditor.Panels.ViewPDFPanel;
+import com.restpdf.javaclases.PDFEditor.Tools.PageCreator;
 
 import javax.swing.*;
 import java.awt.*;
@@ -33,7 +34,9 @@ public class VentanaEditorFrame extends JFrame {    //ventanaPrincipal
 
         pdf_if.addInternalFrameListener(PDFWHandler);
         pdf_if.getPanelpdf().addEventListener(PDFVHandler);
+
         PanelPDF.add(pdf_if);
+
         pdf_if.setSize(800, 1000);
         pdf_if.setVisible(true);
     }
@@ -76,6 +79,9 @@ public class VentanaEditorFrame extends JFrame {    //ventanaPrincipal
         PanelOpciones.setSize(50,100);
 //--------------------------------------------------------------------------
         PanelPDF = new JPanel();
+//
+//        pdf_if.setIMGFondo(pg.returnPage(0).getBi());
+
         PanelPDF.setBorder(BorderFactory.createLineBorder(Color.gray));
         PanelPDF.setForeground(Color.lightGray);
         PanelPDF.setLayout(new BorderLayout());
@@ -85,6 +91,7 @@ public class VentanaEditorFrame extends JFrame {    //ventanaPrincipal
         zonaEscritorio.setBackground(Color.BLACK);
         zonaEscritorio.setPreferredSize(new Dimension(600, 1000));
         PanelPDF.add(zonaEscritorio);
+
 //--------------------------------------------------------------------------
         MainInternalFrame.add(PanelOpciones, BorderLayout.WEST);
         MainInternalFrame.add(PanelPDF);

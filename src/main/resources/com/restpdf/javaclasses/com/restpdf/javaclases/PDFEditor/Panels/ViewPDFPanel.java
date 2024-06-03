@@ -2,6 +2,9 @@ package com.restpdf.javaclases.PDFEditor.Panels;
 
 import com.restpdf.javaclases.PDFEditor.Listeners.*;
 import com.restpdf.javaclases.PDFEditor.Tools.FieldRectangle;
+import com.restpdf.javaclases.PDFEditor.Tools.PageComponent;
+import com.restpdf.javaclases.PDFEditor.Tools.PageCreator;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -23,6 +26,7 @@ public class ViewPDFPanel extends JPanel {   //Lienzo2D
     List<FieldRectangle> vRect = new ArrayList<>();
     boolean isdeletemodeactive;
     BufferedImage ImagenFondoFormulario;
+
 
     public ViewPDFPanel(){
 
@@ -46,7 +50,6 @@ public class ViewPDFPanel extends JPanel {   //Lienzo2D
         ImagenFondoFormulario = bi;
 
         initComponentes();
-
     }
 
     @SuppressWarnings("unchecked")
@@ -70,7 +73,7 @@ public class ViewPDFPanel extends JPanel {   //Lienzo2D
             }
 
             public void mousePressed(MouseEvent evt) {
-                pAux = evt.getPoint();  System.out.println( "MousePressed situó pAu en: " + pAux.getX() +"-"+ pAux.getY());
+                pAux = evt.getPoint(); // System.out.println( "MousePressed situó pAu en: " + pAux.getX() +"-"+ pAux.getY());
 
                 RectAux = getSelectedField(evt.getPoint());
 
@@ -89,8 +92,6 @@ public class ViewPDFPanel extends JPanel {   //Lienzo2D
             }
             public void mouseReleased(MouseEvent evt) {
                 //System.out.println("soltaste wey");
-                //Point2D punto = new Point2D.Double(evt.getPoint().getX() + pAux.getX(), evt.getPoint().getY() + pAux.getY());
-                //RectAux.setLocation(punto);
                 actDragged(evt);
                 updateWindowMode(evt);
             }
@@ -118,8 +119,7 @@ public class ViewPDFPanel extends JPanel {   //Lienzo2D
         if(RectAux != null) {
             Point2D punto = new Point2D.Double(evt.getPoint().getX() + pAux.getX(), evt.getPoint().getY() + pAux.getY());
             RectAux.setLocation(punto);
-            System.out.println("MouseDrag situó RectAux en: " + punto.getX() +"-"+ punto.getY());
-
+           // System.out.println("MouseDrag situó RectAux en: " + punto.getX() +"-"+ punto.getY());
             RectAux.updateShape(evt.getPoint());
         }
         updateWindowMode(evt);
@@ -157,8 +157,6 @@ public class ViewPDFPanel extends JPanel {   //Lienzo2D
     private void createRect(MouseEvent evt){
         RectAux = new FieldRectangle(evt.getPoint());
         vRect.add(RectAux);
-
-        //this.paint(ImagenFondoFormulario.getGraphics());
     }
      @Override
     public void paint(Graphics g){
@@ -189,6 +187,7 @@ public class ViewPDFPanel extends JPanel {   //Lienzo2D
         if (ImagenFondoFormulario != null){
             setPreferredSize(new Dimension(ImagenFondoFormulario.getWidth(), ImagenFondoFormulario.getHeight()));
         }
+
     }
 
     public void setWindowMode(boolean efecto) {

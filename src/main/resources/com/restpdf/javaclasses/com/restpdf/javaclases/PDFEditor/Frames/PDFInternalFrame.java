@@ -5,6 +5,7 @@ import com.spire.pdf.graphics.PdfImageType;
 import com.restpdf.javaclases.PDFEditor.Panels.*;
 import com.restpdf.javaclases.PDFEditor.Tools.*;
 import com.restpdf.javaclases.bdclases.BDForms;
+import javafx.scene.layout.Pane;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -21,6 +22,8 @@ public class PDFInternalFrame extends JInternalFrame { //VentanaInternaSM || Ven
     ViewPDFPanel Panelpdf;    //Lienzo2D
     String namepdf, namenewpdf;
     ArrayList<PageComponent> pages;
+    JLabel picLabel;
+
     private Point2D pAux;   //Punto auxiliar para mantener las coordendas de donde se ha clickado
 
     public PDFInternalFrame(String npdf) {
@@ -42,40 +45,26 @@ public class PDFInternalFrame extends JInternalFrame { //VentanaInternaSM || Ven
         PageComponent page = pages.get(0);
                         //test display one page
                         //PageComponent page = new PageComponent("C:\\\\Users\\\\Almuchuela\\\\Downloads\\\\pagina4.jpeg");
-        //JPanel panel = new JPanel();
+     //
+        picLabel = new JLabel(new ImageIcon(page.getBi()));
 
-//        panel.setBackground(Color.GRAY);
-//        panel.setPreferredSize(new Dimension(page.getW(), page.getH()));
-//
-//        JLabel picLabel = new JLabel(new ImageIcon(page.getBi()));
-
-        //panel.add(picLabel);
-        //bd = new JScrollPane(panel);
-        //add(Panelpdf);
-        //add(bd);
-
-//        Panelpdf = new ViewPDFPanel(page.getBi());
-//        Panelpdf.add(picLabel);
-//        bd = new JScrollPane(Panelpdf);
-//        add(bd);
         Panelpdf = new ViewPDFPanel();
-        //Panelpdf.setImagenFondoFormulario(page.getBi());
+        Panelpdf.add(picLabel);
         bd.setViewportView(Panelpdf);
 
         setClosable(false);
         setResizable(false);
         setForeground(Color.WHITE);
-
         getContentPane().add(bd);
-        pack();
+
     }
 
-    public JScrollPane getBd() {
-        return bd;
+    public JLabel getPicLabel() {
+        return picLabel;
     }
 
-    public void setBd(JScrollPane bd) {
-        this.bd = bd;
+    public void setPicLabel(JLabel picLabel) {
+        this.picLabel = picLabel;
     }
 
     public ViewPDFPanel getPanelpdf() {
@@ -112,24 +101,5 @@ public class PDFInternalFrame extends JInternalFrame { //VentanaInternaSM || Ven
             pages.add(p);
         }
         pdf.close();
-
     }
-
-    public void delete(String n){
-        File myObj = new File(n);
-        if (myObj.delete()) {
-            System.out.println("Deleted the file: " + myObj.getName());
-        } else {
-            System.out.println("Failed to delete the file.");
-        }
-    }
-
-    public void setIMGFondo(BufferedImage bi){
-        this.Panelpdf.setImagenFondoFormulario(bi);
-    }
-
-    public BufferedImage getImagenFondo() {
-        return Panelpdf.getImagenFondoFormulario();
-    }
-
 }
