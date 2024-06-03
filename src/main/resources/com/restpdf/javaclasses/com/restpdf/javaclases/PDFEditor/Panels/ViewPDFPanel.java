@@ -7,18 +7,22 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 
 public class ViewPDFPanel extends JPanel {   //Lienzo2D
 
     private boolean iswindowmode;
-    Ellipse2D.Double ClipWindow;
+    private Ellipse2D.Double ClipWindow;
+    private Rectangle2D.Double clipImgFondoF;
     private Point2D pAux;   //Punto auxiliar para mantener las coordendas de donde se ha clickado
     private FieldRectangle RectAux;
     ArrayList<ViewPDFListeners> PDFEventListeners = new ArrayList(); //Vector con los listeners asociados a los eventos del lienzo
     List<FieldRectangle> vRect = new ArrayList<>();
     boolean isdeletemodeactive;
+    BufferedImage ImagenFondoFormulario;
 
     public ViewPDFPanel(){
 
@@ -27,10 +31,24 @@ public class ViewPDFPanel extends JPanel {   //Lienzo2D
         vRect = new ArrayList<>();
         isdeletemodeactive = false;
         ClipWindow = new Ellipse2D.Double(0, 0, 100, 100);
+        ImagenFondoFormulario = null;
 
         initComponentes();
 
     }
+    public ViewPDFPanel(BufferedImage bi){
+
+        iswindowmode = false;
+        pAux = null;
+        vRect = new ArrayList<>();
+        isdeletemodeactive = false;
+        ClipWindow = new Ellipse2D.Double(0, 0, 100, 100);
+        ImagenFondoFormulario = bi;
+
+        initComponentes();
+
+    }
+
     @SuppressWarnings("unchecked")
     private void initComponentes(){
         this.setLayout(new BorderLayout());
@@ -38,12 +56,7 @@ public class ViewPDFPanel extends JPanel {   //Lienzo2D
         this.setBackground(new Color(255, 255, 255, 0));
         addMouseMotionListener(new MouseMotionAdapter(){
             public void mouseDragged(MouseEvent evt) {
-                Point2D punto = new Point2D.Double(evt.getPoint().getX() + pAux.getX(), evt.getPoint().getY() + pAux.getY());
-                System.out.println( "MouseDrag en: " + punto.getX() + punto.getY());
-
-                RectAux.setLocation(punto);
-                updateWindowMode(evt);
-                repaint();
+                actDragged(evt);
             }
             public void mouseMoved(MouseEvent evt) {
                 updateWindowMode(evt);
@@ -57,8 +70,8 @@ public class ViewPDFPanel extends JPanel {   //Lienzo2D
             }
 
             public void mousePressed(MouseEvent evt) {
-                pAux = evt.getPoint();
-                System.out.println( "MousePressed en: " + pAux.getX() + pAux.getY());
+                pAux = evt.getPoint();  System.out.println( "MousePressed situó pAu en: " + pAux.getX() +"-"+ pAux.getY());
+
                 RectAux = getSelectedField(evt.getPoint());
 
                 if(RectAux != null) {
@@ -68,14 +81,17 @@ public class ViewPDFPanel extends JPanel {   //Lienzo2D
                     PDFEvent pdfe = new PDFEvent(this);
                     pdfe.setXpoint(pAux); //punto de Inicio del recuadro
                     notifyNewField(pdfe);
+
+                   //paint(ImagenFondoFormulario.createGraphics());
                 }else{
                     createRect(evt);
                 }
             }
             public void mouseReleased(MouseEvent evt) {
                 //System.out.println("soltaste wey");
-                Point2D punto = new Point2D.Double(evt.getPoint().getX() + pAux.getX(), evt.getPoint().getY() + pAux.getY());
-                RectAux.setLocation(punto);
+                //Point2D punto = new Point2D.Double(evt.getPoint().getX() + pAux.getX(), evt.getPoint().getY() + pAux.getY());
+                //RectAux.setLocation(punto);
+                actDragged(evt);
                 updateWindowMode(evt);
             }
         });
@@ -98,6 +114,17 @@ public class ViewPDFPanel extends JPanel {   //Lienzo2D
             public void keyReleased(KeyEvent e) {   }
         });
     }
+    public void actDragged(MouseEvent evt){
+        if(RectAux != null) {
+            Point2D punto = new Point2D.Double(evt.getPoint().getX() + pAux.getX(), evt.getPoint().getY() + pAux.getY());
+            RectAux.setLocation(punto);
+            System.out.println("MouseDrag situó RectAux en: " + punto.getX() +"-"+ punto.getY());
+
+            RectAux.updateShape(evt.getPoint());
+        }
+        updateWindowMode(evt);
+        repaint();
+    }
     public void notifyNewField(PDFEvent e){
         if(!PDFEventListeners.isEmpty()) {
             for(ViewPDFListeners listener : PDFEventListeners)
@@ -112,9 +139,9 @@ public class ViewPDFPanel extends JPanel {   //Lienzo2D
         }
     }
     private FieldRectangle getSelectedField(Point2D p){
-        for(int count = vRect.size() -1; count>=0; count = -1){
-            if(vRect.get(count).contains(p))
-                return vRect.get(count);
+        for(int i = vRect.size() -1; i>=0; i = -1){
+            if(vRect.get(i).contains(p))
+                return vRect.get(i);
         }
         return null;
     }
@@ -130,11 +157,45 @@ public class ViewPDFPanel extends JPanel {   //Lienzo2D
     private void createRect(MouseEvent evt){
         RectAux = new FieldRectangle(evt.getPoint());
         vRect.add(RectAux);
+
+        //this.paint(ImagenFondoFormulario.getGraphics());
     }
      @Override
     public void paint(Graphics g){
          super.paint(g);
-         //Graphics2D g2d = (Graphics2D) g;
+         Graphics2D g2d = (Graphics2D) g;
+         if(iswindowmode)
+             g2d.clip(clipImgFondoF);
 
+         if (ImagenFondoFormulario != null) {
+             g2d.setStroke(new BasicStroke(3));
+             g2d.drawRect(0, 0, ImagenFondoFormulario.getWidth(), ImagenFondoFormulario.getHeight());
+             g2d.clip(ClipWindow);
+             g2d.drawImage(ImagenFondoFormulario, 0, 0, this);
+         }
+
+         for (FieldRectangle r : vRect) {
+             r.paint(g2d);
+         }
      }
+
+    public BufferedImage getImagenFondoFormulario() {
+        return ImagenFondoFormulario;
+    }
+
+    public void setImagenFondoFormulario(BufferedImage img) {
+        ImagenFondoFormulario = img;
+        clipImgFondoF = new Rectangle2D.Double(0, 0, ImagenFondoFormulario.getWidth(), ImagenFondoFormulario.getHeight());
+        if (ImagenFondoFormulario != null){
+            setPreferredSize(new Dimension(ImagenFondoFormulario.getWidth(), ImagenFondoFormulario.getHeight()));
+        }
+    }
+
+    public void setWindowMode(boolean efecto) {
+        iswindowmode = efecto;
+    }
+
+    public Boolean getWindowMode() {
+        return this.iswindowmode;
+    }
 }

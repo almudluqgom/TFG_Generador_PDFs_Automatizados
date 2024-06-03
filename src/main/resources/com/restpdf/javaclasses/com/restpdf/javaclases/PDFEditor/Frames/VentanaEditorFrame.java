@@ -11,19 +11,18 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseMotionAdapter;
+import java.awt.image.BufferedImage;
 import java.io.PrintWriter;
 
 public class VentanaEditorFrame extends JFrame {    //ventanaPrincipal
-    JPanel PanelNuevosCampos;
-    JPanel PanelOpciones;
-    JPanel PanelPDF;
+    JPanel PanelNuevosCampos,PanelOpciones, PanelPDF,MainInternalFrame;
     JButton BotonGuardarCampos;
-    JPanel MainInternalFrame;
     PDFWindowHandler PDFWHandler;
     PDFViewHandler PDFVHandler;
     JDesktopPane zonaEscritorio;
+    BufferedImage BiPaginaPDF;
     private String nombrepdf;
-
         public VentanaEditorFrame(String pdfname){
         nombrepdf = pdfname;
         initSwingComponents();
@@ -34,7 +33,6 @@ public class VentanaEditorFrame extends JFrame {    //ventanaPrincipal
 
         pdf_if.addInternalFrameListener(PDFWHandler);
         pdf_if.getPanelpdf().addEventListener(PDFVHandler);
-
         PanelPDF.add(pdf_if);
         pdf_if.setSize(800, 1000);
         pdf_if.setVisible(true);
@@ -44,8 +42,8 @@ public class VentanaEditorFrame extends JFrame {    //ventanaPrincipal
         MainInternalFrame.setLayout(new BorderLayout());
 //--------------------------------------------------------------------------
         PanelOpciones = new JPanel();
-
         PanelNuevosCampos = new JPanel();
+
         //añadir lógica de añadir campos
         PanelOpciones.add(PanelNuevosCampos,BorderLayout.NORTH);
 
@@ -74,10 +72,8 @@ public class VentanaEditorFrame extends JFrame {    //ventanaPrincipal
                 p.writePDF();
             }
         });
-
-
         PanelOpciones.add(BotonGuardarCampos,BorderLayout.SOUTH);
-        PanelOpciones.setSize(50,50);
+        PanelOpciones.setSize(50,100);
 //--------------------------------------------------------------------------
         PanelPDF = new JPanel();
         PanelPDF.setBorder(BorderFactory.createLineBorder(Color.gray));
@@ -85,7 +81,7 @@ public class VentanaEditorFrame extends JFrame {    //ventanaPrincipal
         PanelPDF.setLayout(new BorderLayout());
         PanelPDF.setSize(1000,1000);
 
-        zonaEscritorio = new JDesktopPane(); //aqui es donde añadimos los internalframes
+        zonaEscritorio = new JDesktopPane();
         zonaEscritorio.setBackground(Color.BLACK);
         zonaEscritorio.setPreferredSize(new Dimension(600, 1000));
         PanelPDF.add(zonaEscritorio);

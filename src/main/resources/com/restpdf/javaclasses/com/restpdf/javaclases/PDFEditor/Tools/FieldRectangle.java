@@ -8,17 +8,13 @@ public class FieldRectangle {
     private Rectangle rectangulo;
     private Point2D pAux; //Punto auxiliar para mantener la coordenada de la esquina superior izquierda
 
-    public FieldRectangle() {
-        this.rectangulo = new Rectangle();
-        pAux=null;
-    }
-    public FieldRectangle(Point2D p) {
+      public FieldRectangle(Point2D p) {
         this.rectangulo = new Rectangle((Point) p);
         pAux = p;
     }
     public void paint(Graphics2D g2d) {
         g2d.setPaint(Color.GREEN);
-        g2d.setStroke(new BasicStroke(1));
+        g2d.setStroke(new BasicStroke(5));
         g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
         g2d.draw(rectangulo);
     }
@@ -54,8 +50,7 @@ public class FieldRectangle {
      * @param p Posición para la actualización
      */
 
-    public void updateShape(Point2D p) {
-        this.rectangulo.setFrameFromDiagonal(pAux, p);
+    public void updateShape(Point2D p) { this.rectangulo.setFrameFromDiagonal(pAux, p);
     }
 
 

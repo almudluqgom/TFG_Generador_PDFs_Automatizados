@@ -9,9 +9,6 @@ import com.restpdf.javaclases.bdclases.BDForms;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseMotionAdapter;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -39,33 +36,38 @@ public class PDFInternalFrame extends JInternalFrame { //VentanaInternaSM || Ven
     private void initComponentes() {
 
         bd = new JScrollPane();
-        Panelpdf = new ViewPDFPanel();
 
         //initalization
         createPages();
         PageComponent page = pages.get(0);
                         //test display one page
                         //PageComponent page = new PageComponent("C:\\\\Users\\\\Almuchuela\\\\Downloads\\\\pagina4.jpeg");
-        JPanel panel = new JPanel();
+        //JPanel panel = new JPanel();
 
-        panel.setBackground(Color.GRAY);
-        panel.setPreferredSize(new Dimension(page.getW(), page.getH()));
-
-        JLabel picLabel = new JLabel(new ImageIcon(page.getBi()));
+//        panel.setBackground(Color.GRAY);
+//        panel.setPreferredSize(new Dimension(page.getW(), page.getH()));
+//
+//        JLabel picLabel = new JLabel(new ImageIcon(page.getBi()));
 
         //panel.add(picLabel);
         //bd = new JScrollPane(panel);
         //add(Panelpdf);
         //add(bd);
 
-        Panelpdf.add(picLabel);
-        bd = new JScrollPane(Panelpdf);
-        add(bd);
+//        Panelpdf = new ViewPDFPanel(page.getBi());
+//        Panelpdf.add(picLabel);
+//        bd = new JScrollPane(Panelpdf);
+//        add(bd);
+        Panelpdf = new ViewPDFPanel();
+        //Panelpdf.setImagenFondoFormulario(page.getBi());
+        bd.setViewportView(Panelpdf);
 
-        this.setClosable(false);
-        this.setResizable(false);
+        setClosable(false);
+        setResizable(false);
+        setForeground(Color.WHITE);
 
-        this.setForeground(Color.WHITE);
+        getContentPane().add(bd);
+        pack();
     }
 
     public JScrollPane getBd() {
@@ -112,6 +114,7 @@ public class PDFInternalFrame extends JInternalFrame { //VentanaInternaSM || Ven
         pdf.close();
 
     }
+
     public void delete(String n){
         File myObj = new File(n);
         if (myObj.delete()) {
@@ -119,6 +122,14 @@ public class PDFInternalFrame extends JInternalFrame { //VentanaInternaSM || Ven
         } else {
             System.out.println("Failed to delete the file.");
         }
+    }
+
+    public void setIMGFondo(BufferedImage bi){
+        this.Panelpdf.setImagenFondoFormulario(bi);
+    }
+
+    public BufferedImage getImagenFondo() {
+        return Panelpdf.getImagenFondoFormulario();
     }
 
 }
