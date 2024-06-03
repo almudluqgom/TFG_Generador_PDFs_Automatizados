@@ -6,7 +6,6 @@ import com.restpdf.javaclases.PDFEditor.Handlers.PDFWindowHandler;
 import com.restpdf.javaclases.PDFEditor.Listeners.PDFEvent;
 import com.restpdf.javaclases.PDFEditor.Listeners.ViewPDFListeners;
 import com.restpdf.javaclases.PDFEditor.Panels.ViewPDFPanel;
-import com.restpdf.javaclases.PDFEditor.Tools.PageCreator;
 
 import javax.swing.*;
 import java.awt.*;

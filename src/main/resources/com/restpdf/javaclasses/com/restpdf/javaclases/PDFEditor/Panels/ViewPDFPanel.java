@@ -3,7 +3,6 @@ package com.restpdf.javaclases.PDFEditor.Panels;
 import com.restpdf.javaclases.PDFEditor.Listeners.*;
 import com.restpdf.javaclases.PDFEditor.Tools.FieldRectangle;
 import com.restpdf.javaclases.PDFEditor.Tools.PageComponent;
-import com.restpdf.javaclases.PDFEditor.Tools.PageCreator;
 
 import javax.swing.*;
 import java.awt.*;
