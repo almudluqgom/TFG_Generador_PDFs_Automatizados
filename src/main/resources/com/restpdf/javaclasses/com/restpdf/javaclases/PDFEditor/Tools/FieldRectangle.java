@@ -14,7 +14,7 @@ public class FieldRectangle {
     }
     public void paint(Graphics2D g2d) {
         g2d.setPaint(Color.GREEN);
-        g2d.setStroke(new BasicStroke(5));
+        g2d.setStroke(new BasicStroke(3));
         g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
         g2d.draw(rectangulo);
     }

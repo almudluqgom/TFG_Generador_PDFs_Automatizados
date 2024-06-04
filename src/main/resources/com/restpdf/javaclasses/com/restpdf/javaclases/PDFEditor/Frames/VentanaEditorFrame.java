@@ -11,8 +11,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseMotionAdapter;
-import java.awt.image.BufferedImage;
 import java.io.PrintWriter;
 
 public class VentanaEditorFrame extends JFrame {    //ventanaPrincipal
@@ -21,7 +19,6 @@ public class VentanaEditorFrame extends JFrame {    //ventanaPrincipal
     PDFWindowHandler PDFWHandler;
     PDFViewHandler PDFVHandler;
     JDesktopPane zonaEscritorio;
-    BufferedImage BiPaginaPDF;
     private String nombrepdf;
         public VentanaEditorFrame(String pdfname){
         nombrepdf = pdfname;
@@ -30,7 +27,6 @@ public class VentanaEditorFrame extends JFrame {    //ventanaPrincipal
         PDFVHandler = new PDFViewHandler();
 
         PDFInternalFrame pdf_if = new PDFInternalFrame(nombrepdf);
-
         pdf_if.addInternalFrameListener(PDFWHandler);
         pdf_if.getPanelpdf().addEventListener(PDFVHandler);
 

@@ -2,7 +2,6 @@ package com.restpdf.javaclases.PDFEditor.Panels;
 
 import com.restpdf.javaclases.PDFEditor.Listeners.*;
 import com.restpdf.javaclases.PDFEditor.Tools.FieldRectangle;
-import com.restpdf.javaclases.PDFEditor.Tools.PageComponent;
 
 import javax.swing.*;
 import java.awt.*;
@@ -14,7 +13,7 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ViewPDFPanel extends JPanel {   //Lienzo2D
+public class ViewPDFPanel extends JPanel{   //Lienzo2D
 
     private boolean iswindowmode;
     private Ellipse2D.Double ClipWindow;
@@ -56,8 +55,10 @@ public class ViewPDFPanel extends JPanel {   //Lienzo2D
         this.setLayout(new BorderLayout());
         this.setOpaque(false);
         this.setBackground(new Color(255, 255, 255, 0));
+
         addMouseMotionListener(new MouseMotionAdapter(){
             public void mouseDragged(MouseEvent evt) {
+
                 actDragged(evt);
             }
             public void mouseMoved(MouseEvent evt) {
@@ -95,24 +96,31 @@ public class ViewPDFPanel extends JPanel {   //Lienzo2D
                 updateWindowMode(evt);
             }
         });
-        addKeyListener(new KeyListener() {
-            @Override
-            public void keyTyped(KeyEvent e) {      }
-            @Override
-            public void keyPressed(KeyEvent e) {
-                int key = e.getKeyCode();
-                if(key == KeyEvent.VK_DELETE && isdeletemodeactive){
-                    System.out.println("pulsaste delete maja");
-                    if(RectAux != null && vRect.contains(RectAux)) {
-                        vRect.remove(RectAux);
-                        RectAux = null;
-                        repaint();
-                    }
-                }
-            }
-            @Override
-            public void keyReleased(KeyEvent e) {   }
-        });
+//        addKeyListener(new KeyListener() {
+//            @Override
+//            public void keyTyped(KeyEvent e) {
+//                System.out.println("Key Typed: " + e.getKeyChar());
+//            }
+//            @Override
+//            public void keyPressed(KeyEvent e) {
+//                System.out.println("Key Pressed: " + e.getKeyChar());
+//                int key = e.getKeyCode();
+//                if(key == KeyEvent.VK_DELETE && isdeletemodeactive){
+//                    System.out.println("pulsaste delete maja");
+//                    if(RectAux != null && vRect.contains(RectAux)) {
+//                        vRect.remove(RectAux);
+//                        RectAux = null;
+//                        repaint();
+//                    }
+//                }
+//            }
+//            @Override
+//            public void keyReleased(KeyEvent e) {   }
+//        });
+        KeyLis listener = new KeyLis();
+        this.setFocusable(true);
+        this.requestFocus();
+        this.addKeyListener(listener);
     }
     public void actDragged(MouseEvent evt){
         if(RectAux != null) {
@@ -195,5 +203,22 @@ public class ViewPDFPanel extends JPanel {   //Lienzo2D
 
     public Boolean getWindowMode() {
         return this.iswindowmode;
+    }
+    private class KeyLis extends KeyAdapter {
+        @Override
+        public void keyPressed(KeyEvent e) {
+            System.out.println("mira el codigo : "+e.getExtendedKeyCode() + " y el key char: " + e.getKeyChar());
+            switch (e.getKeyCode()) {
+                case KeyEvent.VK_LEFT:
+                    System.out.println("VK_LEFT pressed");
+                    break;
+                case KeyEvent.VK_RIGHT:
+                    System.out.println("VK_RIGHT pressed");
+                    break;
+                case KeyEvent.VK_DELETE:    //FUNCIONA CON EL SUPRIMIR
+                    System.out.println("delete");
+                    break;
+            }
+        }
     }
 }
