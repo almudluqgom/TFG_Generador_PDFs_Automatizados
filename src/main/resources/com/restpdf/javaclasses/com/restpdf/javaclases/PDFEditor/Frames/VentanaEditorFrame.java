@@ -6,6 +6,7 @@ import com.restpdf.javaclases.PDFEditor.Handlers.PDFWindowHandler;
 import com.restpdf.javaclases.PDFEditor.Listeners.PDFEvent;
 import com.restpdf.javaclases.PDFEditor.Listeners.ViewPDFListeners;
 import com.restpdf.javaclases.PDFEditor.Panels.ViewPDFPanel;
+import com.restpdf.javaclases.PDFEditor.Tools.FieldRectangle;
 
 import javax.swing.*;
 import java.awt.*;
@@ -14,94 +15,128 @@ import java.awt.event.ActionListener;
 import java.io.PrintWriter;
 
 public class VentanaEditorFrame extends JFrame {    //ventanaPrincipal
-    JPanel PanelNuevosCampos,PanelOpciones, PanelPDF,MainInternalFrame;
+    JPanel PanelNuevosCampos, PanelOpciones, PanelCentro;
     JButton BotonGuardarCampos;
     PDFWindowHandler PDFWHandler;
     PDFViewHandler PDFVHandler;
-    JDesktopPane zonaEscritorio;
+    private JDesktopPane zonaEscritorio;
     private String nombrepdf;
-        public VentanaEditorFrame(String pdfname){
+    PDFInternalFrame pdf_if;
+    public VentanaEditorFrame(String pdfname){
         nombrepdf = pdfname;
         initSwingComponents();
+
         PDFWHandler = new PDFWindowHandler();   //mVentanaInterna = new ManejadorVentanaInterna();
         PDFVHandler = new PDFViewHandler();
 
-        PDFInternalFrame pdf_if = new PDFInternalFrame(nombrepdf);
+        pdf_if = new PDFInternalFrame(nombrepdf);
+
         pdf_if.addInternalFrameListener(PDFWHandler);
         pdf_if.getPanelpdf().addEventListener(PDFVHandler);
 
-        PanelPDF.add(pdf_if);
+        //PanelPDF.add(pdf_if);
+        zonaEscritorio.add(pdf_if);
 
-        pdf_if.setSize(800, 1000);
+        pdf_if.setSize(new Dimension(zonaEscritorio.getWidth()-100,zonaEscritorio.getHeight()-100));
+        pdf_if.setClosable(false);
+        pdf_if.setResizable(false);
+
+        pdf_if.setIconifiable(false);
         pdf_if.setVisible(true);
     }
     private void initSwingComponents() {
-        MainInternalFrame = new JPanel();
-        MainInternalFrame.setLayout(new BorderLayout());
-//--------------------------------------------------------------------------
-        PanelOpciones = new JPanel();
-        PanelNuevosCampos = new JPanel();
 
-        //añadir lógica de añadir campos
-        PanelOpciones.add(PanelNuevosCampos,BorderLayout.NORTH);
+        PanelCentro = new JPanel();
+        PanelCentro.setLayout(new BorderLayout());
+
+        zonaEscritorio = new JDesktopPane();
+        zonaEscritorio.setBackground(Color.BLACK);
+        zonaEscritorio.setPreferredSize(new Dimension(2500,700));
+
+        PanelCentro.add(zonaEscritorio,BorderLayout.CENTER);
+
+////--------------------------------------------------------------------------
+        PanelOpciones = new JPanel();
+        PanelOpciones.setLayout(new GridLayout(2,0));
+
+        PanelNuevosCampos = new JPanel();
+        PanelNuevosCampos.setLayout(new BoxLayout(PanelNuevosCampos, BoxLayout.Y_AXIS));
+
+        JScrollPane jsp = new JScrollPane(PanelNuevosCampos);
+        PanelOpciones.add(jsp,BorderLayout.NORTH);
 
         BotonGuardarCampos = new JButton();
         BotonGuardarCampos.setText("Guardar");
         BotonGuardarCampos.setSize(50,50);
         BotonGuardarCampos.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                PrintWriter pout = new PrintWriter(System.out);
-//                if (argv.length == 0) {
-//                    pout = new PrintWriter(System.out);
-//                } else {
-//                    if (new File(argv[0]).exists()) {
-//                        throw new IOException(
-//                                "Output file " + argv[0] + " already exists");
-//                    }
-//                    pout = new PrintWriter(new FileWriter(argv[0]));
-//                }
-                PDF p = new PDF(pout);
-//                Page p1 = new Page(p);
-//                p1.add(new MoveTo(p, 100, 600));
-//                p1.add(new Text(p, "Hello world, live on the web."));
-//                p1.add(new Text(p, "Hello world, line 2 on the web."));
-//                p.add(p1);
-//                p.setAuthor("Ian F. Darwin");
-                p.writePDF();
+                //ESTO NO ESTÁ HECHO. DALE UN TIENTO
+//                PrintWriter pout = new PrintWriter(System.out);
+//                PDF p = new PDF(pout);
+//                p.writePDF();
             }
         });
-        PanelOpciones.add(BotonGuardarCampos,BorderLayout.SOUTH);
-        PanelOpciones.setSize(50,100);
-//--------------------------------------------------------------------------
-        PanelPDF = new JPanel();
-//
-//        pdf_if.setIMGFondo(pg.returnPage(0).getBi());
+        PanelOpciones.add(BotonGuardarCampos, BorderLayout.SOUTH);
+        PanelOpciones.setPreferredSize(new Dimension(200,210));
 
-        PanelPDF.setBorder(BorderFactory.createLineBorder(Color.gray));
-        PanelPDF.setForeground(Color.lightGray);
-        PanelPDF.setLayout(new BorderLayout());
-        PanelPDF.setSize(1000,1000);
-
-        zonaEscritorio = new JDesktopPane();
-        zonaEscritorio.setBackground(Color.BLACK);
-        zonaEscritorio.setPreferredSize(new Dimension(600, 1000));
-        PanelPDF.add(zonaEscritorio);
-
-//--------------------------------------------------------------------------
-        MainInternalFrame.add(PanelOpciones, BorderLayout.WEST);
-        MainInternalFrame.add(PanelPDF);
-
-        this.add(MainInternalFrame);
+        this.getContentPane().add(PanelCentro,BorderLayout.CENTER);
+        this.getContentPane().add(PanelOpciones,BorderLayout.WEST);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.setSize(1000,1000);
+////--------------------------------------------------------------------------
+//        PanelPDF = new JPanel();
+//
+//        PanelPDF.setBorder(BorderFactory.createLineBorder(Color.gray));
+//        PanelPDF.setForeground(Color.lightGray);
+//        PanelPDF.setLayout(new BorderLayout());
+//        PanelPDF.setSize(new Dimension(297,210));
+//
+//        zonaEscritorio = new JDesktopPane();
+//        zonaEscritorio.setBackground(Color.BLACK);
+//        zonaEscritorio.setPreferredSize(new Dimension(600, 1000));
+//        PanelPDF.add(zonaEscritorio);
+//
+////--------------------------------------------------------------------------
+//        MainInternalFrame.add(PanelOpciones, BorderLayout.WEST);
+//        MainInternalFrame.add(PanelPDF);
+//
+//        this.add(MainInternalFrame);
+//        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+//        this.setSize(new Dimension(3970,2100));
+
+       //panelHerramientasSuperior.add(barraHerramientas, java.awt.BorderLayout.PAGE_START);
+
+    pack();
+
     }
 
     private class PDFViewHandler implements ViewPDFListeners {   //manejadorLienzo
 
         @Override
-        public void NewFieldCreated(PDFEvent evt) {
-            ViewPDFPanel view = ((PDFInternalFrame) zonaEscritorio.getSelectedFrame()).getPanelpdf();
-            view.EnableDeleteListener();
+        public void FieldSelected(PDFEvent evt) {
+            ViewPDFPanel view = pdf_if.getPanelpdf();
+
+            if(evt.getFieldSelected() != null){
+                view.updateFieldSelected(evt.getFieldSelected());
+                view.EnableDeleteListener();
+            }
+
+        }
+        public void FieldAdded(PDFEvent evt){
+            addNuevoCampo(evt.getFieldSelected());
+        }
+        public void addNuevoCampo(FieldRectangle f){
+            JLabel ncampo = new JLabel("introduce nombre del nuevo campo: ");
+            JTextField nuevoCampo = new JTextField("nuevo campo...");
+
+            JPanel jp = new JPanel();
+            jp.setLayout(new BoxLayout(jp, BoxLayout.Y_AXIS));
+            jp.setPreferredSize(new Dimension(100,40));
+
+            jp.add(ncampo);
+            jp.add(nuevoCampo);
+
+            PanelNuevosCampos.add(jp);
         }
     }
+
 }

@@ -5,7 +5,6 @@ import com.spire.pdf.graphics.PdfImageType;
 import com.restpdf.javaclases.PDFEditor.Panels.*;
 import com.restpdf.javaclases.PDFEditor.Tools.*;
 import com.restpdf.javaclases.bdclases.BDForms;
-import javafx.scene.layout.Pane;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -47,13 +46,16 @@ public class PDFInternalFrame extends JInternalFrame { //VentanaInternaSM || Ven
                         //PageComponent page = new PageComponent("C:\\\\Users\\\\Almuchuela\\\\Downloads\\\\pagina4.jpeg");
      //
         picLabel = new JLabel(new ImageIcon(page.getBi()));
-
         Panelpdf = new ViewPDFPanel();
+
         Panelpdf.add(picLabel);
         bd.setViewportView(Panelpdf);
 
         setClosable(false);
         setResizable(false);
+        setIconifiable(false);
+        setMaximizable(false);
+
         setForeground(Color.WHITE);
         getContentPane().add(bd);
 
@@ -71,8 +73,12 @@ public class PDFInternalFrame extends JInternalFrame { //VentanaInternaSM || Ven
         return Panelpdf;
     }
 
-    public void setPanelpdf(ViewPDFPanel panelpdf) {
-        this.Panelpdf = panelpdf;
+    public BufferedImage getImagen() {
+        return this.getPanelpdf().getImagenFondoFormulario();
+    }
+
+    public void setImagen(BufferedImage imgaux) {
+        this.getPanelpdf().setImagenFondoFormulario(imgaux);
     }
 
     public void createPages() {

@@ -58,7 +58,6 @@ public class ViewPDFPanel extends JPanel{   //Lienzo2D
 
         addMouseMotionListener(new MouseMotionAdapter(){
             public void mouseDragged(MouseEvent evt) {
-
                 actDragged(evt);
             }
             public void mouseMoved(MouseEvent evt) {
@@ -82,41 +81,25 @@ public class ViewPDFPanel extends JPanel{   //Lienzo2D
                             RectAux.getLocation().getY() - evt.getPoint().getY());
 
                     PDFEvent pdfe = new PDFEvent(this);
-                    pdfe.setXpoint(pAux); //punto de Inicio del recuadro
-                    notifyNewField(pdfe);
+                    pdfe.setpInicio(pAux); //punto de Inicio del recuadro
+                    pdfe.setFieldSelected(RectAux);
 
-                   //paint(ImagenFondoFormulario.createGraphics());
+                    notifyFieldSelected(pdfe);
                 }else{
                     createRect(evt);
                 }
             }
             public void mouseReleased(MouseEvent evt) {
-                //System.out.println("soltaste wey");
                 actDragged(evt);
+
+                PDFEvent pdfe = new PDFEvent(this);
+                pdfe.setpInicio(pAux); //punto de Inicio del recuadro
+                pdfe.setFieldSelected(RectAux);
+                notifyFieldAdded(pdfe);
                 updateWindowMode(evt);
             }
         });
-//        addKeyListener(new KeyListener() {
-//            @Override
-//            public void keyTyped(KeyEvent e) {
-//                System.out.println("Key Typed: " + e.getKeyChar());
-//            }
-//            @Override
-//            public void keyPressed(KeyEvent e) {
-//                System.out.println("Key Pressed: " + e.getKeyChar());
-//                int key = e.getKeyCode();
-//                if(key == KeyEvent.VK_DELETE && isdeletemodeactive){
-//                    System.out.println("pulsaste delete maja");
-//                    if(RectAux != null && vRect.contains(RectAux)) {
-//                        vRect.remove(RectAux);
-//                        RectAux = null;
-//                        repaint();
-//                    }
-//                }
-//            }
-//            @Override
-//            public void keyReleased(KeyEvent e) {   }
-//        });
+
         KeyLis listener = new KeyLis();
         this.setFocusable(true);
         this.requestFocus();
@@ -126,16 +109,21 @@ public class ViewPDFPanel extends JPanel{   //Lienzo2D
         if(RectAux != null) {
             Point2D punto = new Point2D.Double(evt.getPoint().getX() + pAux.getX(), evt.getPoint().getY() + pAux.getY());
             RectAux.setLocation(punto);
-           // System.out.println("MouseDrag situó RectAux en: " + punto.getX() +"-"+ punto.getY());
             RectAux.updateShape(evt.getPoint());
         }
         updateWindowMode(evt);
         repaint();
     }
-    public void notifyNewField(PDFEvent e){
+    public void notifyFieldSelected(PDFEvent e){
         if(!PDFEventListeners.isEmpty()) {
             for(ViewPDFListeners listener : PDFEventListeners)
-                listener.NewFieldCreated(e);
+                listener.FieldSelected(e);
+        }
+    }
+    public void notifyFieldAdded(PDFEvent e){
+        if(!PDFEventListeners.isEmpty()) {
+            for(ViewPDFListeners listener : PDFEventListeners)
+                listener.FieldAdded(e);
         }
     }
     private void updateWindowMode(MouseEvent evt) {
@@ -181,6 +169,13 @@ public class ViewPDFPanel extends JPanel{   //Lienzo2D
 
          for (FieldRectangle r : vRect) {
              r.paint(g2d);
+         }
+     }
+
+     public void updateFieldSelected(FieldRectangle f){
+         int i = vRect.indexOf(f);
+         if( i != -1) {
+            vRect.get(i).updateColorForSelected((Graphics2D) ImagenFondoFormulario.getGraphics(), f.getRectangulo());
          }
      }
 

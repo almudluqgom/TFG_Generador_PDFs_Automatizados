@@ -13,10 +13,19 @@ public class FieldRectangle {
         pAux = p;
     }
     public void paint(Graphics2D g2d) {
-        g2d.setPaint(Color.GREEN);
-        g2d.setStroke(new BasicStroke(3));
+        g2d.setPaint(Color.black);
+        g2d.setStroke(new BasicStroke(5));
         g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
         g2d.draw(rectangulo);
+    }
+
+    public void updateColorForSelected(Graphics2D g2d, Shape f) {
+        g2d.setPaint(Color.GREEN);
+        g2d.setStroke(new BasicStroke(5));
+        g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
+
+        //this.rectangulo = new Rectangle((Point) PFigura);
+        g2d.draw(f);
     }
 
 
@@ -53,5 +62,11 @@ public class FieldRectangle {
     public void updateShape(Point2D p) { this.rectangulo.setFrameFromDiagonal(pAux, p);
     }
 
+    public Rectangle getRectangulo() {
+        return rectangulo;
+    }
 
+    public void setRectangulo(Rectangle rectangulo) {
+        this.rectangulo = rectangulo;
+    }
 }
