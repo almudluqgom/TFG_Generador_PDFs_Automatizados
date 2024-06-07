@@ -2,7 +2,10 @@ package com.restpdf.javaclases.bdclases;
 
 public class CampoF {
     String NameField, NameFatherForm;
-    int Page, PosX, PosY, Height, Width;
+    int Page, PosX, PosY, Height, Width, indexField;
+
+    public CampoF() {
+    }
 
     public String getNameField() {        return NameField;    }
     public void setNameField(String nameField) {        NameField = nameField;    }
@@ -19,6 +22,13 @@ public class CampoF {
     public int getWidth() {        return Width;    }
     public void setWidth(int width) {        Width = width;    }
 
+    public int getIndexField() {
+        return indexField;
+    }
+
+    public void setIndexField(int indexField) {
+        this.indexField = indexField;
+    }
     public CampoF(String nameField, String nameFatherForm, int page, int posX, int posY, int height, int weight) {
         NameField = nameField;
         NameFatherForm = nameFatherForm;
@@ -27,6 +37,17 @@ public class CampoF {
         PosY = posY;
         Height = height;
         Width = weight;
+        indexField = -1;
+    }
+    public CampoF(String nameField, String nameFatherForm, int page, int posX, int posY, int height, int weight, int idf) {
+        NameField = nameField;
+        NameFatherForm = nameFatherForm;
+        Page = page;
+        PosX = posX;
+        PosY = posY;
+        Height = height;
+        Width = weight;
+        indexField = idf;
     }
     public CampoF(CampoF c){
         NameField = c.getNameField();
@@ -36,6 +57,7 @@ public class CampoF {
         PosY = c.getPosY();
         Height = c.getHeight();
         Width = c.getWidth();
+
     }
 
     @Override

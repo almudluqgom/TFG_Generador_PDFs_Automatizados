@@ -199,6 +199,15 @@ public class ViewPDFPanel extends JPanel{   //Lienzo2D
     public Boolean getWindowMode() {
         return this.iswindowmode;
     }
+
+    public List<FieldRectangle> getvRect() {
+        return vRect;
+    }
+
+    public void setvRect(List<FieldRectangle> vRect) {
+        this.vRect = vRect;
+    }
+
     private class KeyLis extends KeyAdapter {
         @Override
         public void keyPressed(KeyEvent e) {

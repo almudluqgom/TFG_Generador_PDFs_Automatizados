@@ -6,8 +6,11 @@ import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.restpdf.javaclases.bdclases.BDForms;
+import com.restpdf.javaclases.bdclases.CampoF;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 public class StringEncoder {
     public String desencripta(String data) {
@@ -44,4 +47,16 @@ public class StringEncoder {
         return data;
     }
 
+    public CampoF transformaStringEnCampo(String campo) {
+
+        ArrayList<String> c = new ArrayList<>(Arrays.asList(campo.split("<b>")));
+        CampoF finaldata = new CampoF(   c.get(0),
+                                         c.get(1),
+                        Integer.parseInt(c.get(2)),
+                        Integer.parseInt(c.get(3)),
+                        Integer.parseInt(c.get(4)),
+                        Integer.parseInt(c.get(5)),
+                        Integer.parseInt(c.get(6))     );
+        return finaldata;
+    }
 }

@@ -14,6 +14,7 @@ public class PageComponent extends Component {
     private BufferedImage bi, biFiltered;
     int w, h;
     String nombrep;
+    int npagina;
 
     public PageComponent(String page){
         try {
@@ -114,5 +115,13 @@ public class PageComponent extends Component {
 
     public void setNombrep(String nombrep) {
         this.nombrep = nombrep;
+    }
+
+    public int getNpagina() {
+        return npagina;
+    }
+
+    public void setNpagina(int npagina) {
+        this.npagina = npagina;
     }
 }

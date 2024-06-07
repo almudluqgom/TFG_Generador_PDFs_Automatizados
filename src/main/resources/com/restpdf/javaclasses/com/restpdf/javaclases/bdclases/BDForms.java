@@ -60,17 +60,33 @@ public class BDForms {
         return o;
     }
 
-    public void setNuevoCampoPDF(String Campof, String NPDF, int p, int posx, int posy, int l, int a) throws SQLException {
+    public String setNuevoCampoPDF(CampoF newf) throws SQLException {
         URL url = null;
+        String result = null;
 
         try {
-            url = new URL("https://tfgbd.000webhostapp.com/AddCampoAlPDF.php?cp=" + Campof + "?np=" + NPDF + "pag" + p + "?posx=" + posx + "?posy=" + posy + "?l=" + l + "?a=" + a);
+            String f = newf.getNameFatherForm();
+            StringEncoder e = new StringEncoder();
+            f= e.encripta(f);
+
+            String u = "https://tfgbd.000webhostapp.com/AddCampoAlPDF.php?campo=" + newf.getNameField() + "?nf=" + f +
+            "?pag=" + newf.getPage() + "?posx=" + newf.getPosX() + "?posy=" + newf.getPosY() +
+                    "?l=" + newf.getWidth() + "?a=" + newf.getHeight();
+
+            url = new URL(u);
             urlc = url.openConnection();
             urlc.connect();
+
+            br = new BufferedReader(new InputStreamReader(((HttpURLConnection) (new URL(u)).openConnection()).getInputStream(),
+                    Charset.forName("UTF-8")));
+            String str = br.readLine();
+            System.out.println(str);
+            result = str;
+
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-
+        return result;
     }
 
     public String sendNewFile(String f) {

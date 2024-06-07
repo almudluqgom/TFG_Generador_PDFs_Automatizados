@@ -1,6 +1,7 @@
 package com.restpdf.javaclases.mainclases;
 
 import com.restpdf.javaclases.PDFEditor.Frames.EditarPDFFrame;
+import com.restpdf.javaclases.PDFEditor.Frames.RellenarPDFFrame;
 import com.restpdf.javaclases.bdclases.BDFrame;
 
 import javax.swing.*;
@@ -13,7 +14,7 @@ public class MainFrame extends JFrame {
     JPanel mainPanel,
             RBPanel,
             ButtonPanel;
-    JRadioButton RBEditarPDF, RBModificaBD;
+    JRadioButton RBEditarPDF, RBModificaBD, RBFillForm;
     JButton jb;
 
     public MainFrame() throws SQLException, ClassNotFoundException {
@@ -30,16 +31,23 @@ public class MainFrame extends JFrame {
 
         RBEditarPDF = new JRadioButton();
         RBModificaBD = new JRadioButton();
+        RBFillForm = new JRadioButton();
+
 
         ButtonGroup G1 = new ButtonGroup();
-        RBEditarPDF.setText("Editar PDF");
+        RBEditarPDF.setText("Añadir campos a un PDF registrado");
         RBEditarPDF.setBounds(120, 30, 120, 50);
+        RBFillForm.setText("Rellenar un PDF");
+        RBFillForm.setBounds(120, 30, 120, 50);
         RBModificaBD.setText("Modificar base de datos");
         RBModificaBD.setBounds(250, 30, 80, 50);
 
         RBPanel.add(RBEditarPDF);
         RBPanel.add(RBModificaBD);
+        RBPanel.add(RBFillForm);
+
         G1.add(RBEditarPDF);
+        G1.add(RBFillForm);
         G1.add(RBModificaBD);
 
         mainPanel.add(RBPanel);
@@ -64,6 +72,15 @@ public class MainFrame extends JFrame {
                     }
                     mainFrame.setVisible(true);
                 }
+                if (RBFillForm.isSelected()) {
+                    RellenarPDFFrame mainFrame = null;
+                    try {
+                        mainFrame = new RellenarPDFFrame();
+                    } catch (SQLException | ClassNotFoundException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                    mainFrame.setVisible(true);
+                }
                 else if (RBModificaBD.isSelected()) {
                     BDFrame mainFrame = null;
                     try {
@@ -82,7 +99,7 @@ public class MainFrame extends JFrame {
     //-------------------------------------------------------------------------------------------
         this.add(mainPanel);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.setSize(200,250);
+        this.setSize(400,400);
 
     }
 

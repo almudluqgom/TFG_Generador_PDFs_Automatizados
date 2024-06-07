@@ -104,6 +104,7 @@ public class PDFInternalFrame extends JInternalFrame { //VentanaInternaSM || Ven
             }
 
             PageComponent p = new PageComponent(imgpath);
+            p.setNpagina(i);
             pages.add(p);
         }
         pdf.close();
