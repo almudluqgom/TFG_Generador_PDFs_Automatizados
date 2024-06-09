@@ -25,11 +25,11 @@ public class EditarPDFFrame extends JFrame {
     private static final String website = "https://tfgbd.000webhostapp.com/SelectPDF.php";
 
     public EditarPDFFrame() throws SQLException, ClassNotFoundException {
-
         initSwingComponents();
     }
 
     private void initSwingComponents() {
+
         mainPanel = new JPanel();
 
         mainPanel.setLayout(new BorderLayout());
@@ -47,9 +47,11 @@ public class EditarPDFFrame extends JFrame {
         mainPanel.add(optionsP, BorderLayout.NORTH);
 
         JButton b = new JButton("Procesar PDF");
+        b.setBounds(120, 30, 120, 50);
+        b.setPreferredSize(new Dimension(100, 50));
         butP.add(b);
 
-        b.addActionListener(new ActionListener() { //confirmación de directorio como almacen. pdf
+        b.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 VentanaEditorFrame mainFrame = null;
@@ -61,6 +63,8 @@ public class EditarPDFFrame extends JFrame {
 
         butP.add(nombrep);
         butP.setSize(300, 100);
+        butP.setBounds(120, 30, 120, 50);
+        butP.setPreferredSize(new Dimension(100, 50));
 
         JButton back = new JButton("Atrás");
         butP.add(back);
@@ -89,18 +93,47 @@ public class EditarPDFFrame extends JFrame {
 
     private void inicializarListaPDFsDisponibles(JPanel panelOp, ButtonGroup buttonGroup1, JLabel nombrep) {
 
-        try {
-            URL url = new URL("https://tfgbd.000webhostapp.com/selectPDF.php");
-            URLConnection urlc = url.openConnection();
+//        try {
+//            URL url = new URL("https://tfgbd.000webhostapp.com/selectPDF.php");
+//            URLConnection urlc = url.openConnection();
+//
+//            urlc.connect();
+//            BufferedReader br = new BufferedReader(new InputStreamReader(urlc.getInputStream()));
+//            String str = br.readLine();
+//
+//            ArrayList<String> listaPDFsDisp = new ArrayList<>(Arrays.asList(str.split("<br>")));
+//            listaPDFsDisp = (ArrayList<String>) listaPDFsDisp.stream().distinct().collect(Collectors.toList());
+//
+//            panelOp.setLayout(new GridLayout(listaPDFsDisp.size(), 0));
+//            StringEncoder e = new StringEncoder();
+//
+//            for (String pdf : listaPDFsDisp) {
+//                pdf = e.desencripta(pdf);
+//                final JRadioButton button1 = new JRadioButton(pdf);
+//                panelOp.add(button1);
+//                buttonGroup1.add(button1);
+//
+//                button1.addActionListener(new ActionListener() {
+//                    @Override
+//                    public void actionPerformed(ActionEvent e) {
+//                        selectedpdf = button1.getText();
+//                        nombrep.setText("PDF seleccionado: " + button1.getText());
+//                    }
+//                });
+//            }
+//
+//            br.close();
+//
+//        } catch (Exception e) {     e.printStackTrace();        }
 
-            urlc.connect();
-            BufferedReader br = new BufferedReader(new InputStreamReader(urlc.getInputStream()));
-            String str = br.readLine();
+        // DEMO VERSION - PARA CUANDO LAS BD NO QUIEREN FUNCAR
+        ArrayList<String> listaPDFsDisp = new ArrayList();
 
-            ArrayList<String> listaPDFsDisp = new ArrayList<>(Arrays.asList(str.split("<br>")));
-            listaPDFsDisp = (ArrayList<String>) listaPDFsDisp.stream().distinct().collect(Collectors.toList());
+        listaPDFsDisp.add("C:\\Users\\Almuchuela\\Desktop\\TestSave\\PDFEnblanco.pdf");
+        listaPDFsDisp.add("C:\\Users\\Almuchuela\\Desktop\\TestSave\\Vinted-S1212467838.pdf");
+        listaPDFsDisp.add("C:\\Users\\Almuchuela\\Downloads\\b8cfcc76-9e9e-468d-aa24-3f4ca3dcce7d.pdf");
 
-            panelOp.setLayout(new GridLayout(listaPDFsDisp.size(), 0));
+        panelOp.setLayout(new GridLayout(listaPDFsDisp.size(), 0));
             StringEncoder e = new StringEncoder();
 
             for (String pdf : listaPDFsDisp) {
@@ -117,10 +150,6 @@ public class EditarPDFFrame extends JFrame {
                     }
                 });
             }
-
-            br.close();
-
-        } catch (Exception e) {     e.printStackTrace();        }
     }
 
 }

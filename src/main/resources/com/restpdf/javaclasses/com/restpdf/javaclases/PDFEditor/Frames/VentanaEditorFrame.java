@@ -47,14 +47,15 @@ public class VentanaEditorFrame extends JFrame {    //ventanaPrincipal
 
         zonaEscritorio.add(pdf_if);
 
-        pdf_if.setSize(new Dimension(zonaEscritorio.getWidth()-100,zonaEscritorio.getHeight()-100));
+        pdf_if.setSize(new Dimension((int) (screenSize.getWidth() * 0.85), (int) (screenSize.getHeight() * 0.85)));
         pdf_if.setClosable(false);
         pdf_if.setResizable(false);
         pdf_if.setIconifiable(false);
         pdf_if.setVisible(true);
 
-        this.setPreferredSize(screenSize);
-        pack();
+        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.setSize(screenSize);
+       // pack();
     }
     private void initSwingComponents() {
 
@@ -63,7 +64,7 @@ public class VentanaEditorFrame extends JFrame {    //ventanaPrincipal
 
         zonaEscritorio = new JDesktopPane();
         zonaEscritorio.setBackground(Color.BLACK);
-        zonaEscritorio.setPreferredSize(new Dimension(2500,700));
+        zonaEscritorio.setPreferredSize(new Dimension((int) (screenSize.getWidth() * 0.8), (int) (screenSize.getHeight() * 0.8)));
 
         PanelCentro.add(zonaEscritorio,BorderLayout.CENTER);
 
@@ -75,6 +76,7 @@ public class VentanaEditorFrame extends JFrame {    //ventanaPrincipal
         PanelNuevosCampos.setPreferredSize(pdim);
 
         JScrollPane jsp = new JScrollPane(PanelNuevosCampos);
+        jsp.getVerticalScrollBar().setUnitIncrement(16);
 
         this.getContentPane().add(jsp,BorderLayout.WEST);
         this.getContentPane().add(PanelCentro,BorderLayout.CENTER);

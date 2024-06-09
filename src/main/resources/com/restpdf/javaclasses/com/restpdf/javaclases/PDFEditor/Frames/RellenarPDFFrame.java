@@ -27,6 +27,7 @@ public class RellenarPDFFrame extends JFrame {
     }
 
     private void initSwingComponents() {
+
         mainPanel = new JPanel();
 
         mainPanel.setLayout(new BorderLayout());
@@ -43,10 +44,13 @@ public class RellenarPDFFrame extends JFrame {
         inicializarListaPDFsDisponibles(optionsP, buttonGroup1, nombrep);
 
         JScrollPane jp = new JScrollPane(optionsP);
+        jp.getVerticalScrollBar().setUnitIncrement(16);
 
         mainPanel.add(jp, BorderLayout.NORTH);
 
         JButton b = new JButton("Rellenar PDF");
+        b.setBounds(120, 30, 120, 50);
+        b.setPreferredSize(new Dimension(100, 50));
         butP.add(b);
 
         b.addActionListener(new ActionListener() { //confirmación de directorio como almacen. pdf
@@ -64,6 +68,8 @@ public class RellenarPDFFrame extends JFrame {
 
         JButton back = new JButton("Atrás");
         butP.add(back);
+        butP.setBounds(120, 30, 120, 50);
+        butP.setPreferredSize(new Dimension(100, 50));
         back.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -81,7 +87,6 @@ public class RellenarPDFFrame extends JFrame {
             }
         });
 
-
         mainPanel.add(butP, BorderLayout.CENTER);
         this.add(mainPanel);
 
@@ -91,38 +96,62 @@ public class RellenarPDFFrame extends JFrame {
 
     private void inicializarListaPDFsDisponibles(JPanel panelOp, ButtonGroup buttonGroup1, JLabel nombrep) {
 
-        try {
-            URL url = new URL("https://tfgbd.000webhostapp.com/selectPDF.php");
-            URLConnection urlc = url.openConnection();
+//        try {
+//            URL url = new URL("https://tfgbd.000webhostapp.com/selectPDF.php");
+//            URLConnection urlc = url.openConnection();
+//
+//            urlc.connect();
+//            BufferedReader br = new BufferedReader(new InputStreamReader(urlc.getInputStream()));
+//            String str = br.readLine();
+//
+//            ArrayList<String> listaPDFsDisp = new ArrayList<>(Arrays.asList(str.split("<br>")));
+//            listaPDFsDisp = (ArrayList<String>) listaPDFsDisp.stream().distinct().collect(Collectors.toList());
+//
+//            panelOp.setLayout(new GridLayout(listaPDFsDisp.size(), 0));
+//            StringEncoder e = new StringEncoder();
+//
+//            for (String pdf : listaPDFsDisp) {
+//                pdf = e.desencripta(pdf);
+//                final JRadioButton button1 = new JRadioButton(pdf);
+//                panelOp.add(button1);
+//                buttonGroup1.add(button1);
+//
+//                button1.addActionListener(new ActionListener() {
+//                    @Override
+//                    public void actionPerformed(ActionEvent e) {
+//                        selectedpdf = button1.getText();
+//                        nombrep.setText("PDF seleccionado: " + button1.getText());
+//                    }
+//                });
+//            }
+//
+//            br.close();
+//
+//        } catch (Exception e) {     e.printStackTrace();        }
+        // DEMO VERSION - PARA CUANDO LAS BD NO QUIEREN FUNCAR
+        ArrayList<String> listaPDFsDisp = new ArrayList();
 
-            urlc.connect();
-            BufferedReader br = new BufferedReader(new InputStreamReader(urlc.getInputStream()));
-            String str = br.readLine();
+        listaPDFsDisp.add("C:\\Users\\Almuchuela\\Desktop\\TestSave\\PDFEnblanco.pdf");
+        listaPDFsDisp.add("C:\\Users\\Almuchuela\\Desktop\\TestSave\\Vinted-S1212467838.pdf");
+        listaPDFsDisp.add("C:\\Users\\Almuchuela\\Downloads\\b8cfcc76-9e9e-468d-aa24-3f4ca3dcce7d.pdf");
 
-            ArrayList<String> listaPDFsDisp = new ArrayList<>(Arrays.asList(str.split("<br>")));
-            listaPDFsDisp = (ArrayList<String>) listaPDFsDisp.stream().distinct().collect(Collectors.toList());
+        panelOp.setLayout(new GridLayout(listaPDFsDisp.size(), 0));
+        StringEncoder e = new StringEncoder();
 
-            panelOp.setLayout(new GridLayout(listaPDFsDisp.size(), 0));
-            StringEncoder e = new StringEncoder();
+        for (String pdf : listaPDFsDisp) {
+            pdf = e.desencripta(pdf);
+            final JRadioButton button1 = new JRadioButton(pdf);
+            panelOp.add(button1);
+            buttonGroup1.add(button1);
 
-            for (String pdf : listaPDFsDisp) {
-                pdf = e.desencripta(pdf);
-                final JRadioButton button1 = new JRadioButton(pdf);
-                panelOp.add(button1);
-                buttonGroup1.add(button1);
-
-                button1.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        selectedpdf = button1.getText();
-                        nombrep.setText("PDF seleccionado: " + button1.getText());
-                    }
-                });
-            }
-
-            br.close();
-
-        } catch (Exception e) {     e.printStackTrace();        }
+            button1.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    selectedpdf = button1.getText();
+                    nombrep.setText("PDF seleccionado: " + button1.getText());
+                }
+            });
+        }
     }
 
 }

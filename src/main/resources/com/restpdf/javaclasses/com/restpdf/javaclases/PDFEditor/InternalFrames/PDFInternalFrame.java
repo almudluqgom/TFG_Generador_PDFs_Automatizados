@@ -38,7 +38,7 @@ public class PDFInternalFrame extends JInternalFrame { //VentanaInternaSM || Ven
     private void initComponentes() {
 
         bd = new JScrollPane();
-
+        bd.getVerticalScrollBar().setUnitIncrement(16);
         //initalization
         createPages();
         PageComponent page = pages.get(0);

@@ -46,8 +46,6 @@ public class PDFCreator {
                         calculodistY,
                         stamp,
                         10);
-//            FixText("miau miau miua", 400, 700, stamp, 14);
-//            FixText("Arnau deja de dar el coñazop", 200, 600, stamp, 10);
             }
             stamp.close();
             document.close();

@@ -5,11 +5,14 @@ import com.restpdf.javaclases.PDFEditor.InternalFrames.PDFillInternalFrame;
 import com.restpdf.javaclases.PDFEditor.Tools.FieldLine;
 import com.restpdf.javaclases.PDFEditor.Tools.StringEncoder;
 import com.restpdf.javaclases.bdclases.CampoF;
+import com.restpdf.javaclases.mainclases.MainFrame;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
@@ -17,6 +20,7 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -36,26 +40,42 @@ public class VentanaRellenarPDFFrame extends JFrame {
 
     List<CampoF> campos = new ArrayList<>();
 
-    public VentanaRellenarPDFFrame(String pdfname){
+    public VentanaRellenarPDFFrame(String pdfname) {
         nombrepdf = pdfname;
         initSwingComponents();
 
         pdf_if = new PDFillInternalFrame(nombrepdf);
         zonaEscritorio.add(pdf_if);
 
-        pagecounter.setText("page 1 of "+ pdf_if.pages.size());
+        pagecounter.setText("page 1 of " + pdf_if.pages.size());
         currentpnumber = 1;
 
         inicializarListaCampos();
 
-        pdf_if.setSize(new Dimension(zonaEscritorio.getWidth()-100,zonaEscritorio.getHeight()-100));
+        pdf_if.setSize(new Dimension((int) (screenSize.getWidth() * 0.85), (int) (screenSize.getHeight() * 0.85)));
         pdf_if.setClosable(false);
         pdf_if.setResizable(false);
         pdf_if.setIconifiable(false);
         pdf_if.setVisible(true);
 
-        this.setPreferredSize(screenSize);
-        pack();
+        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.setSize(screenSize);
+
+        addWindowListener(new WindowAdapter(){
+            @Override
+            public void windowClosing(WindowEvent e){
+                System.out.println("Closed");
+                RellenarPDFFrame mainFrame = null;
+                try {
+                    mainFrame = new RellenarPDFFrame();
+                } catch (SQLException | ClassNotFoundException ex) {
+                    throw new RuntimeException(ex);
+                }
+                mainFrame.setVisible(true);
+               dispose();
+            }
+        });
+        //pack();
     }
 
     private void initSwingComponents() {
@@ -65,19 +85,20 @@ public class VentanaRellenarPDFFrame extends JFrame {
 
         zonaEscritorio = new JDesktopPane();
         zonaEscritorio.setBackground(Color.BLACK);
-        zonaEscritorio.setPreferredSize(new Dimension(2500,700));
+        zonaEscritorio.setPreferredSize(new Dimension((int) (screenSize.getWidth() * 0.8), (int) (screenSize.getHeight() * 0.8)));
 
-        PanelCentro.add(zonaEscritorio,BorderLayout.CENTER);
+        PanelCentro.add(zonaEscritorio, BorderLayout.CENTER);
 ////--------------------------------------------------------------------------
 
         PanelCampos = new JPanel();
         PanelCampos.setLayout(new BoxLayout(PanelCampos, BoxLayout.Y_AXIS));
-        Dimension pdim = new Dimension((int) (screenSize.getWidth()/8), (int) screenSize.getHeight());
+        Dimension pdim = new Dimension((int) (screenSize.getWidth() / 8), (int) screenSize.getHeight());
         PanelCampos.setPreferredSize(pdim);
         JScrollPane jsp = new JScrollPane(PanelCampos);
+        jsp.getVerticalScrollBar().setUnitIncrement(16);
 
-        this.getContentPane().add(jsp,BorderLayout.WEST);
-        this.getContentPane().add(PanelCentro,BorderLayout.CENTER);
+        this.getContentPane().add(jsp, BorderLayout.WEST);
+        this.getContentPane().add(PanelCentro, BorderLayout.CENTER);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 ////--------------------------------------------------------------------------
         panelHerramientasSuperior = new JPanel();
@@ -101,7 +122,7 @@ public class VentanaRellenarPDFFrame extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 AffineTransform at = AffineTransform.getScaleInstance(0.75, 0.75);
-               // aplicarZoom(at);
+                // aplicarZoom(at);
             }
         });
         bHerram.add(bZoomOUT);
@@ -114,8 +135,8 @@ public class VentanaRellenarPDFFrame extends JFrame {
         bPrev.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                currentpnumber = currentpnumber +1;
-                pagecounter.setText("page " + currentpnumber + " of " +  pdf_if.pages.size());
+                currentpnumber = currentpnumber + 1;
+                pagecounter.setText("page " + currentpnumber + " of " + pdf_if.pages.size());
             }
         });
         bHerram.add(bPrev);
@@ -125,7 +146,7 @@ public class VentanaRellenarPDFFrame extends JFrame {
         bNext.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if( currentpnumber -1 > 0) {
+                if (currentpnumber - 1 > 0) {
                     currentpnumber = currentpnumber - 1;
                     pagecounter.setText("page " + currentpnumber + " of " + pdf_if.pages.size());
                 }
@@ -137,17 +158,28 @@ public class VentanaRellenarPDFFrame extends JFrame {
         BotonGuardarCampos = new JButton();
         BotonGuardarCampos.setText("Guardar");
         BotonGuardarCampos.setBounds(120, 30, 120, 50);
-        BotonGuardarCampos.setPreferredSize(new Dimension(100,50));
+        BotonGuardarCampos.setPreferredSize(new Dimension(100, 50));
         BotonGuardarCampos.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 PDFCreator newversion = new PDFCreator(nombrepdf);
                 newversion.addNewTexts(pdf_if.getPanelpdf().getvLines());
                 newversion.fillPDF();
+
+                RellenarPDFFrame mainFrame = null;
+                try {
+                    mainFrame = new RellenarPDFFrame();
+                } catch (SQLException | ClassNotFoundException ex) {
+                    throw new RuntimeException(ex);
+                }
+                JOptionPane.showMessageDialog(null, "Cambios guardados con éxito");
+                mainFrame.setVisible(true);
+                dispose();
             }
         });
         panelHerramientasSuperior.add(BotonGuardarCampos, BorderLayout.WEST);
-        this.getContentPane().add(panelHerramientasSuperior,BorderLayout.PAGE_START);
-        pack();
+
+        this.getContentPane().add(panelHerramientasSuperior, BorderLayout.PAGE_START);
+        this.setSize(java.awt.Toolkit.getDefaultToolkit().getScreenSize());
     }
 
     private void inicializarListaCampos() {
@@ -162,20 +194,40 @@ public class VentanaRellenarPDFFrame extends JFrame {
             BufferedReader br = new BufferedReader(new InputStreamReader(urlc.getInputStream()));
             String str = br.readLine();
 
-            ArrayList<String> listaCampos = new ArrayList<>(Arrays.asList(str.split("<br>")));
-            listaCampos = (ArrayList<String>) listaCampos.stream().distinct().collect(Collectors.toList());
+            if (!str.contains("0 results")) {
+                ArrayList<String> listaCampos = new ArrayList<>(Arrays.asList(str.split("<br>")));
+                listaCampos = (ArrayList<String>) listaCampos.stream().distinct().collect(Collectors.toList());
 
-            for (String campo : listaCampos) {
-                CampoF nuevoc = e.transformaStringEnCampo(campo);
-                dibujaCampoenLienzo(nuevoc);
+                for (String campo : listaCampos) {
+                    CampoF nuevoc = e.transformaStringEnCampo(campo);
+                    dibujaCampoenLienzo(nuevoc);
+                }
+            } else {
+                int input = JOptionPane.showOptionDialog(null, "El PDF seleccionado no contiene campos. ¿Desea añadir campos nuevos?", "PDF Sin campos",
+                        JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE, null, null, null);
+                if (input == JOptionPane.OK_OPTION) {
+                    // do something
+                } else {
+                    RellenarPDFFrame mainFrame = null;
+                    try {
+                        mainFrame = new RellenarPDFFrame();
+                    } catch (SQLException | ClassNotFoundException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                    mainFrame.setVisible(true);
+                    dispose();
+                    JOptionPane.showMessageDialog(null, "Por favor selecciona otro pdf de la lista");
+
+
+                }
             }
-
             br.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
 
     }
+
     public void dibujaCampoenLienzo(CampoF c){
         Point2D p1 = new Point2D.Double(c.getPosX(),c.getPosY());
         Point2D p2 = new Point2D.Double(c.getPosX()+c.getWidth(),c.getPosY());
