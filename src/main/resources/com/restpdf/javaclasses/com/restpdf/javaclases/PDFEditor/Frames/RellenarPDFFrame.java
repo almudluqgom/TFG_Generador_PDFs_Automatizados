@@ -20,10 +20,8 @@ public class RellenarPDFFrame extends JFrame {
     private JPanel mainPanel;
     JLabel nombrep;
     String selectedpdf;
-    private static final String website = "https://tfgbd.000webhostapp.com/SelectPDF.php";
 
     public RellenarPDFFrame() throws SQLException, ClassNotFoundException {
-
         initSwingComponents();
     }
 
@@ -40,9 +38,12 @@ public class RellenarPDFFrame extends JFrame {
         JPanel optionsP = new JPanel();
         optionsP.setLayout(new GridLayout());
         ButtonGroup buttonGroup1 = new ButtonGroup();
+
         inicializarListaPDFsDisponibles(optionsP, buttonGroup1, nombrep);
 
-        mainPanel.add(optionsP, BorderLayout.NORTH);
+        JScrollPane jp = new JScrollPane(optionsP);
+
+        mainPanel.add(jp, BorderLayout.NORTH);
 
         JButton b = new JButton("Rellenar PDF");
         butP.add(b);
@@ -84,7 +85,7 @@ public class RellenarPDFFrame extends JFrame {
         this.add(mainPanel);
 
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.setSize(300, 300);
+        this.setSize(300, 600);
     }
 
     private void inicializarListaPDFsDisponibles(JPanel panelOp, ButtonGroup buttonGroup1, JLabel nombrep) {

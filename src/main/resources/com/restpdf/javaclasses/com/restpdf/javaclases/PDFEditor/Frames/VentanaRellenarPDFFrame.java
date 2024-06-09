@@ -1,8 +1,10 @@
 package com.restpdf.javaclases.PDFEditor.Frames;
 
 import com.restpdf.javaclases.PDFEditor.Handlers.PDFWindowHandler;
+import com.restpdf.javaclases.PDFEditor.InternalFrames.PDFInternalFrame;
+import com.restpdf.javaclases.PDFEditor.InternalFrames.PDFillInternalFrame;
+import com.restpdf.javaclases.PDFEditor.Tools.FieldLine;
 import com.restpdf.javaclases.PDFEditor.Tools.StringEncoder;
-import com.restpdf.javaclases.bdclases.BDForms;
 import com.restpdf.javaclases.bdclases.CampoF;
 
 import javax.swing.*;
@@ -10,14 +12,15 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class VentanaRellenarPDFFrame extends JFrame {
     static Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
@@ -25,25 +28,25 @@ public class VentanaRellenarPDFFrame extends JFrame {
     JButton BotonGuardarCampos, bZoomIN, bZoomOUT, bPrev, bNext;
     BufferedImage fondoAux;
     JToolBar bHerram;
-    PDFWindowHandler PDFWHandler;
     private JDesktopPane zonaEscritorio;
     private String nombrepdf;
     JLabel pagecounter;
-    PDFInternalFrame pdf_if;
+    PDFillInternalFrame pdf_if;
     int currentpnumber;
+
+    List<CampoF> campos = new ArrayList<>();
+
     public VentanaRellenarPDFFrame(String pdfname){
         nombrepdf = pdfname;
         initSwingComponents();
 
-        PDFWHandler = new PDFWindowHandler();   //mVentanaInterna = new ManejadorVentanaInterna();
-
-        pdf_if = new PDFInternalFrame(nombrepdf);
-        pdf_if.addInternalFrameListener(PDFWHandler);
+        pdf_if = new PDFillInternalFrame(nombrepdf);
+        zonaEscritorio.add(pdf_if);
 
         pagecounter.setText("page 1 of "+ pdf_if.pages.size());
         currentpnumber = 1;
 
-        zonaEscritorio.add(pdf_if);
+        inicializarListaCampos();
 
         pdf_if.setSize(new Dimension(zonaEscritorio.getWidth()-100,zonaEscritorio.getHeight()-100));
         pdf_if.setClosable(false);
@@ -71,8 +74,6 @@ public class VentanaRellenarPDFFrame extends JFrame {
         PanelCampos.setLayout(new BoxLayout(PanelCampos, BoxLayout.Y_AXIS));
         Dimension pdim = new Dimension((int) (screenSize.getWidth()/8), (int) screenSize.getHeight());
         PanelCampos.setPreferredSize(pdim);
-        inicializarListaCampos();
-
         JScrollPane jsp = new JScrollPane(PanelCampos);
 
         this.getContentPane().add(jsp,BorderLayout.WEST);
@@ -154,7 +155,6 @@ public class VentanaRellenarPDFFrame extends JFrame {
     private void inicializarListaCampos() {
 
         try {
-
             StringEncoder e = new StringEncoder();
             String s = "https://tfgbd.000webhostapp.com/SelectCamposPDF.php?id=" + e.encripta(nombrepdf);
             URL url = new URL(s);
@@ -163,33 +163,49 @@ public class VentanaRellenarPDFFrame extends JFrame {
 
             BufferedReader br = new BufferedReader(new InputStreamReader(urlc.getInputStream()));
             String str = br.readLine();
+
             ArrayList<String> listaCampos = new ArrayList<>(Arrays.asList(str.split("<br>")));
-
-            PanelCampos = new JPanel();
-            PanelCampos.setLayout(new GridLayout(listaCampos.size(), 0));
-
             for (String campo : listaCampos) {
-                JPanel PanelNuevoC = new JPanel();
-                PanelNuevoC.setLayout(new BoxLayout(PanelNuevoC, BoxLayout.Y_AXIS));
-                PanelNuevoC.setPreferredSize(new Dimension(40,40));
 
                 CampoF nuevoc = e.transformaStringEnCampo(campo);
-                JLabel ncampo = new JLabel(String.valueOf(nuevoc.getNameField()));
-                JTextField nuevoCampo = new JTextField("introduce " + nuevoc.getNameField() + "...");
-                nuevoCampo.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                    }
-                });
-
-                PanelNuevoC.add(ncampo);
-                PanelNuevoC.add(nuevoCampo);
-                PanelCampos.add(PanelNuevoC);
+                dibujaCampoenLienzo(nuevoc);
             }
 
             br.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+    }
+    public void dibujaCampoenLienzo(CampoF c){
+        Point2D p1 = new Point2D.Double(c.getPosX(),c.getPosY());
+        Point2D p2 = new Point2D.Double(c.getPosX()+c.getWidth(),c.getPosY());
+
+        FieldLine f = new FieldLine(p1,p2);
+
+        JLabel ncampo = new JLabel(c.getNameField());
+        JTextField nuevoCampo = new JTextField("escribe el valor de "+c.getNameField() +"...");
+        nuevoCampo.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                f.setText(nuevoCampo.getText());
+                pdf_if.getPanelpdf().repaint();
+            }
+        });
+
+        nuevoCampo.setPreferredSize(new Dimension(20,10));
+
+        JPanel jp = new JPanel();
+        jp.setLayout(new BoxLayout(jp, BoxLayout.Y_AXIS));
+        jp.setPreferredSize(new Dimension(40,40));
+        jp.add(ncampo);
+        jp.add(nuevoCampo);
+
+        PanelCampos.add(jp);
+        PanelCampos.revalidate();
+        PanelCampos.repaint();
+
+        pdf_if.getPanelpdf().addnewLine(f);
+        campos.add(c);
     }
 }

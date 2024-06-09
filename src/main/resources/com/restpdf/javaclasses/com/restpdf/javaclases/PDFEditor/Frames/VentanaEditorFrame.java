@@ -1,22 +1,19 @@
 package com.restpdf.javaclases.PDFEditor.Frames;
 
-import com.restpdf.javaclases.PDFEditor.Handlers.PDFWindowHandler;
-import com.restpdf.javaclases.PDFEditor.Listeners.PDFEvent;
-import com.restpdf.javaclases.PDFEditor.Listeners.ViewPDFListeners;
-import com.restpdf.javaclases.PDFEditor.Panels.ViewPDFPanel;
-import com.restpdf.javaclases.PDFEditor.Tools.FieldRectangle;
+import com.restpdf.javaclases.PDFEditor.Handlers.*;
+import com.restpdf.javaclases.PDFEditor.InternalFrames.*;
+import com.restpdf.javaclases.PDFEditor.Listeners.*;
+import com.restpdf.javaclases.PDFEditor.Panels.*;
+import com.restpdf.javaclases.PDFEditor.Tools.*;
 import com.restpdf.javaclases.bdclases.*;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.geom.AffineTransform;
-import java.awt.image.AffineTransformOp;
-import java.awt.image.BufferedImage;
-import java.io.PrintWriter;
+import java.awt.event.*;
+import java.awt.geom.*;
+import java.awt.image.*;
 import java.sql.SQLException;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.List;
 
 public class VentanaEditorFrame extends JFrame {    //ventanaPrincipal
@@ -82,29 +79,10 @@ public class VentanaEditorFrame extends JFrame {    //ventanaPrincipal
         this.getContentPane().add(jsp,BorderLayout.WEST);
         this.getContentPane().add(PanelCentro,BorderLayout.CENTER);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-////--------------------------------------------------------------------------
-//        PanelPDF = new JPanel();
-//
-//        PanelPDF.setBorder(BorderFactory.createLineBorder(Color.gray));
-//        PanelPDF.setForeground(Color.lightGray);
-//        PanelPDF.setLayout(new BorderLayout());
-//        PanelPDF.setSize(new Dimension(297,210));
-//
-//        zonaEscritorio = new JDesktopPane();
-//        zonaEscritorio.setBackground(Color.BLACK);
-//        zonaEscritorio.setPreferredSize(new Dimension(600, 1000));
-//        PanelPDF.add(zonaEscritorio);
-//
-////--------------------------------------------------------------------------
-//        MainInternalFrame.add(PanelOpciones, BorderLayout.WEST);
-//        MainInternalFrame.add(PanelPDF);
-//
-//        this.add(MainInternalFrame);
-//        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-//        this.setSize(new Dimension(3970,2100));
-    panelHerramientasSuperior = new JPanel();
-    panelHerramientasSuperior.setLayout(new BorderLayout());
-    bHerram = new JToolBar();
+
+        panelHerramientasSuperior = new JPanel();
+        panelHerramientasSuperior.setLayout(new BorderLayout());
+        bHerram = new JToolBar();
 
         bZoomIN = new JButton("+");
         bZoomIN.setFocusable(false);
@@ -176,9 +154,9 @@ public class VentanaEditorFrame extends JFrame {    //ventanaPrincipal
 //                p.writePDF();
             }
         });
-    panelHerramientasSuperior.add(BotonGuardarCampos, BorderLayout.WEST);
-    this.getContentPane().add(panelHerramientasSuperior,BorderLayout.PAGE_START);
-    pack();
+        panelHerramientasSuperior.add(BotonGuardarCampos, BorderLayout.WEST);
+        this.getContentPane().add(panelHerramientasSuperior,BorderLayout.PAGE_START);
+        pack();
     }
 
     private void aplicarZoom(AffineTransform at) {      //NO FUNCIONA, OLE
@@ -223,6 +201,7 @@ public class VentanaEditorFrame extends JFrame {    //ventanaPrincipal
                     (int) f.getRectangulo().getHeight(),
                     (int) f.getRectangulo().getWidth(),
                     campos.size());
+
             campos.add(nuevoF);
 
             JLabel ncampo = new JLabel(String.valueOf(campos.size()));

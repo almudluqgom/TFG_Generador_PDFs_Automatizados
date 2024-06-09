@@ -1,6 +1,6 @@
 package com.restpdf.javaclases.PDFEditor.Handlers;
 
-import com.restpdf.javaclases.PDFEditor.Frames.PDFInternalFrame;
+import com.restpdf.javaclases.PDFEditor.InternalFrames.PDFInternalFrame;
 
 import javax.swing.event.InternalFrameAdapter;
 
