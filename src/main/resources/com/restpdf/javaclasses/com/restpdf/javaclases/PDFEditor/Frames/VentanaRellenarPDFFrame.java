@@ -1,7 +1,6 @@
 package com.restpdf.javaclases.PDFEditor.Frames;
 
-import com.restpdf.javaclases.PDFEditor.Handlers.PDFWindowHandler;
-import com.restpdf.javaclases.PDFEditor.InternalFrames.PDFInternalFrame;
+import com.restpdf.javaclases.PDFEditor.Tools.PDFCreator;
 import com.restpdf.javaclases.PDFEditor.InternalFrames.PDFillInternalFrame;
 import com.restpdf.javaclases.PDFEditor.Tools.FieldLine;
 import com.restpdf.javaclases.PDFEditor.Tools.StringEncoder;
@@ -21,6 +20,7 @@ import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class VentanaRellenarPDFFrame extends JFrame {
     static Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
@@ -140,11 +140,9 @@ public class VentanaRellenarPDFFrame extends JFrame {
         BotonGuardarCampos.setPreferredSize(new Dimension(100,50));
         BotonGuardarCampos.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-
-                //ESTO NO ESTÁ HECHO. DALE UN TIENTO
-//                PrintWriter pout = new PrintWriter(System.out);
-//                PDF p = new PDF(pout);
-//                p.writePDF();
+                PDFCreator newversion = new PDFCreator(nombrepdf);
+                newversion.addNewTexts(pdf_if.getPanelpdf().getvLines());
+                newversion.fillPDF();
             }
         });
         panelHerramientasSuperior.add(BotonGuardarCampos, BorderLayout.WEST);
@@ -165,8 +163,9 @@ public class VentanaRellenarPDFFrame extends JFrame {
             String str = br.readLine();
 
             ArrayList<String> listaCampos = new ArrayList<>(Arrays.asList(str.split("<br>")));
-            for (String campo : listaCampos) {
+            listaCampos = (ArrayList<String>) listaCampos.stream().distinct().collect(Collectors.toList());
 
+            for (String campo : listaCampos) {
                 CampoF nuevoc = e.transformaStringEnCampo(campo);
                 dibujaCampoenLienzo(nuevoc);
             }
@@ -201,11 +200,11 @@ public class VentanaRellenarPDFFrame extends JFrame {
         jp.add(ncampo);
         jp.add(nuevoCampo);
 
+        pdf_if.getPanelpdf().addnewLine(f);
+        campos.add(c);
+
         PanelCampos.add(jp);
         PanelCampos.revalidate();
         PanelCampos.repaint();
-
-        pdf_if.getPanelpdf().addnewLine(f);
-        campos.add(c);
     }
 }

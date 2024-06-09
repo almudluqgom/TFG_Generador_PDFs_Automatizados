@@ -97,11 +97,10 @@ public class FillPanelPDF  extends JPanel {   //Lienzo2D
 
                 String s = r.getText();
                 FontMetrics fm = g2d.getFontMetrics();
-                int width = (int) Math.round(r.getLinea().getX2() - r.getLinea().getX1());
+                int width = r.getWidth();
                 int x = (int) r.getLinea().getX1();
-                int y = fm.getHeight()+1;
+                int y = (int) (r.getLinea().getY1()-5);
                 g2d.drawString(s, x, y);
-                //g2d.dispose();
             }
         }
     }

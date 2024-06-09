@@ -6,7 +6,7 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Line2D;
 
 public class FieldLine {
-    private Point2D pAux; //Punto auxiliar para mantener la coordenada de la esquina superior izquierda
+    private Point2D pAux; //Punto auxiliar para mantener la coordenada de inicio
     private Line2D linea;
     String text;
 
@@ -49,7 +49,9 @@ public class FieldLine {
      }
         return  containsp;
     }
-
+    public int getWidth(){
+        return (int) Math.round(getLinea().getX2() - getLinea().getX1());
+    }
     public void setLocation(Point2D pos) {
         double dx = pos.getX() - linea.getX1();
         double dy = pos.getY() - linea.getY1();

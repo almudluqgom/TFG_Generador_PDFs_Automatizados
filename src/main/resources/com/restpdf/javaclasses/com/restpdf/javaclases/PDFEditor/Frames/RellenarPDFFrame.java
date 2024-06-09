@@ -14,6 +14,7 @@ import java.net.URLConnection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.stream.Collectors;
 
 public class RellenarPDFFrame extends JFrame {
 
@@ -99,6 +100,8 @@ public class RellenarPDFFrame extends JFrame {
             String str = br.readLine();
 
             ArrayList<String> listaPDFsDisp = new ArrayList<>(Arrays.asList(str.split("<br>")));
+            listaPDFsDisp = (ArrayList<String>) listaPDFsDisp.stream().distinct().collect(Collectors.toList());
+
             panelOp.setLayout(new GridLayout(listaPDFsDisp.size(), 0));
             StringEncoder e = new StringEncoder();
 

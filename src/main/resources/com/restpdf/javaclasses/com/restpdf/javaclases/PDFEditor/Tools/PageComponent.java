@@ -1,8 +1,5 @@
 package com.restpdf.javaclases.PDFEditor.Tools;
 
-import com.itextpdf.kernel.pdf.PdfPage;
-import com.itextpdf.layout.element.Image;
-
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
@@ -36,34 +33,34 @@ public class PageComponent extends Component {
             System.exit(1);
         }
     }
-
-    public PageComponent(BufferedImage buf){
-
-            bi = buf;
-            System.out.println("tipo del constructor 2:" + bi.getType());
-            w = bi.getWidth(null);
-            h = bi.getHeight(null);
-
-            if (bi.getType() != BufferedImage.TYPE_INT_RGB) {
-                BufferedImage bi2 =
-                        new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
-                Graphics big = bi2.getGraphics();
-                big.drawImage(bi, 0, 0, null);
-                biFiltered = bi = bi2;
-            }
-    }
-    public PageComponent(Image page, String path){
-        w =  Math.round(page.getImageWidth());
-        h =  Math.round(page.getImageHeight());
-
-        bi = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
-        System.out.println("tipo del constructor 3:" + bi.getType());
-        Graphics big = bi.getGraphics();
-        big.drawImage(bi, 0, 0, null);
-        biFiltered = bi;
-
-        nombrep = path;
-    }
+//
+//    public PageComponent(BufferedImage buf){
+//
+//            bi = buf;
+//            System.out.println("tipo del constructor 2:" + bi.getType());
+//            w = bi.getWidth(null);
+//            h = bi.getHeight(null);
+//
+//            if (bi.getType() != BufferedImage.TYPE_INT_RGB) {
+//                BufferedImage bi2 =
+//                        new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
+//                Graphics big = bi2.getGraphics();
+//                big.drawImage(bi, 0, 0, null);
+//                biFiltered = bi = bi2;
+//            }
+//    }
+//    public PageComponent(Image page, String path){
+//        w =  Math.round(page.getImageWidth());
+//        h =  Math.round(page.getImageHeight());
+//
+//        bi = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
+//        System.out.println("tipo del constructor 3:" + bi.getType());
+//        Graphics big = bi.getGraphics();
+//        big.drawImage(bi, 0, 0, null);
+//        biFiltered = bi;
+//
+//        nombrep = path;
+//    }
 
     public void SaveImage(String n){
         File saveFile = new File(n); //final route
