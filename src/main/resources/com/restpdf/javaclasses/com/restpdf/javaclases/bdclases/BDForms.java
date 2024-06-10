@@ -2,12 +2,9 @@ package com.restpdf.javaclases.bdclases;
 
 import com.restpdf.javaclases.PDFEditor.Tools.StringEncoder;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.net.URLConnection;
+import javax.swing.*;
+import java.io.*;
+import java.net.*;
 import java.nio.charset.Charset;
 import java.sql.*;
 import java.util.ArrayList;
@@ -42,7 +39,9 @@ public class BDForms {
             urlc = url.openConnection();
             urlc.connect();
         } catch (IOException e) {
+            JOptionPane.showMessageDialog(new JFrame(), "Error intentando abrir el documento ", "Error", JOptionPane.ERROR_MESSAGE);
             throw new RuntimeException(e);
+
         }
 
         try {
@@ -61,32 +60,77 @@ public class BDForms {
     }
 
     public String setNuevoCampoPDF(CampoF newf) throws SQLException {
-        URL url = null;
-        String result = null;
+//        URL url = null;
+//        String result = null;
 
         try {
             String f = newf.getNameFatherForm();
             StringEncoder e = new StringEncoder();
             f= e.encripta(f);
 
-            String u = "https://tfgbd.000webhostapp.com/AddCampoAlPDF.php?campo=" + newf.getNameField() + "?nf=" + f +
-            "?pag=" + newf.getPage() + "?posx=" + newf.getPosX() + "?posy=" + newf.getPosY() +
-                    "?l=" + newf.getWidth() + "?a=" + newf.getHeight();
+            String data = "&" + URLEncoder.encode("CamposFormularios", "UTF-8") + "=" + URLEncoder.encode(newf.getNameField(), "UTF-8");
+            data += "&" + URLEncoder.encode("NombreFormulario", "UTF-8") + "=" + URLEncoder.encode(f, "UTF-8");
+            data += "&" + URLEncoder.encode("Pagina", "UTF-8") + "=" + URLEncoder.encode(Integer.toString(newf.getPage()), "UTF-8");
+            data += "&" + URLEncoder.encode("PosicionX", "UTF-8") + "=" + URLEncoder.encode(Integer.toString(newf.getPosX() ), "UTF-8");
+            data += "&" + URLEncoder.encode("PosicionY", "UTF-8") + "=" + URLEncoder.encode(Integer.toString(newf.getPosY() ), "UTF-8");
+            data += "&" + URLEncoder.encode("Largo", "UTF-8") + "=" + URLEncoder.encode(Integer.toString(newf.getWidth()), "UTF-8");
+            data += "&" + URLEncoder.encode("Ancho", "UTF-8") + "=" + URLEncoder.encode(Integer.toString(newf.getHeight()), "UTF-8");
 
-            url = new URL(u);
-            urlc = url.openConnection();
-            urlc.connect();
+//            URL url = new URL("https://tfgbd.000webhostapp.com/AddCampoAlPDF.php");
+//            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+//
+//            conn.setDoOutput(true);
+//            conn.setRequestMethod("POST");
+            String urlString = "https://tfgbd.000webhostapp.com/AddCampoAlPDF.php" + "?" + data;
+            URL url = new URL(urlString);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 
-            br = new BufferedReader(new InputStreamReader(((HttpURLConnection) (new URL(u)).openConnection()).getInputStream(),
-                    Charset.forName("UTF-8")));
-            String str = br.readLine();
-            System.out.println(str);
-            result = str;
+            conn.setDoOutput(false);
+            conn.setRequestMethod("GET");
+            conn.connect();
+//            String u = "?campo=" + newf.getNameField() + "?nform=" + f +
+//            "?pag=" + newf.getPage() + "?posx=" + newf.getPosX() + "?posy=" + newf.getPosY() +
+//                    "?wid=" + newf.getWidth() + "?hei=" + newf.getHeight();
+//
+//            url = new URL(u);
+//            urlc = url.openConnection();
+//            urlc.connect();
+//
+//            br = new BufferedReader(new InputStreamReader(((HttpURLConnection) (new URL(u)).openConnection()).getInputStream(),
+//                    Charset.forName("UTF-8")));
+//            String str = br.readLine();
+//            System.out.println(str);
+//            result = str;
+//
+//        } catch (IOException e) {
+//            throw new RuntimeException(e);
+//        }
+//        return result;
+//            OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
+//            wr.write(data);
+//            wr.flush();
 
+            BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+
+            StringBuilder sb = new StringBuilder();
+            String line = null;
+
+            // Read Server Response
+            while((line = reader.readLine()) != null)
+            {
+                System.out.println(line);
+                sb.append(line);
+                break;
+            }
+            return sb.toString();
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
         }
-        return result;
+        return "fail";
     }
 
     public String sendNewFile(String f) {
