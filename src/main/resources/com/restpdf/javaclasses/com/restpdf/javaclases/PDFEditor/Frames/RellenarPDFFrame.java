@@ -133,6 +133,7 @@ public class RellenarPDFFrame extends JFrame {
 
         listaPDFsDisp.add("C:\\Users\\Almuchuela\\Desktop\\TestSave\\PDFEnblanco.pdf");
         listaPDFsDisp.add("C:\\Users\\Almuchuela\\Desktop\\TestSave\\Vinted-S1212467838.pdf");
+        listaPDFsDisp.add("C:\\Users\\Almuchuela\\Downloads\\factura luz.pdf");
         listaPDFsDisp.add("C:\\Users\\Almuchuela\\Downloads\\b8cfcc76-9e9e-468d-aa24-3f4ca3dcce7d.pdf");
 
         panelOp.setLayout(new GridLayout(listaPDFsDisp.size(), 0));

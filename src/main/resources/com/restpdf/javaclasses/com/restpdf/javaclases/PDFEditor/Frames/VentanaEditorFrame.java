@@ -38,6 +38,7 @@ public class VentanaEditorFrame extends JFrame {    //ventanaPrincipal
         PDFVHandler = new PDFViewHandler();
 
         pdf_if = new PDFInternalFrame(nombrepdf);
+        AddBotones(bHerram);
 
         pdf_if.addInternalFrameListener(PDFWHandler);
         pdf_if.getPanelpdf().addEventListener(PDFVHandler);
@@ -81,59 +82,11 @@ public class VentanaEditorFrame extends JFrame {    //ventanaPrincipal
         this.getContentPane().add(jsp,BorderLayout.WEST);
         this.getContentPane().add(PanelCentro,BorderLayout.CENTER);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
+////--------------------------------------------------------------------------
         panelHerramientasSuperior = new JPanel();
         panelHerramientasSuperior.setLayout(new BorderLayout());
         bHerram = new JToolBar();
 
-        bZoomIN = new JButton("+");
-        bZoomIN.setFocusable(false);
-        bZoomIN.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                AffineTransform at = AffineTransform.getScaleInstance(1.25, 1.25);
-                aplicarZoom(at);
-            }
-        });
-        bHerram.add(bZoomIN);
-
-        bZoomOUT = new JButton("-");
-        bZoomOUT.setFocusable(false);
-        bZoomOUT.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                AffineTransform at = AffineTransform.getScaleInstance(0.75, 0.75);
-                aplicarZoom(at);
-            }
-        });
-        bHerram.add(bZoomOUT);
-
-        pagecounter = new JLabel();
-        bHerram.add(pagecounter);
-
-        bPrev = new JButton("next page");
-        bPrev.setFocusable(false);
-        bPrev.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                currentpnumber = currentpnumber +1;
-                pagecounter.setText("page " + currentpnumber + " of " +  pdf_if.pages.size());
-            }
-        });
-        bHerram.add(bPrev);
-
-        bNext = new JButton("previous page");
-        bNext.setFocusable(false);
-        bNext.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if( currentpnumber -1 > 0) {
-                    currentpnumber = currentpnumber - 1;
-                    pagecounter.setText("page " + currentpnumber + " of " + pdf_if.pages.size());
-                }
-            }
-        });
-        bHerram.add(bNext);
         panelHerramientasSuperior.add(bHerram, BorderLayout.EAST);
 
         BotonGuardarCampos = new JButton();
@@ -150,13 +103,10 @@ public class VentanaEditorFrame extends JFrame {    //ventanaPrincipal
                         throw new RuntimeException(ex);
                     }
                 }
-                //ESTO NO ESTÁ HECHO. DALE UN TIENTO
-//                PrintWriter pout = new PrintWriter(System.out);
-//                PDF p = new PDF(pout);
-//                p.writePDF();
             }
         });
         panelHerramientasSuperior.add(BotonGuardarCampos, BorderLayout.WEST);
+   ////--------------------------------------------------------------------------
         this.getContentPane().add(panelHerramientasSuperior,BorderLayout.PAGE_START);
         pack();
     }
@@ -187,12 +137,21 @@ public class VentanaEditorFrame extends JFrame {    //ventanaPrincipal
 
             if(evt.getFieldSelected() != null){
                 view.updateFieldSelected(evt.getFieldSelected());
+                view.setFieldSelected(evt.getFieldSelected());
                 view.EnableDeleteListener();
             }
         }
         public void FieldAdded(PDFEvent evt){
             addNuevoCampo(evt.getFieldSelected());
         }
+
+        @Override
+        public void FieldDeleted(PDFEvent e) {
+                PanelNuevosCampos.remove(campos.indexOf(e.getIndex()));
+                PanelNuevosCampos.revalidate();
+                PanelNuevosCampos.repaint();
+        }
+
         public void addNuevoCampo(FieldRectangle f){
 
             CampoF nuevoF = new CampoF("",
@@ -204,31 +163,107 @@ public class VentanaEditorFrame extends JFrame {    //ventanaPrincipal
                     (int) f.getRectangulo().getWidth(),
                     campos.size());
 
-            campos.add(nuevoF);
+            if ((nuevoF.getWidth() > 10) && (nuevoF.getHeight() > 10)) {
+                campos.add(nuevoF);
 
-            JLabel ncampo = new JLabel(String.valueOf(campos.size()));
-            JTextField nuevoCampo = new JTextField("escribe el nombre del campo...");
-            nuevoCampo.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    String t = nuevoCampo.getText();
-                    int index = Integer.parseInt(ncampo.getText());
-                    campos.get(index-1).setNameField(t);
-                }
-            });
+                JLabel ncampo = new JLabel(String.valueOf(campos.size()));
+                JTextField nuevoCampo = new JTextField("escribe el nombre del campo...");
+                nuevoCampo.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        String t = nuevoCampo.getText();
+                        int index = Integer.parseInt(ncampo.getText());
+                        campos.get(index - 1).setNameField(t);
+                    }
+                });
 
-            nuevoCampo.setPreferredSize(new Dimension(20,10));
+                nuevoCampo.setPreferredSize(new Dimension(20, 10));
 
-            JPanel jp = new JPanel();
-            jp.setLayout(new BoxLayout(jp, BoxLayout.Y_AXIS));
-            jp.setPreferredSize(new Dimension(40,40));
-            jp.add(ncampo);
-            jp.add(nuevoCampo);
+                JPanel jp = new JPanel();
+                jp.setLayout(new BoxLayout(jp, BoxLayout.Y_AXIS));
+                jp.setPreferredSize(new Dimension(40, 40));
+                jp.add(ncampo);
+                jp.add(nuevoCampo);
 
-            PanelNuevosCampos.add(jp);
-            PanelNuevosCampos.revalidate();
-            PanelNuevosCampos.repaint();
+                PanelNuevosCampos.add(jp);
+                PanelNuevosCampos.revalidate();
+                PanelNuevosCampos.repaint();
+            }
         }
     }
+    public void AddBotones(JToolBar barraHerrm){
 
+        bZoomIN = new JButton("+");
+        bZoomIN.setFocusable(false);
+        bZoomIN.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                AffineTransform at = AffineTransform.getScaleInstance(1.25, 1.25);
+                aplicarZoom(at);
+            }
+        });
+        barraHerrm.add(bZoomIN);
+
+        bZoomOUT = new JButton("-");
+        bZoomOUT.setFocusable(false);
+        bZoomOUT.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                AffineTransform at = AffineTransform.getScaleInstance(0.75, 0.75);
+                aplicarZoom(at);
+            }
+        });
+        barraHerrm.add(bZoomOUT);
+
+        pagecounter = new JLabel();
+        barraHerrm.add(pagecounter);
+
+        bPrev = new JButton("Previous page");
+        bNext = new JButton("Next page");
+
+        bPrev.setFocusable(false);
+        bNext.setFocusable(false);
+
+        barraHerrm.add(bPrev);
+        barraHerrm.add(bNext);
+
+        if( currentpnumber == 1) {
+            bPrev.setEnabled(false);
+        }
+        if( currentpnumber == pdf_if.pages.size()) {
+            bNext.setEnabled(false);
+        }
+        bPrev.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                if( currentpnumber -1 > 0) {
+                    currentpnumber = currentpnumber - 1;
+                    pagecounter.setText("page " + currentpnumber + " of " + pdf_if.pages.size());
+                    pdf_if.showPage(currentpnumber, campos);
+                    pdf_if.getPanelpdf().addEventListener(PDFVHandler);
+                }
+                if( currentpnumber == 1) {
+                    bNext.setEnabled(true);
+                    bPrev.setEnabled(false);
+                }
+            }
+        });
+
+        bNext.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if( currentpnumber + 1 <= pdf_if.pages.size()) {
+                    currentpnumber = currentpnumber + 1;
+                    pagecounter.setText("page " + currentpnumber + " of " + pdf_if.pages.size());
+                    pdf_if.showPage(currentpnumber, campos);
+                    pdf_if.getPanelpdf().addEventListener(PDFVHandler);
+                }
+                if( currentpnumber == pdf_if.pages.size()) {
+                    bPrev.setEnabled(true);
+                    bNext.setEnabled(false);
+                }
+            }
+        });
+    }
 }

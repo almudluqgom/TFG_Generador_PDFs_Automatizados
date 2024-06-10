@@ -22,12 +22,12 @@ public class ViewPDFPanel extends JPanel{   //Lienzo2D
     private FieldRectangle RectAux;
     ArrayList<ViewPDFListeners> PDFEventListeners = new ArrayList(); //Vector con los listeners asociados a los eventos del lienzo
     List<FieldRectangle> vRect = new ArrayList<>();
-    boolean isdeletemodeactive;
+    boolean isdeletemodeactive, cancreatenewfields;
     BufferedImage ImagenFondoFormulario;
-
+    int selectorcounter;
 
     public ViewPDFPanel(){
-
+        selectorcounter = 0;
         iswindowmode = false;
         pAux = null;
         vRect = new ArrayList<>();
@@ -41,13 +41,13 @@ public class ViewPDFPanel extends JPanel{   //Lienzo2D
     public ViewPDFPanel(BufferedImage bi){
 
         iswindowmode = false;
+        cancreatenewfields =true;
         pAux = null;
         vRect = new ArrayList<>();
         isdeletemodeactive = false;
         ClipWindow = new Ellipse2D.Double(0, 0, 100, 100);
-        ImagenFondoFormulario = bi;
-
         initComponentes();
+        ImagenFondoFormulario = bi;
     }
 
     @SuppressWarnings("unchecked")
@@ -68,12 +68,10 @@ public class ViewPDFPanel extends JPanel{   //Lienzo2D
         addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent evt) {
                 pAux = evt.getPoint();
-                //System.out.println( "Clicaste en " + pAux.getX() +"-" + pAux.getY());
-            }
+                         }
 
             public void mousePressed(MouseEvent evt) {
-                pAux = evt.getPoint(); // System.out.println( "MousePressed situó pAu en: " + pAux.getX() +"-"+ pAux.getY());
-
+                pAux = evt.getPoint();
                 RectAux = getSelectedField(evt.getPoint());
 
                 if(RectAux != null) {
@@ -83,19 +81,22 @@ public class ViewPDFPanel extends JPanel{   //Lienzo2D
                     PDFEvent pdfe = new PDFEvent(this);
                     pdfe.setpInicio(pAux); //punto de Inicio del recuadro
                     pdfe.setFieldSelected(RectAux);
-
+                   // notifyPDFEvent(pAux,RectAux);
+                    //cancreatenewfields = false;
                     notifyFieldSelected(pdfe);
                 }else{
-                    createRect(evt);
+                    if(cancreatenewfields)
+                        createRect(evt);
                 }
             }
             public void mouseReleased(MouseEvent evt) {
                 actDragged(evt);
-
                 PDFEvent pdfe = new PDFEvent(this);
                 pdfe.setpInicio(pAux); //punto de Inicio del recuadro
                 pdfe.setFieldSelected(RectAux);
                 notifyFieldAdded(pdfe);
+
+               // notifyPDFEvent(pAux,RectAux);
                 updateWindowMode(evt);
             }
         });
@@ -123,7 +124,14 @@ public class ViewPDFPanel extends JPanel{   //Lienzo2D
     public void notifyFieldAdded(PDFEvent e){
         if(!PDFEventListeners.isEmpty()) {
             for(ViewPDFListeners listener : PDFEventListeners)
-                listener.FieldAdded(e);
+                if(cancreatenewfields)
+                    listener.FieldAdded(e);
+        }
+    }
+    public void notifyRemoved(PDFEvent e){
+        if(!PDFEventListeners.isEmpty()) {
+            for(ViewPDFListeners listener : PDFEventListeners)
+                    listener.FieldDeleted(e);
         }
     }
     private void updateWindowMode(MouseEvent evt) {
@@ -148,7 +156,11 @@ public class ViewPDFPanel extends JPanel{   //Lienzo2D
     public void EnableDeleteListener() {
         isdeletemodeactive=true;
     }
+    public void addRect(Point2D punto, FieldRectangle f){
 
+        f.setpAux(punto);
+        vRect.add(f);
+    }
     private void createRect(MouseEvent evt){
         RectAux = new FieldRectangle(evt.getPoint());
         vRect.add(RectAux);
@@ -160,15 +172,9 @@ public class ViewPDFPanel extends JPanel{   //Lienzo2D
          if(iswindowmode)
              g2d.clip(clipImgFondoF);
 
-         if (ImagenFondoFormulario != null) {
-             g2d.setStroke(new BasicStroke(3));
-             g2d.drawRect(0, 0, ImagenFondoFormulario.getWidth(), ImagenFondoFormulario.getHeight());
-             g2d.clip(ClipWindow);
-             g2d.drawImage(ImagenFondoFormulario, 0, 0, this);
-         }
-
          for (FieldRectangle r : vRect) {
-             r.paint(g2d);
+             if((r.getRectangulo().getWidth()) > 10 && (r.getRectangulo().getHeight()>10))
+                r.paint(g2d);
          }
      }
 
@@ -186,9 +192,8 @@ public class ViewPDFPanel extends JPanel{   //Lienzo2D
     public void setImagenFondoFormulario(BufferedImage img) {
         ImagenFondoFormulario = img;
         clipImgFondoF = new Rectangle2D.Double(0, 0, ImagenFondoFormulario.getWidth(), ImagenFondoFormulario.getHeight());
-        if (ImagenFondoFormulario != null){
+        if (ImagenFondoFormulario != null)
             setPreferredSize(new Dimension(ImagenFondoFormulario.getWidth(), ImagenFondoFormulario.getHeight()));
-        }
 
     }
 
@@ -208,21 +213,75 @@ public class ViewPDFPanel extends JPanel{   //Lienzo2D
         this.vRect = vRect;
     }
 
+    public ArrayList<ViewPDFListeners> getPDFEventListeners() {
+        return PDFEventListeners;
+    }
+
+    public void setPDFEventListeners(ArrayList<ViewPDFListeners> PDFEventListeners) {
+        this.PDFEventListeners = PDFEventListeners;
+    }
+
+    public void setFieldSelected(FieldRectangle fieldSelected) {
+        RectAux = fieldSelected;
+    }
+    public void notifyPDFEvent(Point2D p, FieldRectangle R){
+        PDFEvent pdfe = new PDFEvent(this);
+        pdfe.setpInicio(p); //punto de Inicio del recuadro
+        pdfe.setFieldSelected(R);
+        notifyFieldSelected(pdfe);
+    }
     private class KeyLis extends KeyAdapter {
         @Override
         public void keyPressed(KeyEvent e) {
-            System.out.println("mira el codigo : "+e.getExtendedKeyCode() + " y el key char: " + e.getKeyChar());
-            switch (e.getKeyCode()) {
-                case KeyEvent.VK_LEFT:
-                    System.out.println("VK_LEFT pressed");
-                    break;
-                case KeyEvent.VK_RIGHT:
-                    System.out.println("VK_RIGHT pressed");
-                    break;
-                case KeyEvent.VK_DELETE:    //FUNCIONA CON EL SUPRIMIR
-                    System.out.println("delete");
-                    break;
-            }
+            //System.out.println("mira el codigo : "+e.getExtendedKeyCode() + " y el key char: " + e.getKeyChar());
+//            switch (e.getKeyCode()) {
+//                case KeyEvent.VK_Q:
+//                    if(selectorcounter-1>0) {              //System.out.println("VK_Q pressed");
+//                        updateFieldSelected(vRect.get(selectorcounter));
+//                        selectorcounter--;
+//                    }
+//                        PDFEvent pdfe = new PDFEvent(this);
+//                        RectAux = vRect.get(selectorcounter);
+//
+//                        pdfe.setpInicio(RectAux.getpAux()); //punto de Inicio del recuadro
+//                        pdfe.setFieldSelected(RectAux);
+//                        cancreatenewfields = false;
+//                        notifyFieldSelected(pdfe);
+//                    repaint();
+//                    break;
+//
+//                case KeyEvent.VK_E:
+//                    if(selectorcounter+1<vRect.size()) {                        //System.out.println("VK_Q pressed");
+//                        updateFieldSelected(vRect.get(selectorcounter));
+//                        selectorcounter++;
+//                    }
+//                        PDFEvent pdfev = new PDFEvent(this);
+//                        RectAux = vRect.get(selectorcounter);
+//
+//                        pdfev.setpInicio(RectAux.getpAux()); //punto de Inicio del recuadro
+//                        pdfev.setFieldSelected(RectAux);
+//                        cancreatenewfields = false;
+//                        notifyFieldSelected(pdfev);
+//                    repaint();
+//                    break;
+//                case KeyEvent.VK_DELETE:    //FUNCIONA CON EL SUPRIMIR
+//                    System.out.println("delete");
+//                    if(isdeletemodeactive){
+//                        if(RectAux != null){
+//                            PDFEvent pdfed = new PDFEvent(this);
+//                            pdfed.setpInicio(RectAux.getpAux()); //punto de Inicio del recuadro
+//                            pdfed.setFieldSelected(RectAux);
+//                            pdfed.setIndex(vRect.indexOf(RectAux));
+//
+//                            vRect.remove(vRect.indexOf(RectAux));
+//                            notifyRemoved(pdfed);
+//                            repaint();
+//                        }
+//                        cancreatenewfields = true;
+//                        isdeletemodeactive =false;
+//                    }
+//                    break;
+//            }
         }
     }
 }

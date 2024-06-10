@@ -8,6 +8,8 @@ public class PDFEvent extends EventObject{  //LienzoEvent
     Point2D pInicio;
     FieldRectangle fieldSelected;
 
+    int index;
+
     public PDFEvent(Object source) {
         super(source);
     }
@@ -23,8 +25,15 @@ public class PDFEvent extends EventObject{  //LienzoEvent
     public FieldRectangle getFieldSelected() {
         return fieldSelected;
     }
-
     public void setFieldSelected(FieldRectangle fieldSelected) {
         this.fieldSelected = fieldSelected;
+    }
+
+    public int getIndex() {
+        return index;
+    }
+
+    public void setIndex(int index) {
+        this.index = index;
     }
 }

@@ -1,5 +1,7 @@
 package com.restpdf.javaclases.PDFEditor.InternalFrames;
 
+import com.restpdf.javaclases.PDFEditor.Listeners.PDFEvent;
+import com.restpdf.javaclases.bdclases.CampoF;
 import com.spire.pdf.PdfDocument;
 import com.spire.pdf.graphics.PdfImageType;
 import com.restpdf.javaclases.PDFEditor.Panels.*;
@@ -14,6 +16,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 
 public class PDFInternalFrame extends JInternalFrame { //VentanaInternaSM || VentanaInternaImagen
@@ -46,7 +49,8 @@ public class PDFInternalFrame extends JInternalFrame { //VentanaInternaSM || Ven
                         //PageComponent page = new PageComponent("C:\\\\Users\\\\Almuchuela\\\\Downloads\\\\pagina4.jpeg");
      //
         picLabel = new JLabel(new ImageIcon(page.getBi()));
-        Panelpdf = new ViewPDFPanel();
+        //Panelpdf = new ViewPDFPanel();
+        Panelpdf=new ViewPDFPanel(page.getBi());
 
         Panelpdf.add(picLabel);
         bd.setViewportView(Panelpdf);
@@ -107,5 +111,23 @@ public class PDFInternalFrame extends JInternalFrame { //VentanaInternaSM || Ven
             pages.add(p);
         }
         pdf.close();
+    }
+
+    public void showPage(int p, List<CampoF> campos) {
+        PageComponent page = pages.get(p-1);
+        picLabel = new JLabel(new ImageIcon(page.getBi()));
+        Panelpdf=new ViewPDFPanel(page.getBi());
+
+       for (CampoF c : campos){
+           if (c.getPage() == p){
+               Point2D punto =  new Point2D.Double(c.getPosX(),c.getPosY());
+               Rectangle r = new Rectangle(c.getPosX(),c.getPosY(),c.getWidth(),c.getHeight());
+               FieldRectangle f = new FieldRectangle( r);
+               Panelpdf.addRect(punto,f);
+           }
+       }
+        Panelpdf.add(picLabel);
+        bd.setViewportView(Panelpdf);
+
     }
 }

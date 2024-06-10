@@ -2,29 +2,39 @@ package com.restpdf.javaclases.PDFEditor.Tools;
 
 import java.awt.*;
 import java.awt.geom.Point2D;
-import java.awt.geom.Rectangle2D;
 
 public class FieldRectangle {
     private Rectangle rectangulo;
     private Point2D pAux; //Punto auxiliar para mantener la coordenada de la esquina superior izquierda
 
+    private Color colorf;
       public FieldRectangle(Point2D p) {
         this.rectangulo = new Rectangle((Point) p);
         pAux = p;
     }
+    public FieldRectangle(Rectangle r) {
+        this.rectangulo = r;
+        pAux = new Point2D.Double(r.getX(),r.getY());
+    }
     public void paint(Graphics2D g2d) {
         g2d.setPaint(Color.black);
+        colorf = Color.black;
         g2d.setStroke(new BasicStroke(5));
         g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
         g2d.draw(rectangulo);
     }
 
     public void updateColorForSelected(Graphics2D g2d, Shape f) {
-        g2d.setPaint(Color.GREEN);
+        if (colorf == Color.black){
+            g2d.setPaint(Color.GREEN);
+            colorf = Color.GREEN;
+        }
+        else {
+            g2d.setPaint(Color.black);
+            colorf = Color.black;
+        }
         g2d.setStroke(new BasicStroke(5));
         g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
-
-        //this.rectangulo = new Rectangle((Point) PFigura);
         g2d.draw(f);
     }
 
@@ -68,5 +78,13 @@ public class FieldRectangle {
 
     public void setRectangulo(Rectangle rectangulo) {
         this.rectangulo = rectangulo;
+    }
+
+    public Point2D getpAux() {
+        return pAux;
+    }
+
+    public void setpAux(Point2D pAux) {
+        this.pAux = pAux;
     }
 }
