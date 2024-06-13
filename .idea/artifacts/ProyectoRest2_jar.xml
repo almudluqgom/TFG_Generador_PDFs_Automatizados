@@ -2,7 +2,7 @@
   <artifact type="jar" build-on-make="true" name="ProyectoRest2:jar">
     <output-path>$PROJECT_DIR$/out/artifacts/ProyectoRest2_jar</output-path>
     <root id="archive" name="ProyectoRest2.jar">
-      <element id="module-output" name="ProyectoRest2" />
+      <element id="module-output" name="ProyectoFinGrado_EditorPDF" />
       <element id="extracted-dir" path="$MAVEN_REPOSITORY$/jakarta/xml/bind/jakarta.xml.bind-api/3.0.1/jakarta.xml.bind-api-3.0.1.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$MAVEN_REPOSITORY$/backport-util-concurrent/backport-util-concurrent/3.1/backport-util-concurrent-3.1.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$MAVEN_REPOSITORY$/jakarta/mvc/jakarta.mvc-api/2.1.0/jakarta.mvc-api-2.1.0.jar" path-in-jar="/" />
