@@ -19,21 +19,21 @@ public class FieldRectangle {
     public void paint(Graphics2D g2d) {
         g2d.setPaint(Color.black);
         colorf = Color.black;
-        g2d.setStroke(new BasicStroke(5));
+        g2d.setStroke(new BasicStroke(10));
         g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
         g2d.draw(rectangulo);
     }
 
-    public void updateColorForSelected(Graphics2D g2d, Shape f) {
-        if (colorf == Color.black){
-            g2d.setPaint(Color.GREEN);
-            colorf = Color.GREEN;
-        }
-        else {
-            g2d.setPaint(Color.black);
-            colorf = Color.black;
-        }
-        g2d.setStroke(new BasicStroke(5));
+    public void updateColorForSelected(Graphics2D g2d, Shape f, Color c) {
+       // if (colorf == Color.black){
+            g2d.setPaint(c);
+//            colorf = Color.GREEN;
+//        }
+//        else {
+//            g2d.setPaint(Color.black);
+//            colorf = Color.black;
+//        }
+        g2d.setStroke(new BasicStroke(10));
         g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
         g2d.draw(f);
     }

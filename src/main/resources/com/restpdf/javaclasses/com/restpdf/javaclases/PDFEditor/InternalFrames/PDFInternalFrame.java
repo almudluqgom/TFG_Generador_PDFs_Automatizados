@@ -79,6 +79,9 @@ public class PDFInternalFrame extends JInternalFrame { //VentanaInternaSM || Ven
     public BufferedImage getImagen() {
         return this.getPanelpdf().getImagenFondoFormulario();
     }
+    public BufferedImage getImagen(boolean b) {
+        return this.getPanelpdf().getImagenFondoFormulario(b);
+    }
 
     public void setImagen(BufferedImage imgaux) {
         this.getPanelpdf().setImagenFondoFormulario(imgaux);

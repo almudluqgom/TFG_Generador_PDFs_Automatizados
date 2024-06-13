@@ -54,6 +54,9 @@ public class VentanaEditorFrame extends JFrame {    //ventanaPrincipal
         pdf_if.setIconifiable(false);
         pdf_if.setVisible(true);
 
+
+        fondoAux = pdf_if.getImagen(false);
+
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setSize(screenSize);
        // pack();
@@ -114,7 +117,8 @@ public class VentanaEditorFrame extends JFrame {    //ventanaPrincipal
     private void aplicarZoom(AffineTransform at) {      //NO FUNCIONA, OLE
         PDFInternalFrame pdfif = (PDFInternalFrame) (zonaEscritorio.getSelectedFrame());
         if (pdfif instanceof PDFInternalFrame) {
-            BufferedImage img = pdfif.getImagen();
+           // switchVolcadoActionPerformed(null);
+            BufferedImage img = pdfif.getImagen(false);
             if (img != null) {
                 try {
                     AffineTransformOp atop = new AffineTransformOp(at, AffineTransformOp.TYPE_BILINEAR);
@@ -138,20 +142,35 @@ public class VentanaEditorFrame extends JFrame {    //ventanaPrincipal
             if(evt.getFieldSelected() != null){
                 view.updateFieldSelected(evt.getFieldSelected());
                 view.setFieldSelected(evt.getFieldSelected());
-                view.EnableDeleteListener();
+                view.EnableDeleteListener(evt.getFieldSelected());
             }
         }
         public void FieldAdded(PDFEvent evt){
-            addNuevoCampo(evt.getFieldSelected());
+            addNuevoCampo(evt.getFieldSelected()
+            );
         }
 
         @Override
         public void FieldDeleted(PDFEvent e) {
-                PanelNuevosCampos.remove(campos.indexOf(e.getIndex()));
+            int indice = e.getIndex();
+            campos.remove(indice);
+            
+            ReordenarEtiquetas(PanelNuevosCampos, indice);
+            for (int i= 0; i< PanelNuevosCampos.getComponentCount();i++){
+                if (i == indice)
+                    PanelNuevosCampos.remove(i);
+            }
                 PanelNuevosCampos.revalidate();
                 PanelNuevosCampos.repaint();
-        }
 
+            ViewPDFPanel view = pdf_if.getPanelpdf();
+            view.paint(fondoAux.getGraphics());
+        }
+        private void ReordenarEtiquetas(JPanel panelNuevosCampos, int indice) {
+            for (int i= indice; i< PanelNuevosCampos.getComponentCount();i++){
+                ((JLabel)((JPanel) PanelNuevosCampos.getComponent(i)).getComponent(0)).setText(String.valueOf(i));
+            }
+        }
         public void addNuevoCampo(FieldRectangle f){
 
             CampoF nuevoF = new CampoF("",
@@ -167,6 +186,7 @@ public class VentanaEditorFrame extends JFrame {    //ventanaPrincipal
                 campos.add(nuevoF);
 
                 JLabel ncampo = new JLabel(String.valueOf(campos.size()));
+
                 JTextField nuevoCampo = new JTextField("escribe el nombre del campo...");
                 nuevoCampo.addActionListener(new ActionListener() {
                     @Override
