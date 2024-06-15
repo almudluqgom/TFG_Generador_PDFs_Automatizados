@@ -163,7 +163,9 @@ public class ViewPDFPanel extends JPanel {   //Lienzo2D
 
     public void EnableDeleteListener(FieldRectangle fieldSelected) {
         RecABorrar = fieldSelected;
-        RecABorrar.updateColorForSelected((Graphics2D) ImagenFondoFormulario.getGraphics(), fieldSelected.getRectangulo(),Color.green);
+        //??????????? es el rect a borrar?
+        //RecABorrar.updateColorForSelected((Graphics2D) ImagenFondoFormulario.getGraphics(), fieldSelected.getRectangulo(),Color.green);
+        int i = vRect.indexOf(RecABorrar);
         pAux = fieldSelected.getpAux();
         isdeletemodeactive = true;
     }
@@ -218,30 +220,6 @@ public class ViewPDFPanel extends JPanel {   //Lienzo2D
         if (ImagenFondoFormulario != null)
             setPreferredSize(new Dimension(ImagenFondoFormulario.getWidth(), ImagenFondoFormulario.getHeight()));
     }
-    public void setWindowMode(boolean efecto) {
-        iswindowmode = efecto;
-    }
-
-    public Boolean getWindowMode() {
-        return this.iswindowmode;
-    }
-
-    public List<FieldRectangle> getvRect() {
-        return vRect;
-    }
-
-    public void setvRect(List<FieldRectangle> vRect) {
-        this.vRect = vRect;
-    }
-
-    public ArrayList<ViewPDFListeners> getPDFEventListeners() {
-        return PDFEventListeners;
-    }
-
-    public void setPDFEventListeners(ArrayList<ViewPDFListeners> PDFEventListeners) {
-        this.PDFEventListeners = PDFEventListeners;
-    }
-
     public void setFieldSelected(FieldRectangle fieldSelected) {
         RectAux = fieldSelected;
     }

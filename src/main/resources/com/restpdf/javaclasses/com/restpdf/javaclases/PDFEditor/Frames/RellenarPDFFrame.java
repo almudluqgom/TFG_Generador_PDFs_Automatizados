@@ -96,48 +96,48 @@ public class RellenarPDFFrame extends JFrame {
 
     private void inicializarListaPDFsDisponibles(JPanel panelOp, ButtonGroup buttonGroup1, JLabel nombrep) {
 
-//        try {
-//            URL url = new URL("https://tfgbd.000webhostapp.com/selectPDF.php");
-//            URLConnection urlc = url.openConnection();
-//
-//            urlc.connect();
-//            BufferedReader br = new BufferedReader(new InputStreamReader(urlc.getInputStream()));
-//            String str = br.readLine();
-//
-//            ArrayList<String> listaPDFsDisp = new ArrayList<>(Arrays.asList(str.split("<br>")));
-//            listaPDFsDisp = (ArrayList<String>) listaPDFsDisp.stream().distinct().collect(Collectors.toList());
-//
-//            panelOp.setLayout(new GridLayout(listaPDFsDisp.size(), 0));
-//            StringEncoder e = new StringEncoder();
-//
-//            for (String pdf : listaPDFsDisp) {
-//                pdf = e.desencripta(pdf);
-//                final JRadioButton button1 = new JRadioButton(pdf);
-//                panelOp.add(button1);
-//                buttonGroup1.add(button1);
-//
-//                button1.addActionListener(new ActionListener() {
-//                    @Override
-//                    public void actionPerformed(ActionEvent e) {
-//                        selectedpdf = button1.getText();
-//                        nombrep.setText("PDF seleccionado: " + button1.getText());
-//                    }
-//                });
-//            }
-//
-//            br.close();
-//
-//        } catch (Exception e) {     e.printStackTrace();        }
-        // DEMO VERSION - PARA CUANDO LAS BD NO QUIEREN FUNCAR
-        ArrayList<String> listaPDFsDisp = new ArrayList();
+        try {
+            URL url = new URL("https://tfgbd.000webhostapp.com/selectPDF.php");
+            URLConnection urlc = url.openConnection();
 
-        listaPDFsDisp.add("C:\\Users\\Almuchuela\\Desktop\\TestSave\\PDFEnblanco.pdf");
-        listaPDFsDisp.add("C:\\Users\\Almuchuela\\Desktop\\TestSave\\Vinted-S1212467838.pdf");
-        listaPDFsDisp.add("C:\\Users\\Almuchuela\\Downloads\\factura luz.pdf");
-        listaPDFsDisp.add("C:\\Users\\Almuchuela\\Downloads\\b8cfcc76-9e9e-468d-aa24-3f4ca3dcce7d.pdf");
+            urlc.connect();
+            BufferedReader br = new BufferedReader(new InputStreamReader(urlc.getInputStream()));
+            String str = br.readLine();
+
+            ArrayList<String> listaPDFsDisp = new ArrayList<>(Arrays.asList(str.split("<br>")));
+            listaPDFsDisp = (ArrayList<String>) listaPDFsDisp.stream().distinct().collect(Collectors.toList());
+
+            panelOp.setLayout(new GridLayout(listaPDFsDisp.size(), 0));
+            StringEncoder e = new StringEncoder();
+
+            for (String pdf : listaPDFsDisp) {
+                pdf = e.desencripta(pdf);
+                final JRadioButton button1 = new JRadioButton(pdf);
+                panelOp.add(button1);
+                buttonGroup1.add(button1);
+
+                button1.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        selectedpdf = button1.getText();
+                        nombrep.setText("PDF seleccionado: " + button1.getText());
+                    }
+                });
+            }
+
+            br.close();
+
+
+//        // DEMO VERSION - PARA CUANDO LAS BD NO QUIEREN FUNCAR
+//        ArrayList<String> listaPDFsDisp = new ArrayList();
+//
+//        listaPDFsDisp.add("C:\\Users\\Almuchuela\\Desktop\\TestSave\\PDFEnblanco.pdf");
+//        listaPDFsDisp.add("C:\\Users\\Almuchuela\\Desktop\\TestSave\\Vinted-S1212467838.pdf");
+//        listaPDFsDisp.add("C:\\Users\\Almuchuela\\Downloads\\factura luz.pdf");
+//        listaPDFsDisp.add("C:\\Users\\Almuchuela\\Downloads\\b8cfcc76-9e9e-468d-aa24-3f4ca3dcce7d.pdf");
 
         panelOp.setLayout(new GridLayout(listaPDFsDisp.size(), 0));
-        StringEncoder e = new StringEncoder();
+        //StringEncoder e = new StringEncoder();
 
         for (String pdf : listaPDFsDisp) {
             pdf = e.desencripta(pdf);
@@ -153,6 +153,8 @@ public class RellenarPDFFrame extends JFrame {
                 }
             });
         }
-    }
+    } catch (Exception e) {
+        e.printStackTrace();
+    }}
 
 }
