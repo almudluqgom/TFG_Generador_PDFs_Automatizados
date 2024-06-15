@@ -46,7 +46,7 @@ public class PDFillInternalFrame extends JInternalFrame { //VentanaInternaSM || 
         //test display one page
         //PageComponent page = new PageComponent("C:\\\\Users\\\\Almuchuela\\\\Downloads\\\\pagina4.jpeg");
         //
-        picLabel = new JLabel(new ImageIcon(page.getBi()));
+       picLabel = new JLabel(new ImageIcon(page.getBi()));
         Panelpdf = new FillPanelPDF();
 
         Panelpdf.add(picLabel);
