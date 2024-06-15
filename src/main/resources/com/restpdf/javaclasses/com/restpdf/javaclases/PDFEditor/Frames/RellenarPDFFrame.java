@@ -56,10 +56,16 @@ public class RellenarPDFFrame extends JFrame {
         b.addActionListener(new ActionListener() { //confirmación de directorio como almacen. pdf
             @Override
             public void actionPerformed(ActionEvent e) {
-                VentanaRellenarPDFFrame mainFrame = null;
-                mainFrame = new VentanaRellenarPDFFrame(selectedpdf);
-                mainFrame.setVisible(true);
-                dispose();
+                boolean b=true;
+                VentanaRellenarPDFFrame mainFrame = new VentanaRellenarPDFFrame(selectedpdf,b);
+                if(mainFrame.getCampos().size() != 0){
+                    mainFrame = new VentanaRellenarPDFFrame(selectedpdf);
+                    mainFrame.setVisible(true);
+                    dispose();
+                }
+                else {
+                    JOptionPane.showMessageDialog(null, "No hay campos disponibles para éste documento. Por favor selecciona otro, o inserta campos en éste formulario");
+                }
             }
         });
 
@@ -136,23 +142,23 @@ public class RellenarPDFFrame extends JFrame {
 //        listaPDFsDisp.add("C:\\Users\\Almuchuela\\Downloads\\factura luz.pdf");
 //        listaPDFsDisp.add("C:\\Users\\Almuchuela\\Downloads\\b8cfcc76-9e9e-468d-aa24-3f4ca3dcce7d.pdf");
 
-        panelOp.setLayout(new GridLayout(listaPDFsDisp.size(), 0));
+//        panelOp.setLayout(new GridLayout(listaPDFsDisp.size(), 0));
         //StringEncoder e = new StringEncoder();
-
-        for (String pdf : listaPDFsDisp) {
-            pdf = e.desencripta(pdf);
-            final JRadioButton button1 = new JRadioButton(pdf);
-            panelOp.add(button1);
-            buttonGroup1.add(button1);
-
-            button1.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    selectedpdf = button1.getText();
-                    nombrep.setText("PDF seleccionado: " + button1.getText());
-                }
-            });
-        }
+//
+//        for (String pdf : listaPDFsDisp) {
+//            pdf = e.desencripta(pdf);
+//            final JRadioButton button1 = new JRadioButton(pdf);
+//            panelOp.add(button1);
+//            buttonGroup1.add(button1);
+//
+//            button1.addActionListener(new ActionListener() {
+//                @Override
+//                public void actionPerformed(ActionEvent e) {
+//                    selectedpdf = button1.getText();
+//                    nombrep.setText("PDF seleccionado: " + button1.getText());
+//                }
+//            });
+//        }
     } catch (Exception e) {
         e.printStackTrace();
     }}

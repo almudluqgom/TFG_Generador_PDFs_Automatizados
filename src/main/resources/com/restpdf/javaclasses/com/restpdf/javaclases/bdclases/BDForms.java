@@ -15,22 +15,6 @@ public class BDForms {
     BufferedReader br;
     URLConnection urlc;
 
-    public BDForms() {
-    }
-
-    public void close() throws IOException {
-        br.close();
-    }
-
-    public void setNuevoPDF(FormularioPDF NewPDF) {
-
-        ArrayList<CampoF> fields = NewPDF.getFormfields();
-
-        for (CampoF campoF : fields) {
-            CampoF field = new CampoF(campoF);
-        }
-    }
-
     public String getCarpeta() {
         URL url = null;
 
@@ -60,8 +44,6 @@ public class BDForms {
     }
 
     public String setNuevoCampoPDF(CampoF newf) throws SQLException {
-//        URL url = null;
-//        String result = null;
 
         try {
             String f = newf.getNameFatherForm();
@@ -75,41 +57,15 @@ public class BDForms {
             data += "&" + URLEncoder.encode("PosicionY", "UTF-8") + "=" + URLEncoder.encode(Integer.toString(newf.getPosY() ), "UTF-8");
             data += "&" + URLEncoder.encode("Largo", "UTF-8") + "=" + URLEncoder.encode(Integer.toString(newf.getWidth()), "UTF-8");
             data += "&" + URLEncoder.encode("Ancho", "UTF-8") + "=" + URLEncoder.encode(Integer.toString(newf.getHeight()), "UTF-8");
-
-//            URL url = new URL("https://tfgbd.000webhostapp.com/AddCampoAlPDF.php");
-//            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-//
-//            conn.setDoOutput(true);
-//            conn.setRequestMethod("POST");
+            //System.out.println(data);
             String urlString = "https://tfgbd.000webhostapp.com/AddCampoAlPDF.php" + "?" + data;
+            System.out.println(urlString);
             URL url = new URL(urlString);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 
             conn.setDoOutput(false);
             conn.setRequestMethod("GET");
             conn.connect();
-//            String u = "?campo=" + newf.getNameField() + "?nform=" + f +
-//            "?pag=" + newf.getPage() + "?posx=" + newf.getPosX() + "?posy=" + newf.getPosY() +
-//                    "?wid=" + newf.getWidth() + "?hei=" + newf.getHeight();
-//
-//            url = new URL(u);
-//            urlc = url.openConnection();
-//            urlc.connect();
-//
-//            br = new BufferedReader(new InputStreamReader(((HttpURLConnection) (new URL(u)).openConnection()).getInputStream(),
-//                    Charset.forName("UTF-8")));
-//            String str = br.readLine();
-//            System.out.println(str);
-//            result = str;
-//
-//        } catch (IOException e) {
-//            throw new RuntimeException(e);
-//        }
-//        return result;
-//            OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
-//            wr.write(data);
-//            wr.flush();
-
             BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
 
             StringBuilder sb = new StringBuilder();
@@ -118,7 +74,7 @@ public class BDForms {
             // Read Server Response
             while((line = reader.readLine()) != null)
             {
-                System.out.println(line);
+                System.out.println("inside of readline: "+line);
                 sb.append(line);
                 break;
             }

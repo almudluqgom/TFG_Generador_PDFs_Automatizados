@@ -37,45 +37,58 @@ public class VentanaRellenarPDFFrame extends JFrame {
     JLabel pagecounter;
     PDFillInternalFrame pdf_if;
     int currentpnumber;
+    ArrayList<CampoF> campos;
 
-    List<CampoF> campos = new ArrayList<>();
+    public VentanaRellenarPDFFrame(String pdfname,boolean b){
+        nombrepdf = pdfname;
+        campos = new ArrayList<>();
+
+        inicializarListaCampos();
+    }
 
     public VentanaRellenarPDFFrame(String pdfname) {
         nombrepdf = pdfname;
-        initSwingComponents();
-
-        pdf_if = new PDFillInternalFrame(nombrepdf);
-        zonaEscritorio.add(pdf_if);
-
-        pagecounter.setText("page 1 of " + pdf_if.pages.size());
-        currentpnumber = 1;
+        campos = new ArrayList<>();
 
         inicializarListaCampos();
+        if (!campos.isEmpty()) {
+            initSwingComponents();
+            pdf_if = new PDFillInternalFrame(nombrepdf);
 
-        pdf_if.setSize(new Dimension((int) (screenSize.getWidth() * 0.85), (int) (screenSize.getHeight() * 0.85)));
-        pdf_if.setClosable(false);
-        pdf_if.setResizable(false);
-        pdf_if.setIconifiable(false);
-        pdf_if.setVisible(true);
-
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.setSize(screenSize);
-
-        addWindowListener(new WindowAdapter(){
-            @Override
-            public void windowClosing(WindowEvent e){
-                System.out.println("Closed");
-                RellenarPDFFrame mainFrame = null;
-                try {
-                    mainFrame = new RellenarPDFFrame();
-                } catch (SQLException | ClassNotFoundException ex) {
-                    throw new RuntimeException(ex);
-                }
-                mainFrame.setVisible(true);
-               dispose();
+            for(CampoF c : campos){
+                dibujaCampoenLienzo(c);
             }
-        });
-        //pack();
+            zonaEscritorio.add(pdf_if);
+
+
+            pagecounter.setText("page 1 of " + pdf_if.pages.size());
+            currentpnumber = 1;
+
+            pdf_if.setSize(new Dimension((int) (screenSize.getWidth() * 0.85), (int) (screenSize.getHeight() * 0.85)));
+            pdf_if.setClosable(false);
+            pdf_if.setResizable(false);
+            pdf_if.setIconifiable(false);
+            pdf_if.setVisible(true);
+
+            this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            this.setSize(screenSize);
+
+            addWindowListener(new WindowAdapter() {
+                @Override
+                public void windowClosing(WindowEvent e) {
+                    System.out.println("Closed");
+                    RellenarPDFFrame mainFrame = null;
+                    try {
+                        mainFrame = new RellenarPDFFrame();
+                    } catch (SQLException | ClassNotFoundException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                    mainFrame.setVisible(true);
+                    dispose();
+                }
+            });
+        }
+
     }
 
     private void initSwingComponents() {
@@ -200,32 +213,14 @@ public class VentanaRellenarPDFFrame extends JFrame {
 
                 for (String campo : listaCampos) {
                     CampoF nuevoc = e.transformaStringEnCampo(campo);
-                    dibujaCampoenLienzo(nuevoc);
-                }
-            } else {
-                int input = JOptionPane.showOptionDialog(null, "El PDF seleccionado no contiene campos. ¿Desea añadir campos nuevos?", "PDF Sin campos",
-                        JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE, null, null, null);
-                if (input == JOptionPane.OK_OPTION) {
-                    // do something
-                } else {
-                    RellenarPDFFrame mainFrame = null;
-                    try {
-                        mainFrame = new RellenarPDFFrame();
-                    } catch (SQLException | ClassNotFoundException ex) {
-                        throw new RuntimeException(ex);
-                    }
-                    mainFrame.setVisible(true);
-                    dispose();
-                    JOptionPane.showMessageDialog(null, "Por favor selecciona otro pdf de la lista");
-
-
+                    campos.add(nuevoc);
+                    //dibujaCampoenLienzo(nuevoc);
                 }
             }
             br.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
-
     }
 
     public void dibujaCampoenLienzo(CampoF c){
@@ -253,10 +248,18 @@ public class VentanaRellenarPDFFrame extends JFrame {
         jp.add(nuevoCampo);
 
         pdf_if.getPanelpdf().addnewLine(f);
-        campos.add(c);
+        //campos.add(c);
 
         PanelCampos.add(jp);
         PanelCampos.revalidate();
         PanelCampos.repaint();
+    }
+
+    public ArrayList<CampoF> getCampos() {
+        return campos;
+    }
+
+    public void setCampos(ArrayList<CampoF> campos) {
+        this.campos = campos;
     }
 }
