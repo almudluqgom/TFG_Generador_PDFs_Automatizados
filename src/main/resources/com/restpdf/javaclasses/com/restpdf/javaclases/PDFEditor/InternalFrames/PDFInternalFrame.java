@@ -26,6 +26,8 @@ public class PDFInternalFrame extends JInternalFrame { //VentanaInternaSM || Ven
     public ArrayList<PageComponent> pages;
     JLabel picLabel;
 
+    BufferedImage fondoLienzo;
+
     private Point2D pAux;   //Punto auxiliar para mantener las coordendas de donde se ha clickado
 
     public PDFInternalFrame(String npdf) {
@@ -36,20 +38,20 @@ public class PDFInternalFrame extends JInternalFrame { //VentanaInternaSM || Ven
 
         pages= new ArrayList<>();
         initComponentes();
-
     }
     private void initComponentes() {
 
         bd = new JScrollPane();
         bd.getVerticalScrollBar().setUnitIncrement(16);
+
         //initalization
         createPages();
         PageComponent page = pages.get(0);
                         //test display one page
                         //PageComponent page = new PageComponent("C:\\\\Users\\\\Almuchuela\\\\Downloads\\\\pagina4.jpeg");
-     //
+
+        fondoLienzo =page.getBi();
         picLabel = new JLabel(new ImageIcon(page.getBi()));
-        //Panelpdf = new ViewPDFPanel();
         Panelpdf=new ViewPDFPanel(page.getBi());
 
         Panelpdf.add(picLabel);
@@ -58,35 +60,30 @@ public class PDFInternalFrame extends JInternalFrame { //VentanaInternaSM || Ven
         setClosable(false);
         setResizable(false);
         setIconifiable(false);
-        setMaximizable(false);
+        setMaximizable(true);
 
         setForeground(Color.WHITE);
         getContentPane().add(bd);
     }
-
-    public JLabel getPicLabel() {
-        return picLabel;
-    }
-
-    public void setPicLabel(JLabel picLabel) {
-        this.picLabel = picLabel;
-    }
-
     public ViewPDFPanel getPanelpdf() {
         return Panelpdf;
-    }
-
-    public BufferedImage getImagen() {
-        return this.getPanelpdf().getImagenFondoFormulario();
     }
     public BufferedImage getImagen(boolean b) {
         return this.getPanelpdf().getImagenFondoFormulario(b);
     }
 
+
     public void setImagen(BufferedImage imgaux) {
         this.getPanelpdf().setImagenFondoFormulario(imgaux);
+        //RESET MODE: QUITA TODO
+//        this.Panelpdf.ResetvRect();
+//        repaint();
+//        System.out.println("reseteado");
     }
-
+    public void setClearBackground() {
+        this.getPanelpdf().setImagenFondoFormulario(fondoLienzo);
+        repaint();
+    }
     public void createPages() {
 
         BDForms based = new BDForms();

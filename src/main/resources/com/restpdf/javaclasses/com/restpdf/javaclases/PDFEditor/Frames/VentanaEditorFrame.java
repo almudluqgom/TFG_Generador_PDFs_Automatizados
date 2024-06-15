@@ -29,6 +29,7 @@ public class VentanaEditorFrame extends JFrame {    //ventanaPrincipal
     JLabel pagecounter;
     PDFInternalFrame pdf_if;
     int currentpnumber;
+    ButtonGroup buttonGroup1;
     List<CampoF> campos = new ArrayList<>();
     public VentanaEditorFrame(String pdfname){
         nombrepdf = pdfname;
@@ -72,7 +73,7 @@ public class VentanaEditorFrame extends JFrame {    //ventanaPrincipal
         PanelCentro.add(zonaEscritorio,BorderLayout.CENTER);
 
 ////--------------------------------------------------------------------------
-
+        buttonGroup1 = new ButtonGroup();
         PanelNuevosCampos = new JPanel();
         PanelNuevosCampos.setLayout(new BoxLayout(PanelNuevosCampos, BoxLayout.Y_AXIS));
         Dimension pdim = new Dimension((int) (screenSize.getWidth()/8), (int) screenSize.getHeight());
@@ -155,7 +156,25 @@ public class VentanaEditorFrame extends JFrame {    //ventanaPrincipal
             }
         });
         barraHerrm.add(bZoomOUT);
+        JButton JUndo = new JButton("Deshacer");
+        JUndo.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
 
+                pdf_if.getPanelpdf().deleteLastRect();
+                pdf_if.setClearBackground();
+            }
+        });
+        barraHerrm.add(JUndo);
+
+        JButton JReset = new JButton("Debug: resetea");
+        JReset.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                pdf_if.getPanelpdf().setEditMode(true);
+            }
+        });
+        barraHerrm.add(JReset);
         pagecounter = new JLabel();
         barraHerrm.add(pagecounter);
 
@@ -205,8 +224,8 @@ public class VentanaEditorFrame extends JFrame {    //ventanaPrincipal
                 }
             }
         });
-    }
 
+    }
     private class PDFViewHandler implements ViewPDFListeners {   //manejadorLienzo
 
         @Override
@@ -214,13 +233,22 @@ public class VentanaEditorFrame extends JFrame {    //ventanaPrincipal
             ViewPDFPanel view = pdf_if.getPanelpdf();
 
             if(evt.getFieldSelected() != null){
-                view.updateFieldSelected(evt.getFieldSelected());
+                view.updateFieldSelected(evt.getFieldSelected(),true);
                 view.setFieldSelected(evt.getFieldSelected());
+                view.EnableDeleteListener(evt.getFieldSelected());
+            }
+        }
+        public void FieldUnSelected(PDFEvent evt) {
+            ViewPDFPanel view = pdf_if.getPanelpdf();
+
+            if(evt.getFieldSelected() != null){
+                view.updateFieldSelected(evt.getFieldSelected(),false);
+                //view.setFieldSelected(evt.getFieldSelected());
+                //view.EnableDeleteListener(evt.getFieldSelected());
             }
         }
         public void FieldAdded(PDFEvent evt){
-            addNuevoCampo(evt.getFieldSelected()
-            );
+            addNuevoCampo(evt.getFieldSelected(),buttonGroup1);
         }
 
         @Override
@@ -236,16 +264,16 @@ public class VentanaEditorFrame extends JFrame {    //ventanaPrincipal
                 PanelNuevosCampos.revalidate();
                 PanelNuevosCampos.repaint();
 
-            ViewPDFPanel view = pdf_if.getPanelpdf();
-            view.paint(fondoAux.getGraphics());
+            pdf_if.getPanelpdf().deletefield(indice);
+            pdf_if.setClearBackground();
         }
 
         private void ReordenarEtiquetas(int indice) {
             for (int i= indice; i< PanelNuevosCampos.getComponentCount();i++){
-                ((JLabel)((JPanel) PanelNuevosCampos.getComponent(i)).getComponent(0)).setText(String.valueOf(i));
+                ((JRadioButton)((JPanel) PanelNuevosCampos.getComponent(i)).getComponent(0)).setText(String.valueOf(i));
             }
         }
-        public void addNuevoCampo(FieldRectangle f){
+        public void addNuevoCampo(FieldRectangle f, ButtonGroup buttonGroup1){
 
             CampoF nuevoF = new CampoF("",
                     nombrepdf,
@@ -259,14 +287,20 @@ public class VentanaEditorFrame extends JFrame {    //ventanaPrincipal
             if ((nuevoF.getWidth() > 10) && (nuevoF.getHeight() > 10)) {
                 campos.add(nuevoF);
 
-                JLabel ncampo = new JLabel(String.valueOf(campos.size()));
-
+                //JLabel ncampo = new JLabel(String.valueOf(campos.size()));
+                final JRadioButton bu = new JRadioButton(String.valueOf(campos.size()));
+                bu.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        pdf_if.getPanelpdf().SelectField(Integer.parseInt(bu.getText()));
+                    }
+                });
                 JTextField nuevoCampo = new JTextField("escribe el nombre del campo...");
                 nuevoCampo.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
                         String t = nuevoCampo.getText();
-                        int index = Integer.parseInt(ncampo.getText());
+                        int index = Integer.parseInt(bu.getText());
                         campos.get(index - 1).setNameField(t);
                     }
                 });
@@ -276,7 +310,10 @@ public class VentanaEditorFrame extends JFrame {    //ventanaPrincipal
                 JPanel jp = new JPanel();
                 jp.setLayout(new BoxLayout(jp, BoxLayout.Y_AXIS));
                 jp.setPreferredSize(new Dimension(40, 40));
-                jp.add(ncampo);
+                //jp.add(ncampo);
+                jp.add(bu);
+                buttonGroup1.add(bu);
+
                 jp.add(nuevoCampo);
 
                 PanelNuevosCampos.add(jp);
