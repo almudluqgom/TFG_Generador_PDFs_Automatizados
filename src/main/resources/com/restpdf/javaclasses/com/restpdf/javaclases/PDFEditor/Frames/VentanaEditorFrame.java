@@ -54,7 +54,6 @@ public class VentanaEditorFrame extends JFrame {    //ventanaPrincipal
         pdf_if.setIconifiable(false);
         pdf_if.setVisible(true);
 
-
         fondoAux = pdf_if.getImagen(false);
 
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -133,84 +132,6 @@ public class VentanaEditorFrame extends JFrame {    //ventanaPrincipal
         }
     }
 
-    private class PDFViewHandler implements ViewPDFListeners {   //manejadorLienzo
-
-        @Override
-        public void FieldSelected(PDFEvent evt) {
-            ViewPDFPanel view = pdf_if.getPanelpdf();
-
-            if(evt.getFieldSelected() != null){
-                view.updateFieldSelected(evt.getFieldSelected());
-                view.setFieldSelected(evt.getFieldSelected());
-                view.EnableDeleteListener(evt.getFieldSelected());
-            }
-        }
-        public void FieldAdded(PDFEvent evt){
-            addNuevoCampo(evt.getFieldSelected()
-            );
-        }
-
-        @Override
-        public void FieldDeleted(PDFEvent e) {
-            int indice = e.getIndex();
-            campos.remove(indice);
-            
-            ReordenarEtiquetas(PanelNuevosCampos, indice);
-            for (int i= 0; i< PanelNuevosCampos.getComponentCount();i++){
-                if (i == indice)
-                    PanelNuevosCampos.remove(i);
-            }
-                PanelNuevosCampos.revalidate();
-                PanelNuevosCampos.repaint();
-
-            ViewPDFPanel view = pdf_if.getPanelpdf();
-            view.paint(fondoAux.getGraphics());
-        }
-        private void ReordenarEtiquetas(JPanel panelNuevosCampos, int indice) {
-            for (int i= indice; i< PanelNuevosCampos.getComponentCount();i++){
-                ((JLabel)((JPanel) PanelNuevosCampos.getComponent(i)).getComponent(0)).setText(String.valueOf(i));
-            }
-        }
-        public void addNuevoCampo(FieldRectangle f){
-
-            CampoF nuevoF = new CampoF("",
-                    nombrepdf,
-                    currentpnumber,
-                    (int) f.getRectangulo().getX(),
-                    (int) f.getRectangulo().getY(),
-                    (int) f.getRectangulo().getHeight(),
-                    (int) f.getRectangulo().getWidth(),
-                    campos.size());
-
-            if ((nuevoF.getWidth() > 10) && (nuevoF.getHeight() > 10)) {
-                campos.add(nuevoF);
-
-                JLabel ncampo = new JLabel(String.valueOf(campos.size()));
-
-                JTextField nuevoCampo = new JTextField("escribe el nombre del campo...");
-                nuevoCampo.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        String t = nuevoCampo.getText();
-                        int index = Integer.parseInt(ncampo.getText());
-                        campos.get(index - 1).setNameField(t);
-                    }
-                });
-
-                nuevoCampo.setPreferredSize(new Dimension(20, 10));
-
-                JPanel jp = new JPanel();
-                jp.setLayout(new BoxLayout(jp, BoxLayout.Y_AXIS));
-                jp.setPreferredSize(new Dimension(40, 40));
-                jp.add(ncampo);
-                jp.add(nuevoCampo);
-
-                PanelNuevosCampos.add(jp);
-                PanelNuevosCampos.revalidate();
-                PanelNuevosCampos.repaint();
-            }
-        }
-    }
     public void AddBotones(JToolBar barraHerrm){
 
         bZoomIN = new JButton("+");
@@ -269,7 +190,6 @@ public class VentanaEditorFrame extends JFrame {    //ventanaPrincipal
                 }
             }
         });
-
         bNext.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -285,5 +205,85 @@ public class VentanaEditorFrame extends JFrame {    //ventanaPrincipal
                 }
             }
         });
+    }
+
+    private class PDFViewHandler implements ViewPDFListeners {   //manejadorLienzo
+
+        @Override
+        public void FieldSelected(PDFEvent evt) {
+            ViewPDFPanel view = pdf_if.getPanelpdf();
+
+            if(evt.getFieldSelected() != null){
+                view.updateFieldSelected(evt.getFieldSelected());
+                view.setFieldSelected(evt.getFieldSelected());
+            }
+        }
+        public void FieldAdded(PDFEvent evt){
+            addNuevoCampo(evt.getFieldSelected()
+            );
+        }
+
+        @Override
+        public void FieldDeleted(PDFEvent e) {
+            int indice = e.getIndex();
+            campos.remove(indice);
+
+            ReordenarEtiquetas(indice);
+            for (int i= 0; i< PanelNuevosCampos.getComponentCount();i++){
+                if (i == indice)
+                    PanelNuevosCampos.remove(i);
+            }
+                PanelNuevosCampos.revalidate();
+                PanelNuevosCampos.repaint();
+
+            ViewPDFPanel view = pdf_if.getPanelpdf();
+            view.paint(fondoAux.getGraphics());
+        }
+
+        private void ReordenarEtiquetas(int indice) {
+            for (int i= indice; i< PanelNuevosCampos.getComponentCount();i++){
+                ((JLabel)((JPanel) PanelNuevosCampos.getComponent(i)).getComponent(0)).setText(String.valueOf(i));
+            }
+        }
+        public void addNuevoCampo(FieldRectangle f){
+
+            CampoF nuevoF = new CampoF("",
+                    nombrepdf,
+                    currentpnumber,
+                    (int) f.getRectangulo().getX(),
+                    (int) f.getRectangulo().getY(),
+                    (int) f.getRectangulo().getHeight(),
+                    (int) f.getRectangulo().getWidth(),
+                    campos.size());
+
+            if ((nuevoF.getWidth() > 10) && (nuevoF.getHeight() > 10)) {
+                campos.add(nuevoF);
+
+                JLabel ncampo = new JLabel(String.valueOf(campos.size()));
+
+                JTextField nuevoCampo = new JTextField("escribe el nombre del campo...");
+                nuevoCampo.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        String t = nuevoCampo.getText();
+                        int index = Integer.parseInt(ncampo.getText());
+                        campos.get(index - 1).setNameField(t);
+                    }
+                });
+
+                nuevoCampo.setPreferredSize(new Dimension(20, 10));
+
+                JPanel jp = new JPanel();
+                jp.setLayout(new BoxLayout(jp, BoxLayout.Y_AXIS));
+                jp.setPreferredSize(new Dimension(40, 40));
+                jp.add(ncampo);
+                jp.add(nuevoCampo);
+
+                PanelNuevosCampos.add(jp);
+                PanelNuevosCampos.revalidate();
+                PanelNuevosCampos.repaint();
+            }
+        }
+
     }
 }
