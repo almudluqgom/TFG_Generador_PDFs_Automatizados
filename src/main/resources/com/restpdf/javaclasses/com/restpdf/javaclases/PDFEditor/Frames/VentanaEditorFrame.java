@@ -106,6 +106,8 @@ public class VentanaEditorFrame extends JFrame {    //ventanaPrincipal
                         throw new RuntimeException(ex);
                     }
                 }
+                //acabar
+
             }
         });
         panelHerramientasSuperior.add(BotonGuardarCampos, BorderLayout.WEST);
@@ -243,8 +245,6 @@ public class VentanaEditorFrame extends JFrame {    //ventanaPrincipal
 
             if(evt.getFieldSelected() != null){
                 view.updateFieldSelected(evt.getFieldSelected(),false);
-                //view.setFieldSelected(evt.getFieldSelected());
-                //view.EnableDeleteListener(evt.getFieldSelected());
             }
         }
         public void FieldAdded(PDFEvent evt){
@@ -254,7 +254,6 @@ public class VentanaEditorFrame extends JFrame {    //ventanaPrincipal
         @Override
         public void FieldDeleted(PDFEvent e) {
             int indice = e.getIndex();
-            campos.remove(indice);
 
             ReordenarEtiquetas(indice);
             for (int i= 0; i< PanelNuevosCampos.getComponentCount();i++){
@@ -263,6 +262,7 @@ public class VentanaEditorFrame extends JFrame {    //ventanaPrincipal
             }
                 PanelNuevosCampos.revalidate();
                 PanelNuevosCampos.repaint();
+                campos.remove(indice);
 
             pdf_if.getPanelpdf().deletefield(indice);
             pdf_if.setClearBackground();
@@ -271,6 +271,7 @@ public class VentanaEditorFrame extends JFrame {    //ventanaPrincipal
         private void ReordenarEtiquetas(int indice) {
             for (int i= indice; i< PanelNuevosCampos.getComponentCount();i++){
                 ((JRadioButton)((JPanel) PanelNuevosCampos.getComponent(i)).getComponent(0)).setText(String.valueOf(i));
+                ((JButton)((JPanel) PanelNuevosCampos.getComponent(i)).getComponent(1)).setText("Borrar Campo " + String.valueOf(i));
             }
         }
         public void addNuevoCampo(FieldRectangle f, ButtonGroup buttonGroup1){
@@ -287,14 +288,38 @@ public class VentanaEditorFrame extends JFrame {    //ventanaPrincipal
             if ((nuevoF.getWidth() > 10) && (nuevoF.getHeight() > 10)) {
                 campos.add(nuevoF);
 
-                //JLabel ncampo = new JLabel(String.valueOf(campos.size()));
-                final JRadioButton bu = new JRadioButton(String.valueOf(campos.size()));
+                JRadioButton bu = new JRadioButton(String.valueOf(campos.size()));
                 bu.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
                         pdf_if.getPanelpdf().SelectField(Integer.parseInt(bu.getText()));
                     }
                 });
+                //---------------------
+                //JLabel ncampo = new JLabel(String.valueOf(campos.size()));
+                JButton botond = new JButton("Borrar Campo " + String.valueOf(campos.size()));
+                botond.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                       // pdf_if.getPanelpdf().deletefield(Integer.parseInt(bu.getText())-1);
+                       // pdf_if.getPanelpdf().deletefield(Integer.parseInt(ncampo.getText())-1);
+                        int indice = Integer.parseInt(bu.getText())-1;
+
+                        campos.remove(indice);
+
+                        ReordenarEtiquetas(indice);
+                        for (int i= 0; i< PanelNuevosCampos.getComponentCount();i++){
+                            if (i == indice)
+                                PanelNuevosCampos.remove(i);
+                        }
+                        PanelNuevosCampos.revalidate();
+                        PanelNuevosCampos.repaint();
+
+                        pdf_if.getPanelpdf().deletefield(indice);
+                        pdf_if.setClearBackground();
+                    }
+                });
+                //-----------------
                 JTextField nuevoCampo = new JTextField("escribe el nombre del campo...");
                 nuevoCampo.addActionListener(new ActionListener() {
                     @Override
@@ -310,10 +335,10 @@ public class VentanaEditorFrame extends JFrame {    //ventanaPrincipal
                 JPanel jp = new JPanel();
                 jp.setLayout(new BoxLayout(jp, BoxLayout.Y_AXIS));
                 jp.setPreferredSize(new Dimension(40, 40));
-                //jp.add(ncampo);
                 jp.add(bu);
                 buttonGroup1.add(bu);
-
+                //jp.add(ncampo);
+                jp.add(botond);
                 jp.add(nuevoCampo);
 
                 PanelNuevosCampos.add(jp);

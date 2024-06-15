@@ -226,7 +226,17 @@ public class ViewPDFPanel extends JPanel {   //Lienzo2D
         notifyRemoved(pdfed);
     }
     public void deletefield(int index){
+//        RecABorrar = vRect.get(index);
+//        PDFEvent pdfed = new PDFEvent(this);
+//
+//        pdfed.setpInicio(RecABorrar.getpAux()); //punto de Inicio del recuadro
+//        pdfed.setFieldSelected(RecABorrar);
+//        pdfed.setIndex(vRect.indexOf(RecABorrar));
+//        notifyRemoved(pdfed);
+
         vRect.remove(index);
+
+
     }
     public void setEditMode(boolean b){
 //        cancreatenewfields = b;
