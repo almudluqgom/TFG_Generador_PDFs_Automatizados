@@ -10,8 +10,11 @@ import com.restpdf.javaclases.bdclases.BDForms;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import java.awt.*;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
+import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -20,6 +23,7 @@ import java.util.List;
 
 
 public class PDFInternalFrame extends JInternalFrame { //VentanaInternaSM || VentanaInternaImagen
+    static Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
     JScrollPane bd;
     ViewPDFPanel Panelpdf;    //Lienzo2D
     String namepdf, namenewpdf;
@@ -42,6 +46,7 @@ public class PDFInternalFrame extends JInternalFrame { //VentanaInternaSM || Ven
     private void initComponentes() {
 
         bd = new JScrollPane();
+        bd.setPreferredSize(new Dimension((int)(screenSize.getWidth() * 0.88), (int) (screenSize.getHeight() * 0.90)));
         bd.getVerticalScrollBar().setUnitIncrement(16);
 
         //initalization
@@ -51,18 +56,28 @@ public class PDFInternalFrame extends JInternalFrame { //VentanaInternaSM || Ven
                         //PageComponent page = new PageComponent("C:\\\\Users\\\\Almuchuela\\\\Downloads\\\\pagina4.jpeg");
 
         fondoLienzo =page.getBi();
-        picLabel = new JLabel(new ImageIcon(page.getBi()));
-        Panelpdf=new ViewPDFPanel(page.getBi());
 
+        float w = (float) (screenSize.getWidth() * 0.88)/fondoLienzo.getWidth();
+        //float h = (float) (screenSize.getHeight() * 0.90) /fondoLienzo.getHeight();
+
+        AffineTransform at = AffineTransform.getScaleInstance(w, w);
+        AffineTransformOp atop = new AffineTransformOp(at, AffineTransformOp.TYPE_BILINEAR);
+        BufferedImage imgdest = atop.filter(fondoLienzo, null);
+
+        picLabel = new JLabel(new ImageIcon(imgdest));
+
+        Panelpdf= new ViewPDFPanel(imgdest);
+        Panelpdf.setSize((picLabel.getWidth()),(picLabel.getHeight()));
         Panelpdf.add(picLabel);
+
+        bd.setSize(picLabel.getWidth(),picLabel.getHeight());
         bd.setViewportView(Panelpdf);
 
         setClosable(false);
-        setResizable(false);
+        setResizable(true);
         setIconifiable(false);
         setMaximizable(true);
 
-        setForeground(Color.WHITE);
         getContentPane().add(bd);
     }
     public ViewPDFPanel getPanelpdf() {
@@ -71,7 +86,6 @@ public class PDFInternalFrame extends JInternalFrame { //VentanaInternaSM || Ven
     public BufferedImage getImagen(boolean b) {
         return this.getPanelpdf().getImagenFondoFormulario(b);
     }
-
 
     public void setImagen(BufferedImage imgaux) {
         this.getPanelpdf().setImagenFondoFormulario(imgaux);

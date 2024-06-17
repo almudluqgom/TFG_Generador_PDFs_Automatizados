@@ -108,6 +108,9 @@ public class EditarPDFFrame extends JFrame {
             StringEncoder e = new StringEncoder();
 
             for (String pdf : listaPDFsDisp) {
+                if(listaPDFsDisp.indexOf(pdf) == 0){
+                    pdf = pdf.replace(" ","");
+                }
                 pdf = e.desencripta(pdf);
                 final JRadioButton button1 = new JRadioButton(pdf);
                 panelOp.add(button1);

@@ -12,6 +12,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.*;
 import java.awt.image.*;
+import java.beans.PropertyVetoException;
 import java.sql.SQLException;
 import java.util.*;
 import java.util.List;
@@ -49,17 +50,24 @@ public class VentanaEditorFrame extends JFrame {    //ventanaPrincipal
 
         zonaEscritorio.add(pdf_if);
 
-        pdf_if.setSize(new Dimension((int) (screenSize.getWidth() * 0.85), (int) (screenSize.getHeight() * 0.85)));
+        //pdf_if.setSize(new Dimension((int) (screenSize.getWidth() * 0.88), (int) (screenSize.getHeight() * 0.91)));
         pdf_if.setClosable(false);
         pdf_if.setResizable(false);
         pdf_if.setIconifiable(false);
         pdf_if.setVisible(true);
+        try {
+            pdf_if.setMaximum(true);
+        } catch (PropertyVetoException e) {
+            throw new RuntimeException(e);
+        }
 
         fondoAux = pdf_if.getImagen(false);
+        pdf_if.setPreferredSize(new Dimension(fondoAux.getWidth(), fondoAux.getHeight()));
+        zonaEscritorio.setPreferredSize(new Dimension(fondoAux.getWidth(), fondoAux.getHeight()));
 
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setSize(screenSize);
-       // pack();
+        this.setExtendedState(this.getExtendedState() | JFrame.MAXIMIZED_BOTH);
     }
     private void initSwingComponents() {
 
@@ -67,8 +75,7 @@ public class VentanaEditorFrame extends JFrame {    //ventanaPrincipal
         PanelCentro.setLayout(new BorderLayout());
 
         zonaEscritorio = new JDesktopPane();
-        zonaEscritorio.setBackground(Color.BLACK);
-        zonaEscritorio.setPreferredSize(new Dimension((int) (screenSize.getWidth() * 0.8), (int) (screenSize.getHeight() * 0.8)));
+        zonaEscritorio.setBackground(Color.DARK_GRAY);
 
         PanelCentro.add(zonaEscritorio,BorderLayout.CENTER);
 
@@ -113,7 +120,7 @@ public class VentanaEditorFrame extends JFrame {    //ventanaPrincipal
         panelHerramientasSuperior.add(BotonGuardarCampos, BorderLayout.WEST);
    ////--------------------------------------------------------------------------
         this.getContentPane().add(panelHerramientasSuperior,BorderLayout.PAGE_START);
-        pack();
+        //pack();
     }
 
     private void aplicarZoom(AffineTransform at) {      //NO FUNCIONA, OLE

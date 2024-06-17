@@ -36,6 +36,10 @@ public class ViewPDFPanel extends JPanel {   //Lienzo2D
         ClipWindow = new Ellipse2D.Double(0, 0, 100, 100);
         initComponentes();
         ImagenFondoFormulario = bi;
+
+        this.setBorder(BorderFactory.createLineBorder(Color.blue));
+        this.setLayout(new BorderLayout(1, 1));
+        this.setPreferredSize(new Dimension(bi.getWidth(), bi.getHeight()));
     }
 
     public BufferedImage getImagenFondoFormulario(boolean drawVector) {
@@ -82,7 +86,7 @@ public class ViewPDFPanel extends JPanel {   //Lienzo2D
     private void initComponentes() {
         this.setLayout(new BorderLayout());
         this.setOpaque(false);
-        this.setBackground(new Color(255, 255, 255, 0));
+        //this.setBackground(new Color(255, 255, 255, 0));
 
         addMouseMotionListener(new MouseMotionAdapter() {
             public void mouseDragged(MouseEvent evt) {
@@ -135,6 +139,7 @@ public class ViewPDFPanel extends JPanel {   //Lienzo2D
         this.setFocusable(true);
         this.requestFocus();
         this.addKeyListener(listener);
+        this.setLocation(this.getWidth()/2, this.getHeight()/2    );
     }
 
     public void actDragged(MouseEvent evt) {
