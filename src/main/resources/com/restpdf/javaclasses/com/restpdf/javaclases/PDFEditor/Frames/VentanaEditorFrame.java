@@ -17,7 +17,7 @@ import java.sql.SQLException;
 import java.util.*;
 import java.util.List;
 
-public class VentanaEditorFrame extends JFrame {    //ventanaPrincipal
+public class VentanaEditorFrame extends JFrame {
     static Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
     JPanel PanelNuevosCampos, PanelCentro, panelHerramientasSuperior ;
     JButton BotonGuardarCampos, bZoomIN, bZoomOUT, bPrev, bNext;
@@ -50,7 +50,7 @@ public class VentanaEditorFrame extends JFrame {    //ventanaPrincipal
 
         zonaEscritorio.add(pdf_if);
 
-        //pdf_if.setSize(new Dimension((int) (screenSize.getWidth() * 0.88), (int) (screenSize.getHeight() * 0.91)));
+        pdf_if.setSize(new Dimension((int) (screenSize.getWidth() * 0.88), (int) (screenSize.getHeight() * 0.91)));
         pdf_if.setClosable(false);
         pdf_if.setResizable(false);
         pdf_if.setIconifiable(false);
@@ -62,8 +62,12 @@ public class VentanaEditorFrame extends JFrame {    //ventanaPrincipal
         }
 
         fondoAux = pdf_if.getImagen(false);
-        pdf_if.setPreferredSize(new Dimension(fondoAux.getWidth(), fondoAux.getHeight()));
-        zonaEscritorio.setPreferredSize(new Dimension(fondoAux.getWidth(), fondoAux.getHeight()));
+        double dif1 = fondoAux.getWidth() * fondoAux.getHeight();
+        double dif2 = zonaEscritorio.getWidth() * zonaEscritorio.getHeight();
+
+        if(dif2>=dif1) {            pdf_if.setSize(new Dimension(fondoAux.getWidth(), fondoAux.getHeight()));        }
+
+        zonaEscritorio.setPreferredSize(new Dimension((int) (screenSize.getWidth() * 0.88), (int) (screenSize.getHeight() * 0.91)));
 
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setSize(screenSize);
@@ -123,25 +127,6 @@ public class VentanaEditorFrame extends JFrame {    //ventanaPrincipal
         //pack();
     }
 
-    private void aplicarZoom(AffineTransform at) {      //NO FUNCIONA, OLE
-        PDFInternalFrame pdfif = (PDFInternalFrame) (zonaEscritorio.getSelectedFrame());
-        if (pdfif instanceof PDFInternalFrame) {
-           // switchVolcadoActionPerformed(null);
-            BufferedImage img = pdfif.getImagen(false);
-            if (img != null) {
-                try {
-                    AffineTransformOp atop = new AffineTransformOp(at, AffineTransformOp.TYPE_BILINEAR);
-                    BufferedImage imgdest = atop.filter(img, null);
-                    pdfif.setImagen(imgdest);
-                    ((PDFInternalFrame)pdfif).getPanelpdf().repaint();
-                } catch (IllegalArgumentException e) {
-                    System.err.println("Ha ocurrido un error al aplicar zoom");
-                    JOptionPane.showMessageDialog(new JFrame(), "Error al aplicar zoom ", "Error", JOptionPane.ERROR_MESSAGE);
-                }
-            }
-        }
-    }
-
     public void AddBotones(JToolBar barraHerrm){
 
         bZoomIN = new JButton("+");
@@ -149,8 +134,22 @@ public class VentanaEditorFrame extends JFrame {    //ventanaPrincipal
         bZoomIN.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                AffineTransform at = AffineTransform.getScaleInstance(1.25, 1.25);
-                aplicarZoom(at);
+                AffineTransform at = AffineTransform.getScaleInstance(1.15, 1.15);
+                pdf_if.zoomPage( campos,fondoAux,currentpnumber,at);
+                pdf_if.getPanelpdf().addEventListener(PDFVHandler);
+                fondoAux = pdf_if.getPanelpdf().getImagenFondoFormulario(false);
+
+                Dimension oldd = new Dimension(pdf_if.getWidth(), pdf_if.getHeight());
+
+                if((pdf_if.getWidth() <= fondoAux.getWidth()) &&
+                   (pdf_if.getWidth() < (screenSize.getWidth()* 0.88)) &&
+                   (fondoAux.getWidth() < (screenSize.getWidth()* 0.88))){
+                        pdf_if.setSize(new Dimension(fondoAux.getWidth(),(int) (screenSize.getHeight() * 0.88)));
+                } else if (fondoAux.getWidth() >= (screenSize.getWidth()* 0.88)) {
+                    pdf_if.setSize(new Dimension((int) (screenSize.getWidth() * 0.88), (int) (screenSize.getHeight() * 0.88)));
+                } else{
+                    pdf_if.setSize(oldd);
+                }
             }
         });
         barraHerrm.add(bZoomIN);
@@ -160,8 +159,18 @@ public class VentanaEditorFrame extends JFrame {    //ventanaPrincipal
         bZoomOUT.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                AffineTransform at = AffineTransform.getScaleInstance(0.75, 0.75);
-                aplicarZoom(at);
+                AffineTransform at = AffineTransform.getScaleInstance(0.85, 0.85);
+                pdf_if.zoomPage( campos,fondoAux,currentpnumber,at);
+                pdf_if.getPanelpdf().addEventListener(PDFVHandler);
+
+                fondoAux = pdf_if.getPanelpdf().getImagenFondoFormulario(false);
+                Dimension oldd = new Dimension(pdf_if.getWidth(), pdf_if.getHeight());
+
+                if(pdf_if.getWidth()>=fondoAux.getWidth()) {
+                    pdf_if.setSize(new Dimension(fondoAux.getWidth(), fondoAux.getHeight()));
+                }else{
+                    pdf_if.setSize(oldd);
+                }
             }
         });
         barraHerrm.add(bZoomOUT);
@@ -176,17 +185,17 @@ public class VentanaEditorFrame extends JFrame {    //ventanaPrincipal
         });
         barraHerrm.add(JUndo);
 
-        JButton JReset = new JButton("Debug: resetea");
-        JReset.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                pdf_if.getPanelpdf().setEditMode(true);
-            }
-        });
-        barraHerrm.add(JReset);
+        //RESET BUTTON FOR DEBUGGING PURPOSES. Dont uncomment it unlees needed
+//        JButton JReset = new JButton("Debug: resetea");
+//        JReset.addActionListener(new ActionListener() {
+//            @Override
+//            public void actionPerformed(ActionEvent e) {
+//                pdf_if.getPanelpdf().setEditMode(true);
+//            }
+//        });
+        //barraHerrm.add(JReset);
         pagecounter = new JLabel();
         barraHerrm.add(pagecounter);
-
         bPrev = new JButton("Previous page");
         bNext = new JButton("Next page");
 
@@ -209,6 +218,7 @@ public class VentanaEditorFrame extends JFrame {    //ventanaPrincipal
                 if( currentpnumber -1 > 0) {
                     currentpnumber = currentpnumber - 1;
                     pagecounter.setText("page " + currentpnumber + " of " + pdf_if.pages.size());
+
                     pdf_if.showPage(currentpnumber, campos);
                     pdf_if.getPanelpdf().addEventListener(PDFVHandler);
                 }
@@ -224,6 +234,7 @@ public class VentanaEditorFrame extends JFrame {    //ventanaPrincipal
                 if( currentpnumber + 1 <= pdf_if.pages.size()) {
                     currentpnumber = currentpnumber + 1;
                     pagecounter.setText("page " + currentpnumber + " of " + pdf_if.pages.size());
+
                     pdf_if.showPage(currentpnumber, campos);
                     pdf_if.getPanelpdf().addEventListener(PDFVHandler);
                 }
@@ -302,14 +313,11 @@ public class VentanaEditorFrame extends JFrame {    //ventanaPrincipal
                         pdf_if.getPanelpdf().SelectField(Integer.parseInt(bu.getText()));
                     }
                 });
-                //---------------------
-                //JLabel ncampo = new JLabel(String.valueOf(campos.size()));
+
                 JButton botond = new JButton("Borrar Campo " + String.valueOf(campos.size()));
                 botond.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                       // pdf_if.getPanelpdf().deletefield(Integer.parseInt(bu.getText())-1);
-                       // pdf_if.getPanelpdf().deletefield(Integer.parseInt(ncampo.getText())-1);
                         int indice = Integer.parseInt(bu.getText())-1;
 
                         campos.remove(indice);
@@ -326,7 +334,6 @@ public class VentanaEditorFrame extends JFrame {    //ventanaPrincipal
                         pdf_if.setClearBackground();
                     }
                 });
-                //-----------------
                 JTextField nuevoCampo = new JTextField("escribe el nombre del campo...");
                 nuevoCampo.addActionListener(new ActionListener() {
                     @Override
@@ -344,7 +351,6 @@ public class VentanaEditorFrame extends JFrame {    //ventanaPrincipal
                 jp.setPreferredSize(new Dimension(40, 40));
                 jp.add(bu);
                 buttonGroup1.add(bu);
-                //jp.add(ncampo);
                 jp.add(botond);
                 jp.add(nuevoCampo);
 

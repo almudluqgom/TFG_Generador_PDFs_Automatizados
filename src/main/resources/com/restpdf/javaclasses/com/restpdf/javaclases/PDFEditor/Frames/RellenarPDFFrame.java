@@ -56,9 +56,8 @@ public class RellenarPDFFrame extends JFrame {
         b.addActionListener(new ActionListener() { //confirmación de directorio como almacen. pdf
             @Override
             public void actionPerformed(ActionEvent e) {
-                boolean b=true;
-                VentanaRellenarPDFFrame mainFrame = new VentanaRellenarPDFFrame(selectedpdf,b);
-                if(mainFrame.getCampos().size() != 0){
+                VentanaRellenarPDFFrame mainFrame = new VentanaRellenarPDFFrame(selectedpdf);
+                if(!mainFrame.getCampos().isEmpty()){
                     mainFrame = new VentanaRellenarPDFFrame(selectedpdf);
                     mainFrame.setVisible(true);
                     dispose();

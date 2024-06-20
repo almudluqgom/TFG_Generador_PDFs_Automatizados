@@ -13,7 +13,7 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ViewPDFPanel extends JPanel {   //Lienzo2D
+public class ViewPDFPanel extends JPanel {
 
     private boolean iswindowmode;
     private Ellipse2D.Double ClipWindow;
@@ -22,17 +22,14 @@ public class ViewPDFPanel extends JPanel {   //Lienzo2D
     private FieldRectangle RectAux, RecABorrar;
     ArrayList<ViewPDFListeners> PDFEventListeners = new ArrayList(); //Vector con los listeners asociados a los eventos del lienzo
     List<FieldRectangle> vRect = new ArrayList<>();
-    //boolean isdeletemodeactive, cancreatenewfields;
     BufferedImage ImagenFondoFormulario;
     int selectorcounter;
 
     public ViewPDFPanel(BufferedImage bi) {
 
         iswindowmode = false;
-       // cancreatenewfields = true;
         pAux = null;
         vRect = new ArrayList<>();
-        //isdeletemodeactive = false;
         ClipWindow = new Ellipse2D.Double(0, 0, 100, 100);
         initComponentes();
         ImagenFondoFormulario = bi;
@@ -63,18 +60,6 @@ public class ViewPDFPanel extends JPanel {   //Lienzo2D
       //  isdeletemodeactive = true;
     }
 
-    public List<FieldRectangle> getvRect() {
-        return vRect;
-    }
-
-    public void setvRect(List<FieldRectangle> vRect) {
-        this.vRect = vRect;
-    }
-
-    public void ResetvRect() {
-        vRect = new ArrayList<>();
-    }
-
     private FieldRectangle getSelectedField(Point2D p) {
         for (int i = vRect.size() - 1; i >= 0; i = -1) {
             if (vRect.get(i).contains(p))
@@ -82,12 +67,10 @@ public class ViewPDFPanel extends JPanel {   //Lienzo2D
         }
         return null;
     }
-    @SuppressWarnings("unchecked")
+
     private void initComponentes() {
         this.setLayout(new BorderLayout());
         this.setOpaque(false);
-        //this.setBackground(new Color(255, 255, 255, 0));
-
         addMouseMotionListener(new MouseMotionAdapter() {
             public void mouseDragged(MouseEvent evt) {
                 actDragged(evt);
@@ -168,14 +151,12 @@ public class ViewPDFPanel extends JPanel {   //Lienzo2D
     public void notifyFieldAdded(PDFEvent e) {
         if (!PDFEventListeners.isEmpty()) {
             for (ViewPDFListeners listener : PDFEventListeners)
-            //    if (cancreatenewfields)
                     listener.FieldAdded(e);
         }
     }
     public void notifyRemoved(PDFEvent e) {
         if (!PDFEventListeners.isEmpty()) {
             for (ViewPDFListeners listener : PDFEventListeners)
-            //    if (isdeletemodeactive)
                     listener.FieldDeleted(e);
         }
     }
@@ -206,7 +187,6 @@ public class ViewPDFPanel extends JPanel {   //Lienzo2D
         RecABorrar = fieldSelected;
         int i = vRect.indexOf(RecABorrar);
         pAux = fieldSelected.getpAux();
-        //isdeletemodeactive = true;
     }
 
     public void addRect(Point2D punto, FieldRectangle f) {
@@ -231,22 +211,9 @@ public class ViewPDFPanel extends JPanel {   //Lienzo2D
         notifyRemoved(pdfed);
     }
     public void deletefield(int index){
-//        RecABorrar = vRect.get(index);
-//        PDFEvent pdfed = new PDFEvent(this);
-//
-//        pdfed.setpInicio(RecABorrar.getpAux()); //punto de Inicio del recuadro
-//        pdfed.setFieldSelected(RecABorrar);
-//        pdfed.setIndex(vRect.indexOf(RecABorrar));
-//        notifyRemoved(pdfed);
-
         vRect.remove(index);
-
-
     }
-    public void setEditMode(boolean b){
-//        cancreatenewfields = b;
-//        isdeletemodeactive = false;
-    }
+
     public void SelectField(int i){
         System.out.println(selectorcounter);
         PDFEvent pdfe = new PDFEvent(this);
@@ -298,7 +265,6 @@ public class ViewPDFPanel extends JPanel {   //Lienzo2D
 
                 case KeyEvent.VK_D: //debug mode
 
-                    System.out.println(selectorcounter);
                     selectorcounter = selectorcounter + 1;
                     pAux = vRect.get(1).getpAux();
                     RectAux = vRect.get(1);
@@ -310,15 +276,10 @@ public class ViewPDFPanel extends JPanel {   //Lienzo2D
 
         break;
         case KeyEvent.VK_E: //+1 a la figura
-                    //System.out.println(selectorcounter);
+
                     if(selectorcounter< vRect.size()-1) {
                         PDFEvent pdfeq = new PDFEvent(this);
 
-                        //primero despintamos el seleccionado
-//                        pdfeq.setFieldSelected(vRect.get(selectorcounter));
-//                        notifyFieldUnSelected(pdfeq);
-
-                        //ahora el nuevo
                         selectorcounter = selectorcounter + 1;
                         pAux = vRect.get(selectorcounter).getpAux();
                         RectAux = vRect.get(selectorcounter);
@@ -326,31 +287,20 @@ public class ViewPDFPanel extends JPanel {   //Lienzo2D
                         pdfeq.setpInicio(vRect.get(selectorcounter).getpAux()); //punto de Inicio del recuadro
                         pdfeq.setFieldSelected(vRect.get(selectorcounter));
                         notifyFieldSelected(pdfeq);
-              //          cancreatenewfields = false;
                     }
-
-                    System.out.println(selectorcounter);
         break;
         case KeyEvent.VK_Q: //-1 a la figura
                     if(selectorcounter>0) {
-                        //primero despintamos el seleccionado
                         PDFEvent pdfee = new PDFEvent(this);
-//                        pdfee.setFieldSelected(vRect.get(selectorcounter));
-//                        notifyFieldUnSelected(pdfee);
 
-                        //ahora el nuevo
                         selectorcounter = selectorcounter - 1;
                         pAux = vRect.get(selectorcounter).getpAux();
                         RectAux = vRect.get(selectorcounter);
 
-
-                        pdfee.setpInicio(vRect.get(selectorcounter).getpAux()); //punto de Inicio del recuadro
+                        pdfee.setpInicio(vRect.get(selectorcounter).getpAux());
                         pdfee.setFieldSelected(vRect.get(selectorcounter));
                         notifyFieldSelected(pdfee);
-               //         cancreatenewfields = false;
                     }
-
-                    System.out.println(selectorcounter);
         break;
             }
         }

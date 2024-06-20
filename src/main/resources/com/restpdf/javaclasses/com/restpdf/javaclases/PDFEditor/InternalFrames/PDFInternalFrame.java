@@ -1,6 +1,5 @@
 package com.restpdf.javaclases.PDFEditor.InternalFrames;
 
-import com.restpdf.javaclases.PDFEditor.Listeners.PDFEvent;
 import com.restpdf.javaclases.bdclases.CampoF;
 import com.spire.pdf.PdfDocument;
 import com.spire.pdf.graphics.PdfImageType;
@@ -10,7 +9,6 @@ import com.restpdf.javaclases.bdclases.BDForms;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
@@ -22,23 +20,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class PDFInternalFrame extends JInternalFrame { //VentanaInternaSM || VentanaInternaImagen
+public class PDFInternalFrame extends JInternalFrame {
     static Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
     JScrollPane bd;
-    ViewPDFPanel Panelpdf;    //Lienzo2D
+    ViewPDFPanel Panelpdf;
     String namepdf, namenewpdf;
     public ArrayList<PageComponent> pages;
     JLabel picLabel;
 
     BufferedImage fondoLienzo;
 
-    private Point2D pAux;   //Punto auxiliar para mantener las coordendas de donde se ha clickado
-
     public PDFInternalFrame(String npdf) {
         super(npdf, true, false, false, false);
         namepdf = npdf;
         namenewpdf =  npdf.replace(".pdf", "_new.pdf");
-        pAux = null;
 
         pages= new ArrayList<>();
         initComponentes();
@@ -48,6 +43,8 @@ public class PDFInternalFrame extends JInternalFrame { //VentanaInternaSM || Ven
         bd = new JScrollPane();
         bd.setPreferredSize(new Dimension((int)(screenSize.getWidth() * 0.88), (int) (screenSize.getHeight() * 0.90)));
         bd.getVerticalScrollBar().setUnitIncrement(16);
+        bd.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+
 
         //initalization
         createPages();
@@ -57,8 +54,7 @@ public class PDFInternalFrame extends JInternalFrame { //VentanaInternaSM || Ven
 
         fondoLienzo =page.getBi();
 
-        float w = (float) (screenSize.getWidth() * 0.88)/fondoLienzo.getWidth();
-        //float h = (float) (screenSize.getHeight() * 0.90) /fondoLienzo.getHeight();
+        float w = (float) (screenSize.getWidth() * 0.85)/fondoLienzo.getWidth();
 
         AffineTransform at = AffineTransform.getScaleInstance(w, w);
         AffineTransformOp atop = new AffineTransformOp(at, AffineTransformOp.TYPE_BILINEAR);
@@ -87,13 +83,13 @@ public class PDFInternalFrame extends JInternalFrame { //VentanaInternaSM || Ven
         return this.getPanelpdf().getImagenFondoFormulario(b);
     }
 
-    public void setImagen(BufferedImage imgaux) {
-        this.getPanelpdf().setImagenFondoFormulario(imgaux);
-        //RESET MODE: QUITA TODO
-//        this.Panelpdf.ResetvRect();
-//        repaint();
-//        System.out.println("reseteado");
-    }
+//    public void setImagen(BufferedImage imgaux) {
+//        this.getPanelpdf().setImagenFondoFormulario(imgaux);
+//        //RESET MODE: QUITA TODO
+////        this.Panelpdf.ResetvRect();
+////        repaint();
+////        System.out.println("reseteado");
+//    }
     public void setClearBackground() {
         this.getPanelpdf().setImagenFondoFormulario(fondoLienzo);
         repaint();
@@ -144,4 +140,37 @@ public class PDFInternalFrame extends JInternalFrame { //VentanaInternaSM || Ven
         bd.setViewportView(Panelpdf);
 
     }
+    public void zoomPage ( List<CampoF> campos, BufferedImage img, int p, AffineTransform at){
+
+        AffineTransformOp atop = new AffineTransformOp(at, AffineTransformOp.TYPE_BILINEAR);
+        BufferedImage page =img;
+        BufferedImage imgdest = atop.filter(page, null);
+        picLabel = new JLabel(new ImageIcon(imgdest));
+        Panelpdf=new ViewPDFPanel(imgdest);
+
+        for (CampoF c : campos){
+            if (c.getPage() == p){
+
+                int posx = (int) (c.getPosX()*at.getScaleX());
+                int posy = (int) (c.getPosY()*at.getScaleY());
+                int nh = (int) (c.getHeight()*at.getScaleX());
+                int nw = (int) (c.getWidth()*at.getScaleY());
+
+               Point2D punto =  new Point2D.Double(posx,posy);
+
+                Rectangle r = new Rectangle((int) punto.getX(), (int) punto.getY(),nw,nh);
+
+                FieldRectangle f = new FieldRectangle(r);
+                Panelpdf.addRect(punto,f);
+                c.setPosX(posx);
+                c.setPosY(posy);
+                c.setHeight(nh);
+                c.setWidth(nw);
+            }
+        }
+        Panelpdf.add(picLabel);
+        Panelpdf.setImagenFondoFormulario(imgdest);
+        bd.setViewportView(Panelpdf);
+    }
+
 }

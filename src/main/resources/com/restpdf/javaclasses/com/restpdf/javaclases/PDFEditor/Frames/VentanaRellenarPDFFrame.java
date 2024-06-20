@@ -16,6 +16,7 @@ import java.awt.event.WindowEvent;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
+import java.beans.PropertyVetoException;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.URL;
@@ -39,56 +40,47 @@ public class VentanaRellenarPDFFrame extends JFrame {
     int currentpnumber;
     ArrayList<CampoF> campos;
 
-    public VentanaRellenarPDFFrame(String pdfname,boolean b){
-        nombrepdf = pdfname;
-        campos = new ArrayList<>();
-
-        inicializarListaCampos();
-    }
-
     public VentanaRellenarPDFFrame(String pdfname) {
         nombrepdf = pdfname;
+        initSwingComponents();
+
+        pdf_if = new PDFillInternalFrame(nombrepdf);
+        AddBotones(bHerram);
+
         campos = new ArrayList<>();
-
         inicializarListaCampos();
-        if (!campos.isEmpty()) {
-            initSwingComponents();
-            pdf_if = new PDFillInternalFrame(nombrepdf);
 
-            for(CampoF c : campos){
-                dibujaCampoenLienzo(c);
-            }
-            zonaEscritorio.add(pdf_if);
-
-
-            pagecounter.setText("page 1 of " + pdf_if.pages.size());
-            currentpnumber = 1;
-
-            pdf_if.setSize(new Dimension((int) (screenSize.getWidth() * 0.85), (int) (screenSize.getHeight() * 0.85)));
-            pdf_if.setClosable(false);
-            pdf_if.setResizable(false);
-            pdf_if.setIconifiable(false);
-            pdf_if.setVisible(true);
-
-            this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            this.setSize(screenSize);
-
-            addWindowListener(new WindowAdapter() {
-                @Override
-                public void windowClosing(WindowEvent e) {
-                    System.out.println("Closed");
-                    RellenarPDFFrame mainFrame = null;
-                    try {
-                        mainFrame = new RellenarPDFFrame();
-                    } catch (SQLException | ClassNotFoundException ex) {
-                        throw new RuntimeException(ex);
-                    }
-                    mainFrame.setVisible(true);
-                    dispose();
-                }
-            });
+        for (CampoF c : campos) {
+            dibujaCampoenLienzo(c);
         }
 
+        pagecounter.setText("page 1 of " + pdf_if.pages.size());
+        currentpnumber = 1;
+
+        zonaEscritorio.add(pdf_if);
+
+        pdf_if.setSize(new Dimension((int) (screenSize.getWidth() * 0.88), (int) (screenSize.getHeight() * 0.91)));
+        pdf_if.setClosable(false);
+        pdf_if.setResizable(false);
+        pdf_if.setIconifiable(false);
+        pdf_if.setVisible(true);
+        try {
+            pdf_if.setMaximum(true);
+        } catch (PropertyVetoException e) {
+            throw new RuntimeException(e);
+        }
+
+        fondoAux = pdf_if.getImagen(false);
+        double dif1 = fondoAux.getWidth() * fondoAux.getHeight();
+        double dif2 = zonaEscritorio.getWidth() * zonaEscritorio.getHeight();
+
+        if (dif2 >= dif1) {            pdf_if.setSize(new Dimension(fondoAux.getWidth(), fondoAux.getHeight()));        }
+
+        zonaEscritorio.setPreferredSize(new Dimension((int) (screenSize.getWidth() * 0.88), (int) (screenSize.getHeight() * 0.91)));
+
+        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.setSize(screenSize);
+        this.setExtendedState(this.getExtendedState() | JFrame.MAXIMIZED_BOTH);
     }
 
     private void initSwingComponents() {
@@ -98,15 +90,14 @@ public class VentanaRellenarPDFFrame extends JFrame {
 
         zonaEscritorio = new JDesktopPane();
         zonaEscritorio.setBackground(Color.BLACK);
-        zonaEscritorio.setPreferredSize(new Dimension((int) (screenSize.getWidth() * 0.8), (int) (screenSize.getHeight() * 0.8)));
 
         PanelCentro.add(zonaEscritorio, BorderLayout.CENTER);
 ////--------------------------------------------------------------------------
-
         PanelCampos = new JPanel();
         PanelCampos.setLayout(new BoxLayout(PanelCampos, BoxLayout.Y_AXIS));
-        Dimension pdim = new Dimension((int) (screenSize.getWidth() / 8), (int) screenSize.getHeight());
+        Dimension pdim = new Dimension((int) (screenSize.getWidth()/8), (int) screenSize.getHeight());
         PanelCampos.setPreferredSize(pdim);
+
         JScrollPane jsp = new JScrollPane(PanelCampos);
         jsp.getVerticalScrollBar().setUnitIncrement(16);
 
@@ -118,55 +109,8 @@ public class VentanaRellenarPDFFrame extends JFrame {
         panelHerramientasSuperior.setLayout(new BorderLayout());
         bHerram = new JToolBar();
 
-        bZoomIN = new JButton("+");
-        bZoomIN.setFocusable(false);
-        bZoomIN.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                AffineTransform at = AffineTransform.getScaleInstance(1.25, 1.25);
-                //aplicarZoom(at);
-            }
-        });
-        bHerram.add(bZoomIN);
-
-        bZoomOUT = new JButton("-");
-        bZoomOUT.setFocusable(false);
-        bZoomOUT.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                AffineTransform at = AffineTransform.getScaleInstance(0.75, 0.75);
-                // aplicarZoom(at);
-            }
-        });
-        bHerram.add(bZoomOUT);
-
-        pagecounter = new JLabel();
-        bHerram.add(pagecounter);
-
-        bPrev = new JButton("next page");
-        bPrev.setFocusable(false);
-        bPrev.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                currentpnumber = currentpnumber + 1;
-                pagecounter.setText("page " + currentpnumber + " of " + pdf_if.pages.size());
-            }
-        });
-        bHerram.add(bPrev);
-
-        bNext = new JButton("previous page");
-        bNext.setFocusable(false);
-        bNext.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (currentpnumber - 1 > 0) {
-                    currentpnumber = currentpnumber - 1;
-                    pagecounter.setText("page " + currentpnumber + " of " + pdf_if.pages.size());
-                }
-            }
-        });
-        bHerram.add(bNext);
         panelHerramientasSuperior.add(bHerram, BorderLayout.EAST);
+
 
         BotonGuardarCampos = new JButton();
         BotonGuardarCampos.setText("Guardar");
@@ -190,9 +134,8 @@ public class VentanaRellenarPDFFrame extends JFrame {
             }
         });
         panelHerramientasSuperior.add(BotonGuardarCampos, BorderLayout.WEST);
-
+        ////--------------------------------------------------------------------------
         this.getContentPane().add(panelHerramientasSuperior, BorderLayout.PAGE_START);
-        this.setSize(java.awt.Toolkit.getDefaultToolkit().getScreenSize());
     }
 
     private void inicializarListaCampos() {
@@ -248,7 +191,6 @@ public class VentanaRellenarPDFFrame extends JFrame {
         jp.add(nuevoCampo);
 
         pdf_if.getPanelpdf().addnewLine(f);
-        //campos.add(c);
 
         PanelCampos.add(jp);
         PanelCampos.revalidate();
@@ -258,8 +200,101 @@ public class VentanaRellenarPDFFrame extends JFrame {
     public ArrayList<CampoF> getCampos() {
         return campos;
     }
+    public void AddBotones(JToolBar barraHerrm){
 
-    public void setCampos(ArrayList<CampoF> campos) {
-        this.campos = campos;
+        bZoomIN = new JButton("+");
+        bZoomIN.setFocusable(false);
+        bZoomIN.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                AffineTransform at = AffineTransform.getScaleInstance(1.15, 1.15);
+                pdf_if.zoomPage( campos,fondoAux,currentpnumber,at);
+                fondoAux = pdf_if.getPanelpdf().getImagenFondoFormulario(false);
+
+                Dimension oldd = new Dimension(pdf_if.getWidth(), pdf_if.getHeight());
+
+                if((pdf_if.getWidth() <= fondoAux.getWidth()) &&
+                        (pdf_if.getWidth() < (screenSize.getWidth()* 0.88)) &&
+                        (fondoAux.getWidth() < (screenSize.getWidth()* 0.88))){
+                    pdf_if.setSize(new Dimension(fondoAux.getWidth(), fondoAux.getHeight()));
+                }else{
+                    pdf_if.setSize(oldd);
+                }
+            }
+        });
+        barraHerrm.add(bZoomIN);
+
+        bZoomOUT = new JButton("-");
+        bZoomOUT.setFocusable(false);
+        bZoomOUT.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                AffineTransform at = AffineTransform.getScaleInstance(0.85, 0.85);
+                pdf_if.zoomPage( campos,fondoAux,currentpnumber,at);
+
+                fondoAux = pdf_if.getPanelpdf().getImagenFondoFormulario(false);
+
+                Dimension oldd = new Dimension(pdf_if.getWidth(), pdf_if.getHeight());
+                double dif1 = fondoAux.getWidth() * fondoAux.getHeight();
+                double dif2 = pdf_if.getWidth() * pdf_if.getHeight();
+
+                if(pdf_if.getWidth()>=fondoAux.getWidth()) {
+                    pdf_if.setSize(new Dimension(fondoAux.getWidth(), fondoAux.getHeight()));
+                }else{
+                    pdf_if.setSize(oldd);
+                }
+            }
+        });
+        barraHerrm.add(bZoomOUT);
+
+        pagecounter = new JLabel();
+        bHerram.add(pagecounter);
+
+        bPrev = new JButton("Previous page");
+        bNext = new JButton("Next page");
+
+        bPrev.setFocusable(false);
+        bNext.setFocusable(false);
+
+        barraHerrm.add(bPrev);
+        barraHerrm.add(bNext);
+
+        if( currentpnumber == 1) {
+            bPrev.setEnabled(false);
+        }
+        if( currentpnumber == pdf_if.pages.size()) {
+            bNext.setEnabled(false);
+        }
+        bPrev.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                if( currentpnumber -1 > 0) {
+                    currentpnumber = currentpnumber - 1;
+                    pagecounter.setText("page " + currentpnumber + " of " + pdf_if.pages.size());
+
+                    pdf_if.showPage(currentpnumber, campos);
+                }
+                if( currentpnumber == 1) {
+                    bNext.setEnabled(true);
+                    bPrev.setEnabled(false);
+                }
+            }
+        });
+        bNext.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if( currentpnumber + 1 <= pdf_if.pages.size()) {
+                    currentpnumber = currentpnumber + 1;
+                    pagecounter.setText("page " + currentpnumber + " of " + pdf_if.pages.size());
+
+                    pdf_if.showPage(currentpnumber, campos);
+                }
+                if( currentpnumber == pdf_if.pages.size()) {
+                    bPrev.setEnabled(true);
+                    bNext.setEnabled(false);
+                }
+            }
+        });
     }
 }
