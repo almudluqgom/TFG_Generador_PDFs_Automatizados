@@ -216,8 +216,10 @@ public class VentanaRellenarPDFFrame extends JFrame {
                 if((pdf_if.getWidth() <= fondoAux.getWidth()) &&
                         (pdf_if.getWidth() < (screenSize.getWidth()* 0.88)) &&
                         (fondoAux.getWidth() < (screenSize.getWidth()* 0.88))){
-                    pdf_if.setSize(new Dimension(fondoAux.getWidth(), fondoAux.getHeight()));
-                }else{
+                    pdf_if.setSize(new Dimension(fondoAux.getWidth(),(int) (screenSize.getHeight() * 0.88)));
+                } else if (fondoAux.getWidth() >= (screenSize.getWidth()* 0.88)) {
+                    pdf_if.setSize(new Dimension((int) (screenSize.getWidth() * 0.88), (int) (screenSize.getHeight() * 0.88)));
+                } else{
                     pdf_if.setSize(oldd);
                 }
             }
@@ -235,8 +237,6 @@ public class VentanaRellenarPDFFrame extends JFrame {
                 fondoAux = pdf_if.getPanelpdf().getImagenFondoFormulario(false);
 
                 Dimension oldd = new Dimension(pdf_if.getWidth(), pdf_if.getHeight());
-                double dif1 = fondoAux.getWidth() * fondoAux.getHeight();
-                double dif2 = pdf_if.getWidth() * pdf_if.getHeight();
 
                 if(pdf_if.getWidth()>=fondoAux.getWidth()) {
                     pdf_if.setSize(new Dimension(fondoAux.getWidth(), fondoAux.getHeight()));
