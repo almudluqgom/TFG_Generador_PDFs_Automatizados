@@ -23,7 +23,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PDFillInternalFrame extends JInternalFrame { //VentanaInternaSM || VentanaInternaImagen
+public class PDFillInternalFrame extends JInternalFrame {
     static Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
     JScrollPane bd;
     FillPanelPDF Panelpdf;    //Lienzo2D
@@ -33,7 +33,7 @@ public class PDFillInternalFrame extends JInternalFrame { //VentanaInternaSM || 
     BufferedImage fondoLienzo;
 
     public PDFillInternalFrame(String npdf) {
-        super(npdf, true, false, false, false);
+        super("Lienzo", true, false, false, false);
         namepdf = npdf;
         namenewpdf =  npdf.replace(".pdf", "_new.pdf");
 
@@ -46,6 +46,7 @@ public class PDFillInternalFrame extends JInternalFrame { //VentanaInternaSM || 
         bd = new JScrollPane();
         bd.setPreferredSize(new Dimension((int)(screenSize.getWidth() * 0.88), (int) (screenSize.getHeight() * 0.90)));
         bd.getVerticalScrollBar().setUnitIncrement(16);
+        bd.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 
         //initalization
         createPages();

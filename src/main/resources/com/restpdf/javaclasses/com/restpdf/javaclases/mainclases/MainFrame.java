@@ -2,6 +2,8 @@ package com.restpdf.javaclases.mainclases;
 
 import com.restpdf.javaclases.PDFEditor.Frames.EditarPDFFrame;
 import com.restpdf.javaclases.PDFEditor.Frames.RellenarPDFFrame;
+import com.restpdf.javaclases.PDFEditor.Tools.BotonPersonalizado;
+import com.restpdf.javaclases.PDFEditor.Tools.ColorStyle;
 import com.restpdf.javaclases.bdclases.BDFrame;
 
 import javax.swing.*;
@@ -9,15 +11,26 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.SQLException;
+//import com.formdev.flatlaf.FlatDarkLaf;
 
 public class MainFrame extends JFrame {
     JPanel mainPanel,
             RBPanel,
             ButtonPanel;
     JRadioButton RBEditarPDF, RBModificaBD, RBFillForm;
-    JButton jb;
+    BotonPersonalizado jb;
 
     public MainFrame() throws SQLException, ClassNotFoundException {
+
+        JFrame.setDefaultLookAndFeelDecorated(true);
+        JDialog.setDefaultLookAndFeelDecorated(true);
+        try {
+            UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
+        } catch (Exception ex) {
+            System.err.println("Failed to initialize LaF");
+        }
+
+        this.setTitle("Edición de PDF: Menú principal");
         initSwingComponents();
 
     }
@@ -27,24 +40,28 @@ public class MainFrame extends JFrame {
         mainPanel.setBorder(BorderFactory.createLineBorder(Color.lightGray));
         //-------------------------------------------------------------------------------------------
         RBPanel = new JPanel();
-        RBPanel.add(new JSeparator(JSeparator.HORIZONTAL), BorderLayout.LINE_START);
+        RBPanel.setLayout(new GridLayout(4, 0));
+
+        JLabel lb = new JLabel("    Por favor, selecciona alguna de las opciones abajo seleccionadas:");
+        RBPanel.add(lb);
+        lb.setBounds(150, 30, 120, 50);
+        //RBPanel.add(new JSeparator(JSeparator.HORIZONTAL), BorderLayout.LINE_START);
 
         RBEditarPDF = new JRadioButton();
         RBModificaBD = new JRadioButton();
         RBFillForm = new JRadioButton();
 
-
         ButtonGroup G1 = new ButtonGroup();
         RBEditarPDF.setText("Añadir campos a un PDF registrado");
-        RBEditarPDF.setBounds(120, 30, 120, 50);
+        //RBEditarPDF.setBounds(120, 30, 120, 30);
         RBFillForm.setText("Rellenar un PDF");
-        RBFillForm.setBounds(120, 30, 120, 50);
+        //RBFillForm.setBounds(120, 30, 120, 30);
         RBModificaBD.setText("Modificar base de datos");
-        RBModificaBD.setBounds(250, 30, 80, 50);
+        //RBModificaBD.setBounds(250, 30, 80, 30);
 
         RBPanel.add(RBEditarPDF);
-        RBPanel.add(RBModificaBD);
         RBPanel.add(RBFillForm);
+        RBPanel.add(RBModificaBD);
 
         G1.add(RBEditarPDF);
         G1.add(RBFillForm);
@@ -55,7 +72,11 @@ public class MainFrame extends JFrame {
         ButtonPanel = new JPanel();
         ButtonPanel.add(new JSeparator(JSeparator.HORIZONTAL), BorderLayout.LINE_START);
 
-        jb = new JButton("Selecciona");
+        jb = new BotonPersonalizado();
+        jb.setText("Aceptar");
+        jb.setStyle(ColorStyle.STYLE1);
+
+        //jb = new JButton("Selecciona");
         jb.setBounds(125, 90, 80, 30);
         jb.addActionListener(new ActionListener() {            // Anonymous class.
 
@@ -99,7 +120,7 @@ public class MainFrame extends JFrame {
     //-------------------------------------------------------------------------------------------
         this.add(mainPanel);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.setSize(400,400);
+        this.setSize(500,300);
 
     }
 

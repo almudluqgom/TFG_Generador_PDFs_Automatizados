@@ -1,5 +1,7 @@
 package com.restpdf.javaclases.PDFEditor.Frames;
 
+import com.restpdf.javaclases.PDFEditor.Tools.BotonPersonalizado;
+import com.restpdf.javaclases.PDFEditor.Tools.ColorStyle;
 import com.restpdf.javaclases.PDFEditor.Tools.StringEncoder;
 import com.restpdf.javaclases.mainclases.MainFrame;
 
@@ -23,6 +25,14 @@ public class RellenarPDFFrame extends JFrame {
     String selectedpdf;
 
     public RellenarPDFFrame() throws SQLException, ClassNotFoundException {
+        JFrame.setDefaultLookAndFeelDecorated(true);
+        JDialog.setDefaultLookAndFeelDecorated(true);
+        try {
+            UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
+        } catch (Exception ex) {
+            System.err.println("Failed to initialize LaF");
+        }
+        this.setTitle("Rellenar datos de un PDF");
         initSwingComponents();
     }
 
@@ -30,27 +40,42 @@ public class RellenarPDFFrame extends JFrame {
 
         mainPanel = new JPanel();
 
-        mainPanel.setLayout(new BorderLayout());
+        mainPanel.setLayout(new GridLayout(3, 0));
         mainPanel.setBorder(BorderFactory.createLineBorder(Color.lightGray));
 
+        JPanel PanelTex = new JPanel();
+        PanelTex.setLayout(null);
+        JLabel lb = new JLabel("   Por favor, selecciona alguna de las opciones abajo seleccionadas:");
+        PanelTex.add(lb);
+        lb.setBounds(20, 20, 400, 20);
 
-        JPanel butP = new JPanel(new GridLayout(2, 0));
-        nombrep = new JLabel("...");
+        nombrep = new JLabel("PDF seleccionado: ...");
+        nombrep.setBounds(20, 70, 400, 20);
+        PanelTex.add(nombrep);
+
+        mainPanel.add(PanelTex);
+        //-------------------------------------------------------------------------------------------
 
         JPanel optionsP = new JPanel();
-        optionsP.setLayout(new GridLayout());
         ButtonGroup buttonGroup1 = new ButtonGroup();
 
         inicializarListaPDFsDisponibles(optionsP, buttonGroup1, nombrep);
-
         JScrollPane jp = new JScrollPane(optionsP);
+        jp.setBorder(null);
+        jp.setPreferredSize(new Dimension(400,450));
         jp.getVerticalScrollBar().setUnitIncrement(16);
 
         mainPanel.add(jp, BorderLayout.NORTH);
+        //-------------------------------------------------------------------------------------------
 
-        JButton b = new JButton("Rellenar PDF");
-        b.setBounds(120, 30, 120, 50);
-        b.setPreferredSize(new Dimension(100, 50));
+        JPanel butP = new JPanel();
+        butP.setLayout(null);
+
+        BotonPersonalizado b = new BotonPersonalizado();
+        b.setText("Procesar PDF");
+        b.setStyle(ColorStyle.STYLE1);
+        b.setBounds(80, 30, 100, 20);
+
         butP.add(b);
 
         b.addActionListener(new ActionListener() { //confirmación de directorio como almacen. pdf
@@ -68,13 +93,11 @@ public class RellenarPDFFrame extends JFrame {
             }
         });
 
-        butP.add(nombrep);
-        butP.setSize(300, 100);
-
-        JButton back = new JButton("Atrás");
+        BotonPersonalizado back = new BotonPersonalizado();
+        back.setText("Volver");
+        back.setStyle(ColorStyle.STYLE3);
+        back.setBounds(190, 30, 80, 20);
         butP.add(back);
-        butP.setBounds(120, 30, 120, 50);
-        butP.setPreferredSize(new Dimension(100, 50));
         back.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -82,21 +105,20 @@ public class RellenarPDFFrame extends JFrame {
 
                 try {
                     mainFrame = new MainFrame();
-                } catch (SQLException ex) {
-                    throw new RuntimeException(ex);
-                } catch (ClassNotFoundException ex) {
+                } catch (SQLException | ClassNotFoundException ex) {
                     throw new RuntimeException(ex);
                 }
                 mainFrame.setVisible(true);
                 dispose();
             }
+
         });
 
-        mainPanel.add(butP, BorderLayout.CENTER);
+        mainPanel.add(butP);
         this.add(mainPanel);
 
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.setSize(300, 600);
+        this.setSize(400,400);
     }
 
     private void inicializarListaPDFsDisponibles(JPanel panelOp, ButtonGroup buttonGroup1, JLabel nombrep) {
@@ -116,6 +138,9 @@ public class RellenarPDFFrame extends JFrame {
             StringEncoder e = new StringEncoder();
 
             for (String pdf : listaPDFsDisp) {
+                if(listaPDFsDisp.indexOf(pdf) == 0){
+                    pdf = pdf.replace(" ","");
+                }
                 pdf = e.desencripta(pdf);
                 final JRadioButton button1 = new JRadioButton(pdf);
                 panelOp.add(button1);
@@ -131,18 +156,19 @@ public class RellenarPDFFrame extends JFrame {
             }
 
             br.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
-
-//        // DEMO VERSION - PARA CUANDO LAS BD NO QUIEREN FUNCAR
+        // DEMO VERSION - PARA CUANDO LAS BD NO QUIEREN FUNCAR
 //        ArrayList<String> listaPDFsDisp = new ArrayList();
 //
 //        listaPDFsDisp.add("C:\\Users\\Almuchuela\\Desktop\\TestSave\\PDFEnblanco.pdf");
 //        listaPDFsDisp.add("C:\\Users\\Almuchuela\\Desktop\\TestSave\\Vinted-S1212467838.pdf");
-//        listaPDFsDisp.add("C:\\Users\\Almuchuela\\Downloads\\factura luz.pdf");
-//        listaPDFsDisp.add("C:\\Users\\Almuchuela\\Downloads\\b8cfcc76-9e9e-468d-aa24-3f4ca3dcce7d.pdf");
-
+//       listaPDFsDisp.add("C:\\Users\\Almuchuela\\Downloads\\factura luz.pdf");
+//
 //        panelOp.setLayout(new GridLayout(listaPDFsDisp.size(), 0));
-        //StringEncoder e = new StringEncoder();
+//        StringEncoder e = new StringEncoder();
 //
 //        for (String pdf : listaPDFsDisp) {
 //            pdf = e.desencripta(pdf);
@@ -158,8 +184,6 @@ public class RellenarPDFFrame extends JFrame {
 //                }
 //            });
 //        }
-    } catch (Exception e) {
-        e.printStackTrace();
-    }}
+   }
 
 }

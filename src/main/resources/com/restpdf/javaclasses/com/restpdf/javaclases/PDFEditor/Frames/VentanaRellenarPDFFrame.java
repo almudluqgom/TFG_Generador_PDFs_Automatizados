@@ -1,9 +1,7 @@
 package com.restpdf.javaclases.PDFEditor.Frames;
 
-import com.restpdf.javaclases.PDFEditor.Tools.PDFCreator;
+import com.restpdf.javaclases.PDFEditor.Tools.*;
 import com.restpdf.javaclases.PDFEditor.InternalFrames.PDFillInternalFrame;
-import com.restpdf.javaclases.PDFEditor.Tools.FieldLine;
-import com.restpdf.javaclases.PDFEditor.Tools.StringEncoder;
 import com.restpdf.javaclases.bdclases.CampoF;
 import com.restpdf.javaclases.mainclases.MainFrame;
 
@@ -30,7 +28,7 @@ import java.util.stream.Collectors;
 public class VentanaRellenarPDFFrame extends JFrame {
     static Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
     JPanel PanelCampos, PanelCentro, panelHerramientasSuperior ;
-    JButton BotonGuardarCampos, bZoomIN, bZoomOUT, bPrev, bNext;
+    BotonPersonalizado BotonGuardarCampos, bZoomIN, bZoomOUT, bPrev, bNext;
     BufferedImage fondoAux;
     JToolBar bHerram;
     private JDesktopPane zonaEscritorio;
@@ -41,6 +39,7 @@ public class VentanaRellenarPDFFrame extends JFrame {
     ArrayList<CampoF> campos;
 
     public VentanaRellenarPDFFrame(String pdfname) {
+        this.setTitle("Rellenando campos: " + pdfname);
         nombrepdf = pdfname;
         initSwingComponents();
 
@@ -109,31 +108,7 @@ public class VentanaRellenarPDFFrame extends JFrame {
         panelHerramientasSuperior.setLayout(new BorderLayout());
         bHerram = new JToolBar();
 
-        panelHerramientasSuperior.add(bHerram, BorderLayout.EAST);
-
-
-        BotonGuardarCampos = new JButton();
-        BotonGuardarCampos.setText("Guardar");
-        BotonGuardarCampos.setBounds(120, 30, 120, 50);
-        BotonGuardarCampos.setPreferredSize(new Dimension(100, 50));
-        BotonGuardarCampos.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                PDFCreator newversion = new PDFCreator(nombrepdf);
-                newversion.addNewTexts(pdf_if.getPanelpdf().getvLines());
-                newversion.fillPDF();
-
-                RellenarPDFFrame mainFrame = null;
-                try {
-                    mainFrame = new RellenarPDFFrame();
-                } catch (SQLException | ClassNotFoundException ex) {
-                    throw new RuntimeException(ex);
-                }
-                JOptionPane.showMessageDialog(null, "Cambios guardados con éxito");
-                mainFrame.setVisible(true);
-                dispose();
-            }
-        });
-        panelHerramientasSuperior.add(BotonGuardarCampos, BorderLayout.WEST);
+        panelHerramientasSuperior.add(bHerram);
         ////--------------------------------------------------------------------------
         this.getContentPane().add(panelHerramientasSuperior, BorderLayout.PAGE_START);
     }
@@ -157,7 +132,6 @@ public class VentanaRellenarPDFFrame extends JFrame {
                 for (String campo : listaCampos) {
                     CampoF nuevoc = e.transformaStringEnCampo(campo);
                     campos.add(nuevoc);
-                    //dibujaCampoenLienzo(nuevoc);
                 }
             }
             br.close();
@@ -172,8 +146,9 @@ public class VentanaRellenarPDFFrame extends JFrame {
 
         FieldLine f = new FieldLine(p1,p2);
 
-        JLabel ncampo = new JLabel(c.getNameField());
-        JTextField nuevoCampo = new JTextField("escribe el valor de "+c.getNameField() +"...");
+        String n =c.getNameField().replace(" ","");
+        JLabel ncampo = new JLabel(n);
+        JTextField nuevoCampo = new JTextField("escribe el valor de "+n +"...");
         nuevoCampo.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -182,12 +157,14 @@ public class VentanaRellenarPDFFrame extends JFrame {
             }
         });
 
-        nuevoCampo.setPreferredSize(new Dimension(20,10));
-
         JPanel jp = new JPanel();
-        jp.setLayout(new BoxLayout(jp, BoxLayout.Y_AXIS));
-        jp.setPreferredSize(new Dimension(40,40));
+        jp.setLayout(null);
+        jp.setPreferredSize(new Dimension(200, 200));
+        jp.setBorder(BorderFactory.createLineBorder(Color.lightGray));
+
+        ncampo.setBounds(10, 10, 180, 50);
         jp.add(ncampo);
+        nuevoCampo.setBounds(10, 60, 180, 150);
         jp.add(nuevoCampo);
 
         pdf_if.getPanelpdf().addnewLine(f);
@@ -202,7 +179,33 @@ public class VentanaRellenarPDFFrame extends JFrame {
     }
     public void AddBotones(JToolBar barraHerrm){
 
-        bZoomIN = new JButton("+");
+        BotonGuardarCampos = new BotonPersonalizado();
+        BotonGuardarCampos.setText("Guardar");
+        BotonGuardarCampos.setStyle(ColorStyle.STYLE1);
+
+        BotonGuardarCampos.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                PDFCreator newversion = new PDFCreator(nombrepdf);
+                newversion.addNewTexts(pdf_if.getPanelpdf().getvLines());
+                newversion.fillPDF();
+
+                RellenarPDFFrame mainFrame = null;
+                try {
+                    mainFrame = new RellenarPDFFrame();
+                } catch (SQLException | ClassNotFoundException ex) {
+                    throw new RuntimeException(ex);
+                }
+                JOptionPane.showMessageDialog(null, "Cambios guardados con éxito");
+                mainFrame.setVisible(true);
+                dispose();
+            }
+        });
+
+
+        bZoomIN = new BotonPersonalizado();
+        bZoomIN.setText("+");
+        bZoomIN.setStyle(ColorStyle.STYLE3);
+
         bZoomIN.setFocusable(false);
         bZoomIN.addActionListener(new ActionListener() {
             @Override
@@ -224,9 +227,10 @@ public class VentanaRellenarPDFFrame extends JFrame {
                 }
             }
         });
-        barraHerrm.add(bZoomIN);
 
-        bZoomOUT = new JButton("-");
+        bZoomOUT = new BotonPersonalizado();
+        bZoomOUT.setText("-");
+        bZoomOUT.setStyle(ColorStyle.STYLE3);
         bZoomOUT.setFocusable(false);
         bZoomOUT.addActionListener(new ActionListener() {
             @Override
@@ -245,19 +249,23 @@ public class VentanaRellenarPDFFrame extends JFrame {
                 }
             }
         });
-        barraHerrm.add(bZoomOUT);
+
 
         pagecounter = new JLabel();
         bHerram.add(pagecounter);
 
-        bPrev = new JButton("Previous page");
-        bNext = new JButton("Next page");
+
+        bPrev = new BotonPersonalizado();
+        bPrev.setText("Página anterior");
+        bPrev.setStyle(ColorStyle.STYLE2);
+
+        bNext = new BotonPersonalizado();
+        bNext.setText("Página siguiente");
+        bNext.setStyle(ColorStyle.STYLE2);
 
         bPrev.setFocusable(false);
         bNext.setFocusable(false);
 
-        barraHerrm.add(bPrev);
-        barraHerrm.add(bNext);
 
         if( currentpnumber == 1) {
             bPrev.setEnabled(false);
@@ -296,5 +304,19 @@ public class VentanaRellenarPDFFrame extends JFrame {
                 }
             }
         });
+        barraHerrm.add(BotonGuardarCampos);
+        barraHerrm.add(Box.createHorizontalStrut(550));
+
+
+        barraHerrm.add(bZoomIN);
+        barraHerrm.add(bZoomOUT);
+        barraHerrm.add(Box.createHorizontalStrut(660));
+
+
+        barraHerrm.add(pagecounter);
+        barraHerrm.add(Box.createHorizontalStrut(10));
+
+        barraHerrm.add(bPrev);
+        barraHerrm.add(bNext);
     }
 }

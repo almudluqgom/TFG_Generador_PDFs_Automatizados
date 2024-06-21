@@ -20,7 +20,7 @@ import java.util.List;
 public class VentanaEditorFrame extends JFrame {
     static Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
     JPanel PanelNuevosCampos, PanelCentro, panelHerramientasSuperior ;
-    JButton BotonGuardarCampos, bZoomIN, bZoomOUT, bPrev, bNext;
+    BotonPersonalizado bZoomIN, bZoomOUT, bPrev, bNext,BotonGuardarCampos;
     BufferedImage fondoAux;
     JToolBar bHerram;
     PDFWindowHandler PDFWHandler;
@@ -33,10 +33,11 @@ public class VentanaEditorFrame extends JFrame {
     ButtonGroup buttonGroup1;
     List<CampoF> campos = new ArrayList<>();
     public VentanaEditorFrame(String pdfname){
+        this.setTitle("Añadiendo campos a " + pdfname);
         nombrepdf = pdfname;
         initSwingComponents();
 
-        PDFWHandler = new PDFWindowHandler();   //mVentanaInterna = new ManejadorVentanaInterna();
+        PDFWHandler = new PDFWindowHandler();
         PDFVHandler = new PDFViewHandler();
 
         pdf_if = new PDFInternalFrame(nombrepdf);
@@ -101,35 +102,45 @@ public class VentanaEditorFrame extends JFrame {
         panelHerramientasSuperior.setLayout(new BorderLayout());
         bHerram = new JToolBar();
 
-        panelHerramientasSuperior.add(bHerram, BorderLayout.EAST);
-
-        BotonGuardarCampos = new JButton();
-        BotonGuardarCampos.setText("Guardar");
-        BotonGuardarCampos.setBounds(120, 30, 120, 50);
-        BotonGuardarCampos.setPreferredSize(new Dimension(100,50));
-        BotonGuardarCampos.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                BDForms bd = new BDForms();
-                for (CampoF f : campos){
-                    try {
-                        bd.setNuevoCampoPDF(f);
-                    } catch (SQLException ex) {
-                        throw new RuntimeException(ex);
-                    }
-                }
-                //acabar
-
-            }
-        });
-        panelHerramientasSuperior.add(BotonGuardarCampos, BorderLayout.WEST);
+        panelHerramientasSuperior.add(bHerram);
    ////--------------------------------------------------------------------------
         this.getContentPane().add(panelHerramientasSuperior,BorderLayout.PAGE_START);
-        //pack();
     }
 
     public void AddBotones(JToolBar barraHerrm){
 
-        bZoomIN = new JButton("+");
+        BotonGuardarCampos = new BotonPersonalizado();
+        BotonGuardarCampos.setText("Guardar");
+        BotonGuardarCampos.setStyle(ColorStyle.STYLE1);
+
+        BotonGuardarCampos.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                BDForms bd = new BDForms();
+
+                for (CampoF f : campos){
+                    try {
+                        bd.setNuevoCampoPDF(f);
+                    } catch (SQLException ex) {
+                        JOptionPane.showMessageDialog(null, "Error en el guardado del campo " + f.getIndexField() + ". Por favor vuelve a intentarlo");
+                        throw new RuntimeException(ex);
+                    }
+                }
+                EditarPDFFrame mainFrame = null;
+                try {
+                    mainFrame = new EditarPDFFrame();
+                } catch (SQLException | ClassNotFoundException ex) {
+                    throw new RuntimeException(ex);
+                }
+                JOptionPane.showMessageDialog(null, "Cambios guardados con éxito");
+                mainFrame.setVisible(true);
+                dispose();
+            }
+        });
+
+        bZoomIN = new BotonPersonalizado();
+        bZoomIN.setText("+");
+        bZoomIN.setStyle(ColorStyle.STYLE3);
+
         bZoomIN.setFocusable(false);
         bZoomIN.addActionListener(new ActionListener() {
             @Override
@@ -152,9 +163,10 @@ public class VentanaEditorFrame extends JFrame {
                 }
             }
         });
-        barraHerrm.add(bZoomIN);
 
-        bZoomOUT = new JButton("-");
+        bZoomOUT = new BotonPersonalizado();
+        bZoomOUT.setText("-");
+        bZoomOUT.setStyle(ColorStyle.STYLE3);
         bZoomOUT.setFocusable(false);
         bZoomOUT.addActionListener(new ActionListener() {
             @Override
@@ -173,8 +185,10 @@ public class VentanaEditorFrame extends JFrame {
                 }
             }
         });
-        barraHerrm.add(bZoomOUT);
-        JButton JUndo = new JButton("Deshacer");
+
+        BotonPersonalizado JUndo = new BotonPersonalizado();
+        JUndo.setText("Deshacer");
+        JUndo.setStyle(ColorStyle.STYLE3);
         JUndo.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -183,7 +197,6 @@ public class VentanaEditorFrame extends JFrame {
                 pdf_if.setClearBackground();
             }
         });
-        barraHerrm.add(JUndo);
 
         //RESET BUTTON FOR DEBUGGING PURPOSES. Dont uncomment it unlees needed
 //        JButton JReset = new JButton("Debug: resetea");
@@ -193,17 +206,18 @@ public class VentanaEditorFrame extends JFrame {
 //                pdf_if.getPanelpdf().setEditMode(true);
 //            }
 //        });
-        //barraHerrm.add(JReset);
         pagecounter = new JLabel();
-        barraHerrm.add(pagecounter);
-        bPrev = new JButton("Previous page");
-        bNext = new JButton("Next page");
+
+        bPrev = new BotonPersonalizado();
+        bPrev.setText("Página anterior");
+        bPrev.setStyle(ColorStyle.STYLE2);
+
+        bNext = new BotonPersonalizado();
+        bNext.setText("Página siguiente");
+        bNext.setStyle(ColorStyle.STYLE2);
 
         bPrev.setFocusable(false);
         bNext.setFocusable(false);
-
-        barraHerrm.add(bPrev);
-        barraHerrm.add(bNext);
 
         if( currentpnumber == 1) {
             bPrev.setEnabled(false);
@@ -245,6 +259,22 @@ public class VentanaEditorFrame extends JFrame {
             }
         });
 
+        barraHerrm.add(BotonGuardarCampos);
+        barraHerrm.add(Box.createHorizontalStrut(500));
+
+        barraHerrm.add(JUndo);
+        barraHerrm.add(Box.createHorizontalStrut(50));
+
+        barraHerrm.add(bZoomIN);
+        barraHerrm.add(bZoomOUT);
+        barraHerrm.add(Box.createHorizontalStrut(600));
+
+
+        barraHerrm.add(pagecounter);
+        barraHerrm.add(Box.createHorizontalStrut(10));
+
+        barraHerrm.add(bPrev);
+        barraHerrm.add(bNext);
     }
     private class PDFViewHandler implements ViewPDFListeners {   //manejadorLienzo
 
@@ -314,7 +344,9 @@ public class VentanaEditorFrame extends JFrame {
                     }
                 });
 
-                JButton botond = new JButton("Borrar Campo " + String.valueOf(campos.size()));
+                BotonPersonalizado botond = new BotonPersonalizado();
+                botond.setText("Borrar Campo " + String.valueOf(campos.size()));
+                botond.setStyle(ColorStyle.STYLE2);
                 botond.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
@@ -344,14 +376,17 @@ public class VentanaEditorFrame extends JFrame {
                     }
                 });
 
-                nuevoCampo.setPreferredSize(new Dimension(20, 10));
-
                 JPanel jp = new JPanel();
-                jp.setLayout(new BoxLayout(jp, BoxLayout.Y_AXIS));
-                jp.setPreferredSize(new Dimension(40, 40));
+                jp.setLayout(null);
+                jp.setPreferredSize(new Dimension(200, 60));
+                jp.setBorder(BorderFactory.createLineBorder(Color.lightGray));
+
+                bu.setBounds(0, 10, 40, 20);
                 jp.add(bu);
                 buttonGroup1.add(bu);
+                botond.setBounds(50, 10, 90, 30);
                 jp.add(botond);
+                nuevoCampo.setBounds(10, 60, 200, 50);
                 jp.add(nuevoCampo);
 
                 PanelNuevosCampos.add(jp);

@@ -31,7 +31,7 @@ public class PDFInternalFrame extends JInternalFrame {
     BufferedImage fondoLienzo;
 
     public PDFInternalFrame(String npdf) {
-        super(npdf, true, false, false, false);
+        super("Lienzo", true, false, false, false);
         namepdf = npdf;
         namenewpdf =  npdf.replace(".pdf", "_new.pdf");
 
@@ -44,7 +44,6 @@ public class PDFInternalFrame extends JInternalFrame {
         bd.setPreferredSize(new Dimension((int)(screenSize.getWidth() * 0.88), (int) (screenSize.getHeight() * 0.90)));
         bd.getVerticalScrollBar().setUnitIncrement(16);
         bd.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-
 
         //initalization
         createPages();
@@ -70,9 +69,9 @@ public class PDFInternalFrame extends JInternalFrame {
         bd.setViewportView(Panelpdf);
 
         setClosable(false);
-        setResizable(true);
+        setResizable(false);
         setIconifiable(false);
-        setMaximizable(true);
+        setMaximizable(false);
 
         getContentPane().add(bd);
     }
