@@ -37,6 +37,7 @@ public class VentanaRellenarPDFFrame extends JFrame {
     PDFillInternalFrame pdf_if;
     int currentpnumber;
     ArrayList<CampoF> campos;
+    float factormultiplic;
 
     public VentanaRellenarPDFFrame(String pdfname) {
         this.setTitle("Rellenando campos: " + pdfname);
@@ -44,6 +45,7 @@ public class VentanaRellenarPDFFrame extends JFrame {
         initSwingComponents();
 
         pdf_if = new PDFillInternalFrame(nombrepdf);
+        factormultiplic= pdf_if.getFactormultiplic();
         AddBotones(bHerram);
 
         campos = new ArrayList<>();
@@ -140,6 +142,15 @@ public class VentanaRellenarPDFFrame extends JFrame {
         }
     }
 
+    public void applyZoom(double mult){
+        for (CampoF c : campos) {
+            c.setWidth((int) (c.getWidth() * mult));
+            c.setHeight((int) (c.getHeight()*mult));
+            c.setPosX((int) (c.getPosX()*mult));
+            c.setPosY((int) (c.getPosY()*mult));
+        }
+    }
+
     public void dibujaCampoenLienzo(CampoF c){
         Point2D p1 = new Point2D.Double(c.getPosX(),c.getPosY());
         Point2D p2 = new Point2D.Double(c.getPosX()+c.getWidth(),c.getPosY());
@@ -212,6 +223,10 @@ public class VentanaRellenarPDFFrame extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 AffineTransform at = AffineTransform.getScaleInstance(1.15, 1.15);
                 pdf_if.zoomPage( campos,fondoAux,currentpnumber,at);
+                factormultiplic= (float) (factormultiplic*0.85);
+                applyZoom(0.85);
+                pdf_if.setFactormultiplic(factormultiplic);
+
                 fondoAux = pdf_if.getPanelpdf().getImagenFondoFormulario(false);
 
                 Dimension oldd = new Dimension(pdf_if.getWidth(), pdf_if.getHeight());
@@ -237,7 +252,9 @@ public class VentanaRellenarPDFFrame extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 AffineTransform at = AffineTransform.getScaleInstance(0.85, 0.85);
                 pdf_if.zoomPage( campos,fondoAux,currentpnumber,at);
-
+                factormultiplic= (float) (factormultiplic*0.85);
+                applyZoom(0.85);
+                pdf_if.setFactormultiplic(factormultiplic);
                 fondoAux = pdf_if.getPanelpdf().getImagenFondoFormulario(false);
 
                 Dimension oldd = new Dimension(pdf_if.getWidth(), pdf_if.getHeight());

@@ -32,6 +32,8 @@ public class PDFillInternalFrame extends JInternalFrame {
     JLabel picLabel;
     BufferedImage fondoLienzo;
 
+    float factormultiplic;
+
     public PDFillInternalFrame(String npdf) {
         super("Lienzo", true, false, false, false);
         namepdf = npdf;
@@ -56,9 +58,9 @@ public class PDFillInternalFrame extends JInternalFrame {
                     //
         fondoLienzo =page.getBi();
 
-        float w = (float) (screenSize.getWidth() * 0.85)/fondoLienzo.getWidth();
+        factormultiplic = (float) (screenSize.getWidth() * 0.85)/fondoLienzo.getWidth();
 
-        AffineTransform at = AffineTransform.getScaleInstance(w, w);
+        AffineTransform at = AffineTransform.getScaleInstance(factormultiplic, factormultiplic);
         AffineTransformOp atop = new AffineTransformOp(at, AffineTransformOp.TYPE_BILINEAR);
         BufferedImage imgdest = atop.filter(fondoLienzo, null);
 
@@ -79,6 +81,15 @@ public class PDFillInternalFrame extends JInternalFrame {
         getContentPane().add(bd);
 
     }
+
+    public float getFactormultiplic() {
+        return factormultiplic;
+    }
+
+    public void setFactormultiplic(float factormultiplic) {
+        this.factormultiplic = factormultiplic;
+    }
+
     public FillPanelPDF getPanelpdf() {
         return Panelpdf;
     }

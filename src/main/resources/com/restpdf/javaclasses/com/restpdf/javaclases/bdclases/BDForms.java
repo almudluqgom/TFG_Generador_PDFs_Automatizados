@@ -56,6 +56,7 @@ public class BDForms {
             data += "&" + URLEncoder.encode("PosicionX", "UTF-8") + "=" + URLEncoder.encode(Integer.toString(newf.getPosX() ), "UTF-8");
             data += "&" + URLEncoder.encode("PosicionY", "UTF-8") + "=" + URLEncoder.encode(Integer.toString(newf.getPosY() ), "UTF-8");
             data += "&" + URLEncoder.encode("Largo", "UTF-8") + "=" + URLEncoder.encode(Integer.toString(newf.getWidth()), "UTF-8");
+          //EN VEZ DE ANCHO ES ALTO. EL HEIGHT.
             data += "&" + URLEncoder.encode("Ancho", "UTF-8") + "=" + URLEncoder.encode(Integer.toString(newf.getHeight()), "UTF-8");
             //System.out.println(data);
             String urlString = "https://tfgbd.000webhostapp.com/AddCampoAlPDF.php" + "?" + data;

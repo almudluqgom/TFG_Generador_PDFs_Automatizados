@@ -27,6 +27,7 @@ public class PDFInternalFrame extends JInternalFrame {
     String namepdf, namenewpdf;
     public ArrayList<PageComponent> pages;
     JLabel picLabel;
+    float factormultiplic;
 
     BufferedImage fondoLienzo;
 
@@ -53,9 +54,9 @@ public class PDFInternalFrame extends JInternalFrame {
 
         fondoLienzo =page.getBi();
 
-        float w = (float) (screenSize.getWidth() * 0.85)/fondoLienzo.getWidth();
+        factormultiplic= (float) (screenSize.getWidth() * 0.85)/fondoLienzo.getWidth();
 
-        AffineTransform at = AffineTransform.getScaleInstance(w, w);
+        AffineTransform at = AffineTransform.getScaleInstance(factormultiplic, factormultiplic);
         AffineTransformOp atop = new AffineTransformOp(at, AffineTransformOp.TYPE_BILINEAR);
         BufferedImage imgdest = atop.filter(fondoLienzo, null);
 
@@ -82,7 +83,15 @@ public class PDFInternalFrame extends JInternalFrame {
         return this.getPanelpdf().getImagenFondoFormulario(b);
     }
 
-//    public void setImagen(BufferedImage imgaux) {
+    public float getFactormultiplic() {
+        return factormultiplic;
+    }
+
+    public void setFactormultiplic(float factormultiplic) {
+        this.factormultiplic = factormultiplic;
+    }
+
+    //    public void setImagen(BufferedImage imgaux) {
 //        this.getPanelpdf().setImagenFondoFormulario(imgaux);
 //        //RESET MODE: QUITA TODO
 ////        this.Panelpdf.ResetvRect();
@@ -152,8 +161,8 @@ public class PDFInternalFrame extends JInternalFrame {
 
                 int posx = (int) (c.getPosX()*at.getScaleX());
                 int posy = (int) (c.getPosY()*at.getScaleY());
-                int nh = (int) (c.getHeight()*at.getScaleX());
-                int nw = (int) (c.getWidth()*at.getScaleY());
+                int nh = (int) (c.getHeight()*at.getScaleY());
+                int nw = (int) (c.getWidth()*at.getScaleX());
 
                Point2D punto =  new Point2D.Double(posx,posy);
 
