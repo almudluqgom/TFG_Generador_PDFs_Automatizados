@@ -12,6 +12,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.beans.PropertyVetoException;
@@ -37,6 +38,7 @@ public class VentanaRellenarPDFFrame extends JFrame {
     PDFillInternalFrame pdf_if;
     int currentpnumber;
     ArrayList<CampoF> campos;
+    ArrayList<FieldLine> truefields;
     float factormultiplic;
 
     public VentanaRellenarPDFFrame(String pdfname) {
@@ -48,7 +50,8 @@ public class VentanaRellenarPDFFrame extends JFrame {
         factormultiplic= pdf_if.getFactormultiplic();
         AddBotones(bHerram);
 
-        campos = new ArrayList<>();
+        truefields = new ArrayList<>();
+        campos =  new ArrayList<>();
         inicializarListaCampos();
 
         for (CampoF c : campos) {
@@ -133,7 +136,6 @@ public class VentanaRellenarPDFFrame extends JFrame {
 
                 for (String campo : listaCampos) {
                     CampoF nuevoc = e.transformaStringEnCampo(campo);
-                    //aplicaZoom(nuevoc);
                     campos.add(nuevoc);
                 }
             }
@@ -149,16 +151,8 @@ public class VentanaRellenarPDFFrame extends JFrame {
             c.setPosY((int) (c.getPosY()*factormultiplic));
     }
 
-//    public void applyZoom(double mult){
-//        for (CampoF c : campos) {
-//            c.setWidth((int) (c.getWidth() * mult));
-//            c.setHeight((int) (c.getHeight()*mult));
-//            c.setPosX((int) (c.getPosX()*mult));
-//            c.setPosY((int) (c.getPosY()*mult));
-//        }
-//    }
-
     public void dibujaCampoenLienzo(CampoF c){
+
         aplicaZoom(c);
         Point2D p1 = new Point2D.Double(c.getPosX(),
                 c.getPosY()+c.getHeight());
@@ -206,8 +200,15 @@ public class VentanaRellenarPDFFrame extends JFrame {
 
         BotonGuardarCampos.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                PDFCreator newversion = new PDFCreator(nombrepdf);
-                newversion.addNewTexts(pdf_if.getPanelpdf().getvLines());
+
+                float h= pdf_if.getOldP().getHeight();
+                float w =pdf_if.getOldP().getWidth();
+
+                Dimension d = new Dimension((int) w, (int) h);
+                PDFCreator newversion = new PDFCreator(nombrepdf,d);
+                desaplicaZoom(pdf_if.getPanelpdf().getvLines());
+
+                newversion.addNewTexts(truefields);
                 newversion.fillPDF();
 
                 RellenarPDFFrame mainFrame = null;
@@ -222,7 +223,6 @@ public class VentanaRellenarPDFFrame extends JFrame {
             }
         });
 
-
         bZoomIN = new BotonPersonalizado();
         bZoomIN.setText("+");
         bZoomIN.setStyle(ColorStyle.STYLE3);
@@ -234,7 +234,6 @@ public class VentanaRellenarPDFFrame extends JFrame {
                 AffineTransform at = AffineTransform.getScaleInstance(1.15, 1.15);
                 pdf_if.zoomPage( campos,fondoAux,currentpnumber,at);
                 factormultiplic= (float) (factormultiplic*1.15);
-                //applyZoom(1.15);
                 pdf_if.setFactormultiplic(factormultiplic);
 
                 fondoAux = pdf_if.getPanelpdf().getImagenFondoFormulario(false);
@@ -263,7 +262,6 @@ public class VentanaRellenarPDFFrame extends JFrame {
                 AffineTransform at = AffineTransform.getScaleInstance(0.85, 0.85);
                 pdf_if.zoomPage( campos,fondoAux,currentpnumber,at);
                 factormultiplic= (float) (factormultiplic*0.85);
-                //applyZoom(0.85);
                 pdf_if.setFactormultiplic(factormultiplic);
                 fondoAux = pdf_if.getPanelpdf().getImagenFondoFormulario(false);
 
@@ -277,10 +275,8 @@ public class VentanaRellenarPDFFrame extends JFrame {
             }
         });
 
-
         pagecounter = new JLabel();
         bHerram.add(pagecounter);
-
 
         bPrev = new BotonPersonalizado();
         bPrev.setText("Página anterior");
@@ -345,5 +341,28 @@ public class VentanaRellenarPDFFrame extends JFrame {
 
         barraHerrm.add(bPrev);
         barraHerrm.add(bNext);
+    }
+
+    private void desaplicaZoom(List<FieldLine> fieldLines) {
+        truefields = new ArrayList<>();
+        for (FieldLine c : fieldLines) {
+            int posx = (int) (c.getpAux().getX() * 1/factormultiplic);
+            int posy = (int) ((c.getpAux().getY()) * 1/factormultiplic);
+            int newl = (int) (c.getWidth()*1/factormultiplic);
+            int posx2 = posx + newl;
+
+            Point2D punto =  new Point2D.Double(posx,posy);
+            Point2D punto1 =  new Point2D.Double(posx2,posy);
+
+            //Line2D newline= new Line2D.Double(punto,punto1);
+
+            FieldLine f = new FieldLine(punto,punto1);
+            f.setpAux(punto);
+            f.setText(c.getText());
+
+            truefields.add(f);
+//            c.setpAux(punto);
+//            c.setLinea(newline);
+        }
     }
 }

@@ -10,11 +10,6 @@ public class FieldLine {
     private Line2D linea;
     String text;
 
-    public FieldLine(Point2D pt) {
-        linea = new Line2D.Double(pt, pt);
-        pAux=pt;
-        text="";
-    }
 
     public FieldLine(Point2D pt1, Point2D pt2) {
         linea = new Line2D.Double(pt1, pt2);

@@ -32,6 +32,16 @@ public class PDFillInternalFrame extends JInternalFrame {
     JLabel picLabel;
     BufferedImage fondoLienzo;
 
+    public BufferedImage getOldP() {
+        return oldP;
+    }
+
+    public void setOldP(BufferedImage oldP) {
+        this.oldP = oldP;
+    }
+
+    BufferedImage oldP;
+
     float factormultiplic;
 
     public PDFillInternalFrame(String npdf) {
@@ -57,7 +67,7 @@ public class PDFillInternalFrame extends JInternalFrame {
                     //PageComponent page = new PageComponent("C:\\\\Users\\\\Almuchuela\\\\Downloads\\\\pagina4.jpeg");
                     //
         fondoLienzo =page.getBi();
-
+        oldP = fondoLienzo;
         factormultiplic = (float) (screenSize.getWidth() * 0.85)/fondoLienzo.getWidth();
 
         AffineTransform at = AffineTransform.getScaleInstance(factormultiplic, factormultiplic);

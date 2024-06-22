@@ -1,10 +1,12 @@
 package com.restpdf.javaclases.PDFEditor.Tools;
 
 import com.itextpdf.text.*;
+import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.pdf.*;
 import com.restpdf.javaclases.PDFEditor.Tools.FieldLine;
 
 import javax.swing.*;
+import java.awt.*;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -12,40 +14,45 @@ import java.util.List;
 
 public class PDFCreator {
        List<FieldLine> newtextlines;
-    PdfContentByte canvas;
+    static Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
     PdfStamper stamp;
     String origen,destino;
+    float factorm;
+    Dimension dimensionp;
 
-    public PDFCreator(String src){
+    public PDFCreator(String src,Dimension d){
         origen = src;
         destino = src.replace(".pdf","_new.pdf");
-
+        dimensionp = d;
     }
 
     public void addNewTexts(List<FieldLine> fieldLines) {
         newtextlines = fieldLines;
     }
     public void fillPDF(){
-
         try {
             PdfReader reader = new PdfReader(origen);
-            PdfWriter writer = null;
 
             Rectangle dim = reader.getPageSize(reader.getPageN(1));
             Document document = new Document(dim);
 
-
+            float newscale = (float) (document.getPageSize().getHeight()/ dimensionp.getHeight());
+            float newscale2 = (float) (document.getPageSize().getWidth()/ dimensionp.getWidth());
             stamp = new PdfStamper(reader, new FileOutputStream(destino));
             document.open();
 
             for (FieldLine f : newtextlines) {
-                int calculodistY = (int) (document.getPageSize().getHeight() - f.getpAux().getY());
-                int calculodistX = (int) f.getpAux().getX();
+                float h1 = document.getPageSize().getHeight();
+
+                int calculodistY = (int) (f.getpAux().getY());
+                calculodistY = (int) ((int) h1-(newscale*calculodistY));
+
+                int calculodistX = (int) (f.getpAux().getX()*newscale2);
                 FixText(f.getText(),
                         calculodistX,
                         calculodistY,
                         stamp,
-                        10);
+                        12);
             }
             stamp.close();
             document.close();
@@ -85,6 +92,10 @@ public class PDFCreator {
         } catch (DocumentException | IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public void setFactorM(float factormultiplic) {
+        factorm = factormultiplic;
     }
 //
 //    public void print(PdfContentByte pagina){
