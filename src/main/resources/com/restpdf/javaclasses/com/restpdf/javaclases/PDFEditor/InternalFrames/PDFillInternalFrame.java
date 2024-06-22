@@ -163,8 +163,8 @@ public class PDFillInternalFrame extends JInternalFrame {
                 int nh = (int) (c.getHeight()*at.getScaleX());
                 String t = L.get(campos.indexOf(c)).getText();
 
-                Point2D punto =  new Point2D.Double(posx,posy);
-                Point2D punto1 =  new Point2D.Double(posx+ nw,posy);
+                Point2D punto =  new Point2D.Double(posx,posy+nh);
+                Point2D punto1 =  new Point2D.Double(posx+ nw,posy+nh);
                 FieldLine f = new FieldLine(punto,punto1);
                 f.setText(t);
                 Panelpdf.addnewLine(f);

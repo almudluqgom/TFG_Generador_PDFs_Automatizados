@@ -133,6 +133,7 @@ public class VentanaRellenarPDFFrame extends JFrame {
 
                 for (String campo : listaCampos) {
                     CampoF nuevoc = e.transformaStringEnCampo(campo);
+                    //aplicaZoom(nuevoc);
                     campos.add(nuevoc);
                 }
             }
@@ -141,19 +142,28 @@ public class VentanaRellenarPDFFrame extends JFrame {
             e.printStackTrace();
         }
     }
-
-    public void applyZoom(double mult){
-        for (CampoF c : campos) {
-            c.setWidth((int) (c.getWidth() * mult));
-            c.setHeight((int) (c.getHeight()*mult));
-            c.setPosX((int) (c.getPosX()*mult));
-            c.setPosY((int) (c.getPosY()*mult));
-        }
+    public void aplicaZoom(CampoF c){
+        c.setWidth((int) (c.getWidth() * factormultiplic));
+            c.setHeight((int) (c.getHeight()*factormultiplic));
+            c.setPosX((int) (c.getPosX()*factormultiplic));
+            c.setPosY((int) (c.getPosY()*factormultiplic));
     }
 
+//    public void applyZoom(double mult){
+//        for (CampoF c : campos) {
+//            c.setWidth((int) (c.getWidth() * mult));
+//            c.setHeight((int) (c.getHeight()*mult));
+//            c.setPosX((int) (c.getPosX()*mult));
+//            c.setPosY((int) (c.getPosY()*mult));
+//        }
+//    }
+
     public void dibujaCampoenLienzo(CampoF c){
-        Point2D p1 = new Point2D.Double(c.getPosX(),c.getPosY());
-        Point2D p2 = new Point2D.Double(c.getPosX()+c.getWidth(),c.getPosY());
+        aplicaZoom(c);
+        Point2D p1 = new Point2D.Double(c.getPosX(),
+                c.getPosY()+c.getHeight());
+        Point2D p2 = new Point2D.Double(c.getPosX()+c.getWidth(),
+                c.getPosY()+c.getHeight());
 
         FieldLine f = new FieldLine(p1,p2);
 
@@ -223,8 +233,8 @@ public class VentanaRellenarPDFFrame extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 AffineTransform at = AffineTransform.getScaleInstance(1.15, 1.15);
                 pdf_if.zoomPage( campos,fondoAux,currentpnumber,at);
-                factormultiplic= (float) (factormultiplic*0.85);
-                applyZoom(0.85);
+                factormultiplic= (float) (factormultiplic*1.15);
+                //applyZoom(1.15);
                 pdf_if.setFactormultiplic(factormultiplic);
 
                 fondoAux = pdf_if.getPanelpdf().getImagenFondoFormulario(false);
@@ -253,7 +263,7 @@ public class VentanaRellenarPDFFrame extends JFrame {
                 AffineTransform at = AffineTransform.getScaleInstance(0.85, 0.85);
                 pdf_if.zoomPage( campos,fondoAux,currentpnumber,at);
                 factormultiplic= (float) (factormultiplic*0.85);
-                applyZoom(0.85);
+                //applyZoom(0.85);
                 pdf_if.setFactormultiplic(factormultiplic);
                 fondoAux = pdf_if.getPanelpdf().getImagenFondoFormulario(false);
 

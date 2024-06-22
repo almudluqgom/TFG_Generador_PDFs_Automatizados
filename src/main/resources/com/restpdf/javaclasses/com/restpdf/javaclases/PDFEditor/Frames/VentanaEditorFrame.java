@@ -122,12 +122,15 @@ public class VentanaEditorFrame extends JFrame {
         BotonGuardarCampos.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 BDForms bd = new BDForms();
-
-                for (CampoF f : campos) {
+                for (CampoF c : campos) {
                     try {
-                        bd.setNuevoCampoPDF(f);
+                        c.setWidth((int) (c.getWidth() * (1/factormultiplic)));
+                        c.setHeight((int) (c.getHeight() * (1/factormultiplic)));
+                        c.setPosX((int) (c.getPosX() * (1/factormultiplic)));
+                        c.setPosY((int) (c.getPosY() * (1/factormultiplic)));
+                        bd.setNuevoCampoPDF(c);
                     } catch (SQLException ex) {
-                        JOptionPane.showMessageDialog(null, "Error en el guardado del campo " + f.getIndexField() + ". Por favor vuelve a intentarlo");
+                        JOptionPane.showMessageDialog(null, "Error en el guardado del campo " + c.getIndexField() + ". Por favor vuelve a intentarlo");
                         throw new RuntimeException(ex);
                     }
                 }
@@ -151,10 +154,10 @@ public class VentanaEditorFrame extends JFrame {
         bZoomIN.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                //factormultiplic= (float) (factormultiplic*1.15);
+                factormultiplic= (float) (factormultiplic*1.15);
                 AffineTransform at = AffineTransform.getScaleInstance(1.15, 1.15);
                 pdf_if.zoomPage(campos, fondoAux, currentpnumber, at);
-                //applyZoom(0.85);
+               // applyZoom(1.15);
                 pdf_if.getPanelpdf().addEventListener(PDFVHandler);
                 fondoAux = pdf_if.getPanelpdf().getImagenFondoFormulario(false);
 
@@ -179,7 +182,7 @@ public class VentanaEditorFrame extends JFrame {
         bZoomOUT.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                //factormultiplic= (float) (factormultiplic*0.85);
+                factormultiplic= (float) (factormultiplic*0.85);
                 AffineTransform at = AffineTransform.getScaleInstance(0.85, 0.85);
                 pdf_if.zoomPage(campos, fondoAux, currentpnumber, at);
                 //applyZoom(0.85);
