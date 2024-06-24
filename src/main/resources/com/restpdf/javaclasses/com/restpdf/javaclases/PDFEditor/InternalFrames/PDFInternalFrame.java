@@ -1,6 +1,5 @@
 package com.restpdf.javaclases.PDFEditor.InternalFrames;
 
-import com.restpdf.javaclases.PDFEditor.Listeners.PDFEvent;
 import com.restpdf.javaclases.bdclases.CampoF;
 import com.spire.pdf.PdfDocument;
 import com.spire.pdf.graphics.PdfImageType;
@@ -11,7 +10,9 @@ import com.restpdf.javaclases.bdclases.BDForms;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
+import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -19,40 +20,53 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class PDFInternalFrame extends JInternalFrame { //VentanaInternaSM || VentanaInternaImagen
+public class PDFInternalFrame extends JInternalFrame {
+    static Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
     JScrollPane bd;
-    ViewPDFPanel Panelpdf;    //Lienzo2D
+    ViewPDFPanel Panelpdf;
     String namepdf, namenewpdf;
     public ArrayList<PageComponent> pages;
     JLabel picLabel;
+    float factormultiplic;
 
-    private Point2D pAux;   //Punto auxiliar para mantener las coordendas de donde se ha clickado
+    BufferedImage fondoLienzo;
 
     public PDFInternalFrame(String npdf) {
-        super(npdf, true, false, false, false);
+        super("Lienzo", true, false, false, false);
         namepdf = npdf;
         namenewpdf =  npdf.replace(".pdf", "_new.pdf");
-        pAux = null;
 
         pages= new ArrayList<>();
         initComponentes();
-
     }
     private void initComponentes() {
 
         bd = new JScrollPane();
+        bd.setPreferredSize(new Dimension((int)(screenSize.getWidth() * 0.88), (int) (screenSize.getHeight() * 0.90)));
         bd.getVerticalScrollBar().setUnitIncrement(16);
+        bd.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+
         //initalization
         createPages();
         PageComponent page = pages.get(0);
                         //test display one page
                         //PageComponent page = new PageComponent("C:\\\\Users\\\\Almuchuela\\\\Downloads\\\\pagina4.jpeg");
-     //
-        picLabel = new JLabel(new ImageIcon(page.getBi()));
-        //Panelpdf = new ViewPDFPanel();
-        Panelpdf=new ViewPDFPanel(page.getBi());
 
+        fondoLienzo =page.getBi();
+
+        factormultiplic= (float) (screenSize.getWidth() * 0.85)/fondoLienzo.getWidth();
+
+        AffineTransform at = AffineTransform.getScaleInstance(factormultiplic, factormultiplic);
+        AffineTransformOp atop = new AffineTransformOp(at, AffineTransformOp.TYPE_BILINEAR);
+        BufferedImage imgdest = atop.filter(fondoLienzo, null);
+
+        picLabel = new JLabel(new ImageIcon(imgdest));
+
+        Panelpdf= new ViewPDFPanel(imgdest);
+        Panelpdf.setSize((picLabel.getWidth()),(picLabel.getHeight()));
         Panelpdf.add(picLabel);
+
+        bd.setSize(picLabel.getWidth(),picLabel.getHeight());
         bd.setViewportView(Panelpdf);
 
         setClosable(false);
@@ -60,33 +74,34 @@ public class PDFInternalFrame extends JInternalFrame { //VentanaInternaSM || Ven
         setIconifiable(false);
         setMaximizable(false);
 
-        setForeground(Color.WHITE);
         getContentPane().add(bd);
     }
-
-    public JLabel getPicLabel() {
-        return picLabel;
-    }
-
-    public void setPicLabel(JLabel picLabel) {
-        this.picLabel = picLabel;
-    }
-
     public ViewPDFPanel getPanelpdf() {
         return Panelpdf;
-    }
-
-    public BufferedImage getImagen() {
-        return this.getPanelpdf().getImagenFondoFormulario();
     }
     public BufferedImage getImagen(boolean b) {
         return this.getPanelpdf().getImagenFondoFormulario(b);
     }
 
-    public void setImagen(BufferedImage imgaux) {
-        this.getPanelpdf().setImagenFondoFormulario(imgaux);
+    public float getFactormultiplic() {
+        return factormultiplic;
     }
 
+    public void setFactormultiplic(float factormultiplic) {
+        this.factormultiplic = factormultiplic;
+    }
+
+    //    public void setImagen(BufferedImage imgaux) {
+//        this.getPanelpdf().setImagenFondoFormulario(imgaux);
+//        //RESET MODE: QUITA TODO
+////        this.Panelpdf.ResetvRect();
+////        repaint();
+////        System.out.println("reseteado");
+//    }
+    public void setClearBackground() {
+        this.getPanelpdf().setImagenFondoFormulario(fondoLienzo);
+        repaint();
+    }
     public void createPages() {
 
         BDForms based = new BDForms();
@@ -133,4 +148,37 @@ public class PDFInternalFrame extends JInternalFrame { //VentanaInternaSM || Ven
         bd.setViewportView(Panelpdf);
 
     }
+    public void zoomPage ( List<CampoF> campos, BufferedImage img, int p, AffineTransform at){
+
+        AffineTransformOp atop = new AffineTransformOp(at, AffineTransformOp.TYPE_BILINEAR);
+        BufferedImage page =img;
+        BufferedImage imgdest = atop.filter(page, null);
+        picLabel = new JLabel(new ImageIcon(imgdest));
+        Panelpdf=new ViewPDFPanel(imgdest);
+
+        for (CampoF c : campos){
+            if (c.getPage() == p){
+
+                int posx = (int) (c.getPosX()*at.getScaleX());
+                int posy = (int) (c.getPosY()*at.getScaleY());
+                int nh = (int) (c.getHeight()*at.getScaleY());
+                int nw = (int) (c.getWidth()*at.getScaleX());
+
+               Point2D punto =  new Point2D.Double(posx,posy);
+
+                Rectangle r = new Rectangle((int) punto.getX(), (int) punto.getY(),nw,nh);
+
+                FieldRectangle f = new FieldRectangle(r);
+                Panelpdf.addRect(punto,f);
+                c.setPosX(posx);
+                c.setPosY(posy);
+                c.setHeight(nh);
+                c.setWidth(nw);
+            }
+        }
+        Panelpdf.add(picLabel);
+        Panelpdf.setImagenFondoFormulario(imgdest);
+        bd.setViewportView(Panelpdf);
+    }
+
 }

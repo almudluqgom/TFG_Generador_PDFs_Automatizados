@@ -1,5 +1,7 @@
 package com.restpdf.javaclases.bdclases;
 
+import com.restpdf.javaclases.PDFEditor.Tools.BotonPersonalizado;
+import com.restpdf.javaclases.PDFEditor.Tools.ColorStyle;
 import com.restpdf.javaclases.mainclases.MainFrame;
 
 import javax.swing.*;
@@ -13,7 +15,7 @@ public class BDFrame extends JFrame {
 
     BDForms bd;
     JPanel mainPanel, FolderPanel,  FilePanel;
-    JButton ChooserFolderButton, NewFolderButton,
+    BotonPersonalizado ChooserFolderButton, NewFolderButton,
             ChooseFileButton, NewFileButton;
     JFileChooser chooser;
     JLabel textfolder, textfile;
@@ -21,6 +23,16 @@ public class BDFrame extends JFrame {
     static String filetitle = "Selecciona el archivo: ";
 
     public BDFrame() throws SQLException, ClassNotFoundException {
+
+        JFrame.setDefaultLookAndFeelDecorated(true);
+        JDialog.setDefaultLookAndFeelDecorated(true);
+        try {
+            UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
+        } catch (Exception ex) {
+            System.err.println("Failed to initialize LaF");
+        }
+
+        this.setTitle("Gestión de base de datos del programa");
         bd = new BDForms();
 
         initSwingComponents();
@@ -29,15 +41,18 @@ public class BDFrame extends JFrame {
     private void initSwingComponents() {
 
         mainPanel = new JPanel();
-        mainPanel.setLayout(new GridLayout(4,1));
+        mainPanel.setLayout(new GridLayout(2,0));
         mainPanel.setBorder(BorderFactory.createLineBorder(Color.lightGray));
 
-        FolderPanel = new JPanel(new FlowLayout());
-        FolderPanel.add(new JSeparator(JSeparator.HORIZONTAL), BorderLayout.LINE_START);
+        FolderPanel = new JPanel();
+        //FolderPanel.add(new JSeparator(JSeparator.HORIZONTAL), BorderLayout.LINE_START);
         FolderPanel.setSize(300,250);
-        textfolder = new JLabel();
 
-        ChooserFolderButton = new JButton("Cargar directorio...");
+        //ChooserFolderButton = new JButton("Cargar directorio...");
+        JLabel init = new JLabel("Selección de directorio de guardado de archivos:");
+        ChooserFolderButton = new BotonPersonalizado();
+        ChooserFolderButton.setText("Selecciona un directorio...");
+        ChooserFolderButton.setStyle(ColorStyle.STYLE2);
         ChooserFolderButton.addActionListener(new ActionListener() { //selección de directorio a guardar
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -58,9 +73,13 @@ public class BDFrame extends JFrame {
                 }
             }
         });
-        FolderPanel.add(ChooserFolderButton);
-        FolderPanel.add(textfolder);
-        NewFolderButton = new JButton("Selecciona directorio");
+        textfolder = new JLabel("....");
+
+
+        //NewFolderButton = new JButton("Selecciona directorio");
+        NewFolderButton = new BotonPersonalizado();
+        NewFolderButton.setText("Guardar directorio");
+        NewFolderButton.setStyle(ColorStyle.STYLE1);
         NewFolderButton.addActionListener(new ActionListener() { //confirmación de directorio como almacen. pdf
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -73,18 +92,32 @@ public class BDFrame extends JFrame {
 
             }
         });
+
+        FolderPanel.setLayout(null);
+        init.setBounds(10,10,300,20);
+        ChooserFolderButton.setBounds(80,30,150,20);
+        textfolder.setBounds(80,60,100,20);
+        NewFolderButton.setBounds(80,80,150,20);
+
+        FolderPanel.add(init);
+        FolderPanel.add(ChooserFolderButton);
+        FolderPanel.add(textfolder);
         FolderPanel.add(NewFolderButton);
+
         mainPanel.add(FolderPanel);
 
         //----------------------------------------------------------------------
 
-        FilePanel = new JPanel(new FlowLayout());
-
-        FilePanel.add(new JSeparator(JSeparator.HORIZONTAL), BorderLayout.LINE_START);
+        FilePanel = new JPanel();
         FilePanel.setSize(300,150);
 
-        textfile= new JLabel();
-        ChooseFileButton = new JButton("Añadir nuevo PDF a la base de Datos");
+        JLabel init2 = new JLabel("Subida de archivos a la nube:");
+
+
+        //ChooseFileButton = new JButton("Añadir nuevo PDF a la base de Datos");
+        ChooseFileButton = new BotonPersonalizado();
+        ChooseFileButton.setText("Añadir nuevo PDF");
+        ChooseFileButton.setStyle(ColorStyle.STYLE2);
         ChooseFileButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -108,10 +141,10 @@ public class BDFrame extends JFrame {
             }
         });
 
-        FilePanel.add(ChooseFileButton);
-        FilePanel.add(textfile);
 
-        NewFileButton = new JButton("Añadir PDF");
+        NewFileButton = new BotonPersonalizado();
+        NewFileButton.setText("Añadir PDF");
+        NewFileButton.setStyle(ColorStyle.STYLE1);
         NewFileButton.addActionListener(new ActionListener() { //confirmación de directorio como almacen. pdf
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -124,7 +157,21 @@ public class BDFrame extends JFrame {
 
             }
         });
+
+        textfile= new JLabel("....");
+
+        FilePanel.setLayout(null);
+
+        init2.setBounds(10,10,300,20);
+        ChooseFileButton.setBounds(80,30,150,20);
+        textfile.setBounds(80,60,150,20);
+        NewFileButton.setBounds(80,80,150,20);
+
+        FilePanel.add(init2);
+        FilePanel.add(ChooseFileButton);
         FilePanel.add(NewFileButton);
+        FilePanel.add(textfile);
+
         mainPanel.add(FilePanel);
         //----------------------------------------------------------------------
 

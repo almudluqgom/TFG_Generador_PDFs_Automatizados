@@ -20,19 +20,12 @@ public class PageComponent extends Component {
             bi = ImageIO.read(new File(page));
             System.out.println("tipo del constructor 1:" + bi.getType());
 
-            w = (int) (bi.getWidth(null) / 0.5);
-            h = (int) (bi.getHeight(null) / 0.5);
+            w = bi.getWidth(null);
+            h = bi.getHeight(null);
 
             if (bi.getType() != BufferedImage.TYPE_INT_RGB) {
                 BufferedImage bi2 =
                         new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
-                BufferedImage bi3 = bi2;
-//                AffineTransform at = new AffineTransform();
-//                at.scale(0.5, 0.5);
-//                AffineTransformOp scaleOp =
-//                        new AffineTransformOp(at, AffineTransformOp.TYPE_BILINEAR);
-//                bi3 = scaleOp.filter(bi2, bi3);
-//
 
                 Graphics big = bi2.getGraphics();
                 big.drawImage(bi, 0, 0, null);

@@ -29,24 +29,24 @@ public class CampoF {
     public void setIndexField(int indexField) {
         this.indexField = indexField;
     }
-    public CampoF(String nameField, String nameFatherForm, int page, int posX, int posY, int height, int weight) {
+    public CampoF(String nameField, String nameFatherForm, int page, int posX, int posY, int width, int height) {
         NameField = nameField;
         NameFatherForm = nameFatherForm;
         Page = page;
         PosX = posX;
         PosY = posY;
         Height = height;
-        Width = weight;
+        Width = width;
         indexField = -1;
     }
-    public CampoF(String nameField, String nameFatherForm, int page, int posX, int posY, int height, int weight, int idf) {
+    public CampoF(String nameField, String nameFatherForm, int page, int posX, int posY, int width, int height, int idf) {
         NameField = nameField;
         NameFatherForm = nameFatherForm;
         Page = page;
         PosX = posX;
         PosY = posY;
         Height = height;
-        Width = weight;
+        Width = width;
         indexField = idf;
     }
     public CampoF(CampoF c){
